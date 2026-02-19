@@ -36,3 +36,11 @@ coverage/
 .temp
 .cache
 _site
+
+
+# Syncthing
+.stfolder/
+.stversions/
+.stignore
+*.sync-conflict-*
+
