@@ -26,13 +26,12 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.0",
-    "@vercel/ncc": "^0.38.1",
     "eslint": "^7.32.0",
     "eslint-config-google": "^0.9.1"
   },
   "scripts": {
     "lint": "eslint .",
-    "build": "bunx --bun @vercel/ncc build prepare-release.js -o dist --source-map --license licenses.txt",
+    "build": "bun build ./prepare-release.js --target=bun --format=cjs --sourcemap=linked --outdir dist --entry-naming index.js",
     "prepare": "bun run build"
   }
 }
