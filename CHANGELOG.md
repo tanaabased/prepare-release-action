@@ -1,5 +1,7 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
+## v1.0.0 - [February 26, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.0.0)
+
 - Added Bun runtime support files, including `.bun-version` and `bun.lock`. [#4](https://github.com/tanaabased/prepare-release-action/pull/4)
 - Added comprehensive Mocha unit tests for every module in `utils/`. [#4](https://github.com/tanaabased/prepare-release-action/pull/4)
 - Converted the action source and utility modules from CommonJS to ESM syntax. [#4](https://github.com/tanaabased/prepare-release-action/pull/4)
