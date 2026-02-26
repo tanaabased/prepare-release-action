@@ -10,9 +10,10 @@ All inputs are optional however if you are **NOT** triggering this action on a `
 |---|---|---|---|
 | `version` | The version of the thing to be released. Must be a semver valid string. | `${{ github.event.release.tag_name }}` | `v3.14.0` |
 | `bundle-dependencies` | A toggle to autoset `bundleDependencies` in `package.json`. | `false` | `true` |
-| `commands` | A list of commands to run to prepare the release. | `[]` | `npm run prepare` |
+| `commands` | A list of commands to run to prepare the release. | `[]` | `bun run build` |
 | `meta` | A list of `path=value` strings to merge into the `package.json` | `null` | `dist=thing` |
 | `root` | The location of the code being prepared for release. | `${{ github.workspace }}` | `/path/to/my/project` |
+| `bun-version` | The Bun version to use when running this action. | `1.3.4` | `1.3.4` |
 | `sync` | A toggle to enable/disable code syncing. | `true` | `false` |
 | `sync-branch` | The target branch to use when syncing changes back to the repo. | `${{ github.event.release.target_commitish \|\| github.event.pull_request.head.ref \|\| github.ref_name }}` | `main` |
 | `sync-email` | The email to use when syncing changes back to the repo. | `github-actions@github.com` | `riker@starfleet.gov` |
@@ -29,7 +30,7 @@ Note that `sync` must be set to `true` for the other `sync-*` options to do anyt
 
 Also note that `sync-username` and `sync-email` are simply for `git config` purposes and *DO NOT* map to a GitHub user. If you want to do remote git ops as a particular user then use `sync-token`.
 
-Also also note that `bundle-dependencies` runs _after_ sync eg it will not push changes to `bundleDependencies` in your `package.json` back to your repo. It is intended to be used for packaging dependencies when publishing to a npm compatible package registry eg `npm` or `npm.pkg.github.com`.
+Also also note that `bundle-dependencies` runs _after_ sync eg it will not push changes to `bundleDependencies` in your `package.json` back to your repo. It is intended to be used for packaging dependencies when publishing to an npm compatible package registry eg `npm.pkg.github.com`.
 
 Also note that while `update-files-meta` is expressed as `KEY=VALUE` it must be wrapped with double brackets like `{{ KEY }}` in the relevant `update-files` for it to be properly tokenized/replaced. See our [CHANGELOG.md](https://github.com/tanaabased/prepare-release-action/blob/main/CHANGELOG.md) for an example using the below inputs:
 
@@ -67,7 +68,7 @@ update-files-meta: |
   uses: tanaabased/prepare-release-action@v1
   with:
     commands: |
-      npm run prepare
+      bun run build
     sync-tags: v3
 ```
 
@@ -81,7 +82,7 @@ update-files-meta: |
     bundle-dependencies: true
     commands: |
       touch riker
-      npm run prepare
+      bun run build
     meta: |
       jazzman=William T. Riker
       bosmang=Picard

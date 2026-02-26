@@ -20,8 +20,6 @@ jobs:
         bundle-dependencies:
           - true
           - false
-        node-version:
-          - '20'
         lando-plugin:
           - true
           - false
@@ -29,15 +27,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Install node ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
+          bun-version-file: .bun-version
       - name: Install deps and prep
         run: |
-          npm clean-install
-          npm run prepare
+          bun install --frozen-lockfile --ignore-scripts
+          bun run build
       - name: Export formatted release date
         run: echo "RELEASE_DATE=$(date "+%B %e, %Y" | tr -s ' ')" >> $GITHUB_ENV
       - name: Prepare release
@@ -45,7 +42,7 @@ jobs:
         with:
           version: ${{ matrix.version }}
           bundle-dependencies: ${{ matrix.bundle-dependencies }}
-          commands: npm run prepare
+          commands: bun run build
           lando-plugin: ${{ matrix.lando-plugin }}
           sync-tags: |
             v2

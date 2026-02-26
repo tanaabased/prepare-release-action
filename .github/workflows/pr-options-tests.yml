@@ -15,21 +15,18 @@ jobs:
           - windows-2022
           - ubuntu-24.04
           - macos-15
-        node-version:
-          - '20'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Install node ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
+          bun-version-file: .bun-version
       - name: Install deps and prep
         run: |
-          npm clean-install
-          npm run prepare
+          bun install --frozen-lockfile --ignore-scripts
+          bun run build
       - name: Prepare release
         uses: ./
         with:
@@ -113,4 +110,3 @@ jobs:
             exit 4
           fi
         shell: bash
-
