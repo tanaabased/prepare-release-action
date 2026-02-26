@@ -36,7 +36,7 @@ jobs:
         uses: ./
         with:
           commands: bun run build
-          sync-tags: v3
+          sync-tags: v1
           sync-token: ${{ secrets.TANAAB_COAXIUM_INJECTOR }}
           sync-email: tanaabot@tanaab.dev
           sync-username: tanaabot
