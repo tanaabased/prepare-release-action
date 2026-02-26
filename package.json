@@ -1,17 +1,15 @@
 {
-  "name": "@lando/prepare-release-action",
+  "name": "@tanaabased/prepare-release-action",
   "version": "3.3.4",
   "description": "An action that can automate release steps and sync them back to the releasing repo.",
   "contributors": [
-    "Alec Reynolds @reynoldsalec",
     "Mike Pirog @pirog"
   ],
   "license": "MIT",
-  "repository": "https://github.com/lando/prepare-release-action",
-  "bugs": "https://github.com/lando/prepare-release-action/issues",
-  "homepage": "https://github.com/lando/prepare-release-action",
+  "repository": "https://github.com/tanaabased/prepare-release-action",
+  "bugs": "https://github.com/tanaabased/prepare-release-action/issues",
+  "homepage": "https://github.com/tanaabased/prepare-release-action",
   "keywords": [
-    "lando",
     "Github Actions"
   ],
   "engines": {

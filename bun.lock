@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "@lando/prepare-release-action",
+      "name": "@tanaabased/prepare-release-action",
       "dependencies": {
         "@actions/core": "^1.10.1",
         "@actions/exec": "^1.1.1",
