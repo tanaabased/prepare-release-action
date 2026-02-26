@@ -45,7 +45,7 @@ jobs:
             bosmang=Picard
           root: ${{ github.workspace }}/test
           sync: true
-          sync-branch: test
+          sync-branch: sync-test
           sync-email: william.t.riker@starfleet.mil
           sync-message: riker
           sync-tags: |

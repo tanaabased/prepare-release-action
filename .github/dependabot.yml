@@ -18,4 +18,3 @@ updates:
     ignore:
       - dependency-name: "lando/prepare-release-action"
         versions: ["99", "99.x.x"] # v99 used for internal testing
-
