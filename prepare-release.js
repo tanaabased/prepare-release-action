@@ -1,21 +1,23 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+
 import core from '@actions/core';
 import exec from '@actions/exec';
-import fs from 'fs';
-import getInputs from './utils/get-inputs.js';
-import getStdOut from './utils/get-stdout.js';
 import github from '@actions/github';
-import hasDependencies from './utils/has-dependencies.js';
-import hideCredentialFiles from './utils/hide-credentials.js';
-import isLandoPlugin from './utils/is-lando-plugin.js';
 import jsonfile from 'jsonfile';
-import os from 'os';
-import path from 'path';
-import parseReleaseDate from './utils/parse-release-date.js';
-import parseHumanSizeToBytes from './utils/parse-human-size-to-bytes.js';
-import parseTokens from './utils/parse-tokens.js';
 import semverClean from 'semver/functions/clean.js';
 import semverValid from 'semver/functions/valid.js';
 import set from 'lodash.set';
+
+import getInputs from './utils/get-inputs.js';
+import getStdOut from './utils/get-stdout.js';
+import hasDependencies from './utils/has-dependencies.js';
+import hideCredentialFiles from './utils/hide-credentials.js';
+import isLandoPlugin from './utils/is-lando-plugin.js';
+import parseHumanSizeToBytes from './utils/parse-human-size-to-bytes.js';
+import parseReleaseDate from './utils/parse-release-date.js';
+import parseTokens from './utils/parse-tokens.js';
 import restoreCredentialFiles from './utils/restore-credentials.js';
 
 const main = async () => {

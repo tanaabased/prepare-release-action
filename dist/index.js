@@ -8329,19 +8329,19 @@ var require_lodash = __commonJS((exports, module) => {
     var pattern = isFunction(value) || isHostObject(value) ? reIsNative : reIsHostCtor;
     return pattern.test(toSource(value));
   }
-  function baseSet(object, path2, value, customizer) {
+  function baseSet(object, path, value, customizer) {
     if (!isObject(object)) {
       return object;
     }
-    path2 = isKey(path2, object) ? [path2] : castPath(path2);
-    var index = -1, length = path2.length, lastIndex = length - 1, nested = object;
+    path = isKey(path, object) ? [path] : castPath(path);
+    var index = -1, length = path.length, lastIndex = length - 1, nested = object;
     while (nested != null && ++index < length) {
-      var key = toKey(path2[index]), newValue = value;
+      var key = toKey(path[index]), newValue = value;
       if (index != lastIndex) {
         var objValue = nested[key];
         newValue = customizer ? customizer(objValue, key, nested) : undefined;
         if (newValue === undefined) {
-          newValue = isObject(objValue) ? objValue : isIndex(path2[index + 1]) ? [] : {};
+          newValue = isObject(objValue) ? objValue : isIndex(path[index + 1]) ? [] : {};
         }
       }
       assignValue(nested, key, newValue);
@@ -8458,8 +8458,8 @@ var require_lodash = __commonJS((exports, module) => {
   function toString(value) {
     return value == null ? "" : baseToString(value);
   }
-  function set(object, path2, value) {
-    return object == null ? object : baseSet(object, path2, value);
+  function set(object, path, value) {
+    return object == null ? object : baseSet(object, path, value);
   }
   module.exports = set;
 });
@@ -8467,7 +8467,14 @@ var require_lodash = __commonJS((exports, module) => {
 // prepare-release.js
 var import_core5 = __toESM(require_core(), 1);
 var import_exec = __toESM(require_exec(), 1);
+var import_github = __toESM(require_github(), 1);
+var import_jsonfile2 = __toESM(require_jsonfile(), 1);
+var import_clean = __toESM(require_clean(), 1);
+var import_valid = __toESM(require_valid(), 1);
+var import_lodash = __toESM(require_lodash(), 1);
 import fs3 from "fs";
+import os from "os";
+import path3 from "path";
 
 // utils/get-inputs.js
 var import_core = __toESM(require_core(), 1);
@@ -8500,9 +8507,6 @@ var get_stdout_default = (command) => {
   const data = execSync(command, { maxBuffer: 1024 * 1024 * 10, encoding: "utf-8" });
   return typeof data === "string" ? data.trim() : data;
 };
-
-// prepare-release.js
-var import_github = __toESM(require_github(), 1);
 
 // utils/has-dependencies.js
 var import_core2 = __toESM(require_core(), 1);
@@ -8549,16 +8553,6 @@ var is_lando_plugin_default = (manifest = {}) => {
   return false;
 };
 
-// prepare-release.js
-var import_jsonfile2 = __toESM(require_jsonfile(), 1);
-import os from "os";
-import path3 from "path";
-
-// utils/parse-release-date.js
-var parse_release_date_default = (data) => {
-  return new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric" }).format(new Date(data));
-};
-
 // utils/parse-human-size-to-bytes.js
 var parse_human_size_to_bytes_default = (size) => {
   if (typeof size !== "string")
@@ -8575,15 +8569,15 @@ var parse_human_size_to_bytes_default = (size) => {
   return Math.round(value * 1024 ** exponent);
 };
 
+// utils/parse-release-date.js
+var parse_release_date_default = (data) => {
+  return new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric" }).format(new Date(data));
+};
+
 // utils/parse-tokens.js
 var parse_tokens_default = (tokens) => {
   return tokens.map((token) => token.split("=")).filter(([token, value]) => typeof token === "string" && typeof value === "string").map(([token, value]) => [token.trim(), value.trim()]);
 };
-
-// prepare-release.js
-var import_clean = __toESM(require_clean(), 1);
-var import_valid = __toESM(require_valid(), 1);
-var import_lodash = __toESM(require_lodash(), 1);
 
 // utils/restore-credentials.js
 var import_core4 = __toESM(require_core(), 1);
@@ -8760,5 +8754,5 @@ var main = async () => {
 };
 main();
 
-//# debugId=FD8020E243AA45BC64756E2164756E21
+//# debugId=520B612C6F5ABBB764756E2164756E21
 //# sourceMappingURL=index.js.map
