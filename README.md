@@ -55,7 +55,7 @@ update-files-meta: |
 
 ```yaml
 - name: Prepare Release
-  uses: tanaabased/prepare-release-action@v3
+  uses: tanaabased/prepare-release-action@v1
 ```
 
 ### Advanced Usage
@@ -64,7 +64,7 @@ update-files-meta: |
 
 ```yaml
 - name: Prepare Release
-  uses: tanaabased/prepare-release-action@v3
+  uses: tanaabased/prepare-release-action@v1
   with:
     commands: |
       npm run prepare
@@ -75,7 +75,7 @@ update-files-meta: |
 
 ```yaml
 - name: Prepare Release
-  uses: tanaabased/prepare-release-action@v3
+  uses: tanaabased/prepare-release-action@v1
   with:
     version: v3.1.4-riker.1
     bundle-dependencies: true
