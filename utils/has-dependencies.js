@@ -1,9 +1,7 @@
-'use strict';
+import core from '@actions/core';
+import jsonfile from 'jsonfile';
 
-const core = require('@actions/core');
-const jsonfile = require('jsonfile');
-
-module.exports = pjson => {
+export default pjson => {
   const {dependencies} = jsonfile.readFileSync(pjson);
 
   if (!dependencies || (dependencies && Object.keys(dependencies).length === 0)) {

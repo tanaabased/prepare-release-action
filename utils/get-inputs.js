@@ -1,8 +1,6 @@
-'use strict';
+import core from '@actions/core';
 
-const core = require('@actions/core');
-
-module.exports = () => ({
+export default () => ({
   // required inputs
   version: String(core.getInput('version')),
 

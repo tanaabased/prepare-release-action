@@ -1,8 +1,6 @@
-'use strict';
+import {execSync} from 'child_process';
 
-const {execSync} = require('child_process');
-
-module.exports = command => {
+export default command => {
   // validate inputs
   if (!command) throw new Error('Must specify a command!');
   // get output

@@ -1,11 +1,27 @@
-// @bun @bun-cjs
-(function(exports, require, module, __filename, __dirname) {"use strict";
+// @bun
+var __create = Object.create;
+var __getProtoOf = Object.getPrototypeOf;
+var __defProp = Object.defineProperty;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __toESM = (mod, isNodeMode, target) => {
+  target = mod != null ? __create(__getProtoOf(mod)) : {};
+  const to = isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target;
+  for (let key of __getOwnPropNames(mod))
+    if (!__hasOwnProp.call(to, key))
+      __defProp(to, key, {
+        get: () => mod[key],
+        enumerable: true
+      });
+  return to;
+};
 var __commonJS = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
+var __require = import.meta.require;
 
 // node_modules/@actions/core/lib/utils.js
-var require_utils = __commonJS((exports2) => {
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.toCommandProperties = exports2.toCommandValue = undefined;
+var require_utils = __commonJS((exports) => {
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.toCommandProperties = exports.toCommandValue = undefined;
   function toCommandValue(input) {
     if (input === null || input === undefined) {
       return "";
@@ -14,7 +30,7 @@ var require_utils = __commonJS((exports2) => {
     }
     return JSON.stringify(input);
   }
-  exports2.toCommandValue = toCommandValue;
+  exports.toCommandValue = toCommandValue;
   function toCommandProperties(annotationProperties) {
     if (!Object.keys(annotationProperties).length) {
       return {};
@@ -28,12 +44,12 @@ var require_utils = __commonJS((exports2) => {
       endColumn: annotationProperties.endColumn
     };
   }
-  exports2.toCommandProperties = toCommandProperties;
+  exports.toCommandProperties = toCommandProperties;
 });
 
 // node_modules/@actions/core/lib/command.js
-var require_command = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_command = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -48,12 +64,12 @@ var require_command = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -65,19 +81,19 @@ var require_command = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.issue = exports2.issueCommand = undefined;
-  var os = __importStar(require("os"));
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.issue = exports.issueCommand = undefined;
+  var os = __importStar(__require("os"));
   var utils_1 = require_utils();
   function issueCommand(command, properties, message) {
     const cmd = new Command(command, properties, message);
     process.stdout.write(cmd.toString() + os.EOL);
   }
-  exports2.issueCommand = issueCommand;
+  exports.issueCommand = issueCommand;
   function issue(name, message = "") {
     issueCommand(name, {}, message);
   }
-  exports2.issue = issue;
+  exports.issue = issue;
   var CMD_STRING = "::";
 
   class Command {
@@ -121,8 +137,8 @@ var require_command = __commonJS((exports2) => {
 });
 
 // node_modules/@actions/core/lib/file-command.js
-var require_file_command = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_file_command = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -137,12 +153,12 @@ var require_file_command = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -154,11 +170,11 @@ var require_file_command = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.prepareKeyValueMessage = exports2.issueFileCommand = undefined;
-  var crypto = __importStar(require("crypto"));
-  var fs = __importStar(require("fs"));
-  var os = __importStar(require("os"));
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.prepareKeyValueMessage = exports.issueFileCommand = undefined;
+  var crypto = __importStar(__require("crypto"));
+  var fs = __importStar(__require("fs"));
+  var os = __importStar(__require("os"));
   var utils_1 = require_utils();
   function issueFileCommand(command, message) {
     const filePath = process.env[`GITHUB_${command}`];
@@ -172,7 +188,7 @@ var require_file_command = __commonJS((exports2) => {
       encoding: "utf8"
     });
   }
-  exports2.issueFileCommand = issueFileCommand;
+  exports.issueFileCommand = issueFileCommand;
   function prepareKeyValueMessage(key, value) {
     const delimiter = `ghadelimiter_${crypto.randomUUID()}`;
     const convertedValue = (0, utils_1.toCommandValue)(value);
@@ -184,13 +200,13 @@ var require_file_command = __commonJS((exports2) => {
     }
     return `${key}<<${delimiter}${os.EOL}${convertedValue}${os.EOL}${delimiter}`;
   }
-  exports2.prepareKeyValueMessage = prepareKeyValueMessage;
+  exports.prepareKeyValueMessage = prepareKeyValueMessage;
 });
 
 // node_modules/@actions/http-client/lib/proxy.js
-var require_proxy = __commonJS((exports2) => {
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.checkBypass = exports2.getProxyUrl = undefined;
+var require_proxy = __commonJS((exports) => {
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.checkBypass = exports.getProxyUrl = undefined;
   function getProxyUrl(reqUrl) {
     const usingSsl = reqUrl.protocol === "https:";
     if (checkBypass(reqUrl)) {
@@ -214,7 +230,7 @@ var require_proxy = __commonJS((exports2) => {
       return;
     }
   }
-  exports2.getProxyUrl = getProxyUrl;
+  exports.getProxyUrl = getProxyUrl;
   function checkBypass(reqUrl) {
     if (!reqUrl.hostname) {
       return false;
@@ -246,7 +262,7 @@ var require_proxy = __commonJS((exports2) => {
     }
     return false;
   }
-  exports2.checkBypass = checkBypass;
+  exports.checkBypass = checkBypass;
   function isLoopbackAddress(host) {
     const hostLower = host.toLowerCase();
     return hostLower === "localhost" || hostLower.startsWith("127.") || hostLower.startsWith("[::1]") || hostLower.startsWith("[0:0:0:0:0:0:0:1]");
@@ -268,18 +284,18 @@ var require_proxy = __commonJS((exports2) => {
 });
 
 // node_modules/tunnel/lib/tunnel.js
-var require_tunnel = __commonJS((exports2) => {
-  var net = require("net");
-  var tls = require("tls");
-  var http = require("http");
-  var https = require("https");
-  var events = require("events");
-  var assert = require("assert");
-  var util = require("util");
-  exports2.httpOverHttp = httpOverHttp;
-  exports2.httpsOverHttp = httpsOverHttp;
-  exports2.httpOverHttps = httpOverHttps;
-  exports2.httpsOverHttps = httpsOverHttps;
+var require_tunnel = __commonJS((exports) => {
+  var net = __require("net");
+  var tls = __require("tls");
+  var http = __require("http");
+  var https = __require("https");
+  var events = __require("events");
+  var assert = __require("assert");
+  var util = __require("util");
+  exports.httpOverHttp = httpOverHttp;
+  exports.httpsOverHttp = httpsOverHttp;
+  exports.httpOverHttps = httpOverHttps;
+  exports.httpsOverHttps = httpsOverHttps;
   function httpOverHttp(options) {
     var agent = new TunnelingAgent(options);
     agent.request = http.request;
@@ -484,17 +500,12 @@ var require_tunnel = __commonJS((exports2) => {
   } else {
     debug = function() {};
   }
-  exports2.debug = debug;
-});
-
-// node_modules/tunnel/index.js
-var require_tunnel2 = __commonJS((exports2, module2) => {
-  module2.exports = require_tunnel();
+  exports.debug = debug;
 });
 
 // node_modules/@actions/http-client/lib/index.js
-var require_lib = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_lib = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -509,12 +520,12 @@ var require_lib = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -526,7 +537,7 @@ var require_lib = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+  var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
         resolve(value);
@@ -553,13 +564,13 @@ var require_lib = __commonJS((exports2) => {
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.HttpClient = exports2.isHttps = exports2.HttpClientResponse = exports2.HttpClientError = exports2.getProxyUrl = exports2.MediaTypes = exports2.Headers = exports2.HttpCodes = undefined;
-  var http = __importStar(require("http"));
-  var https = __importStar(require("https"));
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.HttpClient = exports.isHttps = exports.HttpClientResponse = exports.HttpClientError = exports.getProxyUrl = exports.MediaTypes = exports.Headers = exports.HttpCodes = undefined;
+  var http = __importStar(__require("http"));
+  var https = __importStar(__require("https"));
   var pm = __importStar(require_proxy());
-  var tunnel = __importStar(require_tunnel2());
-  var undici_1 = require("undici");
+  var tunnel = __importStar(require_tunnel());
+  var undici_1 = __require("undici");
   var HttpCodes;
   (function(HttpCodes2) {
     HttpCodes2[HttpCodes2["OK"] = 200] = "OK";
@@ -589,21 +600,21 @@ var require_lib = __commonJS((exports2) => {
     HttpCodes2[HttpCodes2["BadGateway"] = 502] = "BadGateway";
     HttpCodes2[HttpCodes2["ServiceUnavailable"] = 503] = "ServiceUnavailable";
     HttpCodes2[HttpCodes2["GatewayTimeout"] = 504] = "GatewayTimeout";
-  })(HttpCodes || (exports2.HttpCodes = HttpCodes = {}));
+  })(HttpCodes || (exports.HttpCodes = HttpCodes = {}));
   var Headers;
   (function(Headers2) {
     Headers2["Accept"] = "accept";
     Headers2["ContentType"] = "content-type";
-  })(Headers || (exports2.Headers = Headers = {}));
+  })(Headers || (exports.Headers = Headers = {}));
   var MediaTypes;
   (function(MediaTypes2) {
     MediaTypes2["ApplicationJson"] = "application/json";
-  })(MediaTypes || (exports2.MediaTypes = MediaTypes = {}));
+  })(MediaTypes || (exports.MediaTypes = MediaTypes = {}));
   function getProxyUrl(serverUrl) {
     const proxyUrl = pm.getProxyUrl(new URL(serverUrl));
     return proxyUrl ? proxyUrl.href : "";
   }
-  exports2.getProxyUrl = getProxyUrl;
+  exports.getProxyUrl = getProxyUrl;
   var HttpRedirectCodes = [
     HttpCodes.MovedPermanently,
     HttpCodes.ResourceMoved,
@@ -628,7 +639,7 @@ var require_lib = __commonJS((exports2) => {
       Object.setPrototypeOf(this, HttpClientError.prototype);
     }
   }
-  exports2.HttpClientError = HttpClientError;
+  exports.HttpClientError = HttpClientError;
 
   class HttpClientResponse {
     constructor(message) {
@@ -661,12 +672,12 @@ var require_lib = __commonJS((exports2) => {
       });
     }
   }
-  exports2.HttpClientResponse = HttpClientResponse;
+  exports.HttpClientResponse = HttpClientResponse;
   function isHttps(requestUrl) {
     const parsedUrl = new URL(requestUrl);
     return parsedUrl.protocol === "https:";
   }
-  exports2.isHttps = isHttps;
+  exports.isHttps = isHttps;
 
   class HttpClient {
     constructor(userAgent, handlers, requestOptions) {
@@ -1083,13 +1094,13 @@ var require_lib = __commonJS((exports2) => {
       });
     }
   }
-  exports2.HttpClient = HttpClient;
+  exports.HttpClient = HttpClient;
   var lowercaseKeys = (obj) => Object.keys(obj).reduce((c, k) => (c[k.toLowerCase()] = obj[k], c), {});
 });
 
 // node_modules/@actions/http-client/lib/auth.js
-var require_auth = __commonJS((exports2) => {
-  var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+var require_auth = __commonJS((exports) => {
+  var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
         resolve(value);
@@ -1116,8 +1127,8 @@ var require_auth = __commonJS((exports2) => {
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.PersonalAccessTokenCredentialHandler = exports2.BearerCredentialHandler = exports2.BasicCredentialHandler = undefined;
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.PersonalAccessTokenCredentialHandler = exports.BearerCredentialHandler = exports.BasicCredentialHandler = undefined;
 
   class BasicCredentialHandler {
     constructor(username, password) {
@@ -1139,7 +1150,7 @@ var require_auth = __commonJS((exports2) => {
       });
     }
   }
-  exports2.BasicCredentialHandler = BasicCredentialHandler;
+  exports.BasicCredentialHandler = BasicCredentialHandler;
 
   class BearerCredentialHandler {
     constructor(token) {
@@ -1160,7 +1171,7 @@ var require_auth = __commonJS((exports2) => {
       });
     }
   }
-  exports2.BearerCredentialHandler = BearerCredentialHandler;
+  exports.BearerCredentialHandler = BearerCredentialHandler;
 
   class PersonalAccessTokenCredentialHandler {
     constructor(token) {
@@ -1181,12 +1192,12 @@ var require_auth = __commonJS((exports2) => {
       });
     }
   }
-  exports2.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHandler;
+  exports.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHandler;
 });
 
 // node_modules/@actions/core/lib/oidc-utils.js
-var require_oidc_utils = __commonJS((exports2) => {
-  var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+var require_oidc_utils = __commonJS((exports) => {
+  var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
         resolve(value);
@@ -1213,8 +1224,8 @@ var require_oidc_utils = __commonJS((exports2) => {
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.OidcClient = undefined;
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.OidcClient = undefined;
   var http_client_1 = require_lib();
   var auth_1 = require_auth();
   var core_1 = require_core();
@@ -1277,12 +1288,12 @@ var require_oidc_utils = __commonJS((exports2) => {
       });
     }
   }
-  exports2.OidcClient = OidcClient;
+  exports.OidcClient = OidcClient;
 });
 
 // node_modules/@actions/core/lib/summary.js
-var require_summary = __commonJS((exports2) => {
-  var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+var require_summary = __commonJS((exports) => {
+  var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
         resolve(value);
@@ -1309,13 +1320,13 @@ var require_summary = __commonJS((exports2) => {
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.summary = exports2.markdownSummary = exports2.SUMMARY_DOCS_URL = exports2.SUMMARY_ENV_VAR = undefined;
-  var os_1 = require("os");
-  var fs_1 = require("fs");
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.summary = exports.markdownSummary = exports.SUMMARY_DOCS_URL = exports.SUMMARY_ENV_VAR = undefined;
+  var os_1 = __require("os");
+  var fs_1 = __require("fs");
   var { access, appendFile, writeFile } = fs_1.promises;
-  exports2.SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY";
-  exports2.SUMMARY_DOCS_URL = "https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary";
+  exports.SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY";
+  exports.SUMMARY_DOCS_URL = "https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary";
 
   class Summary {
     constructor() {
@@ -1326,9 +1337,9 @@ var require_summary = __commonJS((exports2) => {
         if (this._filePath) {
           return this._filePath;
         }
-        const pathFromEnv = process.env[exports2.SUMMARY_ENV_VAR];
+        const pathFromEnv = process.env[exports.SUMMARY_ENV_VAR];
         if (!pathFromEnv) {
-          throw new Error(`Unable to find environment variable for $${exports2.SUMMARY_ENV_VAR}. Check if your runtime environment supports job summaries.`);
+          throw new Error(`Unable to find environment variable for $${exports.SUMMARY_ENV_VAR}. Check if your runtime environment supports job summaries.`);
         }
         try {
           yield access(pathFromEnv, fs_1.constants.R_OK | fs_1.constants.W_OK);
@@ -1439,13 +1450,13 @@ var require_summary = __commonJS((exports2) => {
     }
   }
   var _summary = new Summary;
-  exports2.markdownSummary = _summary;
-  exports2.summary = _summary;
+  exports.markdownSummary = _summary;
+  exports.summary = _summary;
 });
 
 // node_modules/@actions/core/lib/path-utils.js
-var require_path_utils = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_path_utils = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -1460,12 +1471,12 @@ var require_path_utils = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -1477,26 +1488,26 @@ var require_path_utils = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.toPlatformPath = exports2.toWin32Path = exports2.toPosixPath = undefined;
-  var path = __importStar(require("path"));
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.toPlatformPath = exports.toWin32Path = exports.toPosixPath = undefined;
+  var path = __importStar(__require("path"));
   function toPosixPath(pth) {
     return pth.replace(/[\\]/g, "/");
   }
-  exports2.toPosixPath = toPosixPath;
+  exports.toPosixPath = toPosixPath;
   function toWin32Path(pth) {
     return pth.replace(/[/]/g, "\\");
   }
-  exports2.toWin32Path = toWin32Path;
+  exports.toWin32Path = toWin32Path;
   function toPlatformPath(pth) {
     return pth.replace(/[/\\]/g, path.sep);
   }
-  exports2.toPlatformPath = toPlatformPath;
+  exports.toPlatformPath = toPlatformPath;
 });
 
 // node_modules/@actions/io/lib/io-util.js
-var require_io_util = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_io_util = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -1507,12 +1518,12 @@ var require_io_util = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -1524,7 +1535,7 @@ var require_io_util = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+  var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
         resolve(value);
@@ -1552,18 +1563,18 @@ var require_io_util = __commonJS((exports2) => {
     });
   };
   var _a;
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.getCmdPath = exports2.tryGetExecutablePath = exports2.isRooted = exports2.isDirectory = exports2.exists = exports2.READONLY = exports2.UV_FS_O_EXLOCK = exports2.IS_WINDOWS = exports2.unlink = exports2.symlink = exports2.stat = exports2.rmdir = exports2.rm = exports2.rename = exports2.readlink = exports2.readdir = exports2.open = exports2.mkdir = exports2.lstat = exports2.copyFile = exports2.chmod = undefined;
-  var fs = __importStar(require("fs"));
-  var path = __importStar(require("path"));
-  _a = fs.promises, exports2.chmod = _a.chmod, exports2.copyFile = _a.copyFile, exports2.lstat = _a.lstat, exports2.mkdir = _a.mkdir, exports2.open = _a.open, exports2.readdir = _a.readdir, exports2.readlink = _a.readlink, exports2.rename = _a.rename, exports2.rm = _a.rm, exports2.rmdir = _a.rmdir, exports2.stat = _a.stat, exports2.symlink = _a.symlink, exports2.unlink = _a.unlink;
-  exports2.IS_WINDOWS = process.platform === "win32";
-  exports2.UV_FS_O_EXLOCK = 268435456;
-  exports2.READONLY = fs.constants.O_RDONLY;
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.getCmdPath = exports.tryGetExecutablePath = exports.isRooted = exports.isDirectory = exports.exists = exports.READONLY = exports.UV_FS_O_EXLOCK = exports.IS_WINDOWS = exports.unlink = exports.symlink = exports.stat = exports.rmdir = exports.rm = exports.rename = exports.readlink = exports.readdir = exports.open = exports.mkdir = exports.lstat = exports.copyFile = exports.chmod = undefined;
+  var fs = __importStar(__require("fs"));
+  var path = __importStar(__require("path"));
+  _a = fs.promises, exports.chmod = _a.chmod, exports.copyFile = _a.copyFile, exports.lstat = _a.lstat, exports.mkdir = _a.mkdir, exports.open = _a.open, exports.readdir = _a.readdir, exports.readlink = _a.readlink, exports.rename = _a.rename, exports.rm = _a.rm, exports.rmdir = _a.rmdir, exports.stat = _a.stat, exports.symlink = _a.symlink, exports.unlink = _a.unlink;
+  exports.IS_WINDOWS = process.platform === "win32";
+  exports.UV_FS_O_EXLOCK = 268435456;
+  exports.READONLY = fs.constants.O_RDONLY;
   function exists(fsPath) {
     return __awaiter(this, undefined, undefined, function* () {
       try {
-        yield exports2.stat(fsPath);
+        yield exports.stat(fsPath);
       } catch (err) {
         if (err.code === "ENOENT") {
           return false;
@@ -1573,37 +1584,37 @@ var require_io_util = __commonJS((exports2) => {
       return true;
     });
   }
-  exports2.exists = exists;
+  exports.exists = exists;
   function isDirectory(fsPath, useStat = false) {
     return __awaiter(this, undefined, undefined, function* () {
-      const stats = useStat ? yield exports2.stat(fsPath) : yield exports2.lstat(fsPath);
+      const stats = useStat ? yield exports.stat(fsPath) : yield exports.lstat(fsPath);
       return stats.isDirectory();
     });
   }
-  exports2.isDirectory = isDirectory;
+  exports.isDirectory = isDirectory;
   function isRooted(p) {
     p = normalizeSeparators(p);
     if (!p) {
       throw new Error('isRooted() parameter "p" cannot be empty');
     }
-    if (exports2.IS_WINDOWS) {
+    if (exports.IS_WINDOWS) {
       return p.startsWith("\\") || /^[A-Z]:/i.test(p);
     }
     return p.startsWith("/");
   }
-  exports2.isRooted = isRooted;
+  exports.isRooted = isRooted;
   function tryGetExecutablePath(filePath, extensions) {
     return __awaiter(this, undefined, undefined, function* () {
       let stats = undefined;
       try {
-        stats = yield exports2.stat(filePath);
+        stats = yield exports.stat(filePath);
       } catch (err) {
         if (err.code !== "ENOENT") {
           console.log(`Unexpected error attempting to determine if executable file exists '${filePath}': ${err}`);
         }
       }
       if (stats && stats.isFile()) {
-        if (exports2.IS_WINDOWS) {
+        if (exports.IS_WINDOWS) {
           const upperExt = path.extname(filePath).toUpperCase();
           if (extensions.some((validExt) => validExt.toUpperCase() === upperExt)) {
             return filePath;
@@ -1619,18 +1630,18 @@ var require_io_util = __commonJS((exports2) => {
         filePath = originalFilePath + extension;
         stats = undefined;
         try {
-          stats = yield exports2.stat(filePath);
+          stats = yield exports.stat(filePath);
         } catch (err) {
           if (err.code !== "ENOENT") {
             console.log(`Unexpected error attempting to determine if executable file exists '${filePath}': ${err}`);
           }
         }
         if (stats && stats.isFile()) {
-          if (exports2.IS_WINDOWS) {
+          if (exports.IS_WINDOWS) {
             try {
               const directory = path.dirname(filePath);
               const upperName = path.basename(filePath).toUpperCase();
-              for (const actualName of yield exports2.readdir(directory)) {
+              for (const actualName of yield exports.readdir(directory)) {
                 if (upperName === actualName.toUpperCase()) {
                   filePath = path.join(directory, actualName);
                   break;
@@ -1650,10 +1661,10 @@ var require_io_util = __commonJS((exports2) => {
       return "";
     });
   }
-  exports2.tryGetExecutablePath = tryGetExecutablePath;
+  exports.tryGetExecutablePath = tryGetExecutablePath;
   function normalizeSeparators(p) {
     p = p || "";
-    if (exports2.IS_WINDOWS) {
+    if (exports.IS_WINDOWS) {
       p = p.replace(/\//g, "\\");
       return p.replace(/\\\\+/g, "\\");
     }
@@ -1666,12 +1677,12 @@ var require_io_util = __commonJS((exports2) => {
     var _a2;
     return (_a2 = process.env["COMSPEC"]) !== null && _a2 !== undefined ? _a2 : `cmd.exe`;
   }
-  exports2.getCmdPath = getCmdPath;
+  exports.getCmdPath = getCmdPath;
 });
 
 // node_modules/@actions/io/lib/io.js
-var require_io = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_io = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -1682,12 +1693,12 @@ var require_io = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -1699,7 +1710,7 @@ var require_io = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+  var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
         resolve(value);
@@ -1726,10 +1737,10 @@ var require_io = __commonJS((exports2) => {
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.findInPath = exports2.which = exports2.mkdirP = exports2.rmRF = exports2.mv = exports2.cp = undefined;
-  var assert_1 = require("assert");
-  var path = __importStar(require("path"));
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.findInPath = exports.which = exports.mkdirP = exports.rmRF = exports.mv = exports.cp = undefined;
+  var assert_1 = __require("assert");
+  var path = __importStar(__require("path"));
   var ioUtil = __importStar(require_io_util());
   function cp(source, dest, options = {}) {
     return __awaiter(this, undefined, undefined, function* () {
@@ -1757,7 +1768,7 @@ var require_io = __commonJS((exports2) => {
       }
     });
   }
-  exports2.cp = cp;
+  exports.cp = cp;
   function mv(source, dest, options = {}) {
     return __awaiter(this, undefined, undefined, function* () {
       if (yield ioUtil.exists(dest)) {
@@ -1778,7 +1789,7 @@ var require_io = __commonJS((exports2) => {
       yield ioUtil.rename(source, dest);
     });
   }
-  exports2.mv = mv;
+  exports.mv = mv;
   function rmRF(inputPath) {
     return __awaiter(this, undefined, undefined, function* () {
       if (ioUtil.IS_WINDOWS) {
@@ -1798,14 +1809,14 @@ var require_io = __commonJS((exports2) => {
       }
     });
   }
-  exports2.rmRF = rmRF;
+  exports.rmRF = rmRF;
   function mkdirP(fsPath) {
     return __awaiter(this, undefined, undefined, function* () {
       assert_1.ok(fsPath, "a path argument must be provided");
       yield ioUtil.mkdir(fsPath, { recursive: true });
     });
   }
-  exports2.mkdirP = mkdirP;
+  exports.mkdirP = mkdirP;
   function which(tool, check) {
     return __awaiter(this, undefined, undefined, function* () {
       if (!tool) {
@@ -1829,7 +1840,7 @@ var require_io = __commonJS((exports2) => {
       return "";
     });
   }
-  exports2.which = which;
+  exports.which = which;
   function findInPath(tool) {
     return __awaiter(this, undefined, undefined, function* () {
       if (!tool) {
@@ -1871,7 +1882,7 @@ var require_io = __commonJS((exports2) => {
       return matches;
     });
   }
-  exports2.findInPath = findInPath;
+  exports.findInPath = findInPath;
   function readCopyOptions(options) {
     const force = options.force == null ? true : options.force;
     const recursive = Boolean(options.recursive);
@@ -1920,8 +1931,8 @@ var require_io = __commonJS((exports2) => {
 });
 
 // node_modules/@actions/exec/lib/toolrunner.js
-var require_toolrunner = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_toolrunner = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -1932,12 +1943,12 @@ var require_toolrunner = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -1949,7 +1960,7 @@ var require_toolrunner = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+  var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
         resolve(value);
@@ -1976,15 +1987,15 @@ var require_toolrunner = __commonJS((exports2) => {
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.argStringToArray = exports2.ToolRunner = undefined;
-  var os = __importStar(require("os"));
-  var events = __importStar(require("events"));
-  var child = __importStar(require("child_process"));
-  var path = __importStar(require("path"));
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.argStringToArray = exports.ToolRunner = undefined;
+  var os = __importStar(__require("os"));
+  var events = __importStar(__require("events"));
+  var child = __importStar(__require("child_process"));
+  var path = __importStar(__require("path"));
   var io = __importStar(require_io());
   var ioUtil = __importStar(require_io_util());
-  var timers_1 = require("timers");
+  var timers_1 = __require("timers");
   var IS_WINDOWS = process.platform === "win32";
 
   class ToolRunner extends events.EventEmitter {
@@ -2287,7 +2298,7 @@ var require_toolrunner = __commonJS((exports2) => {
       });
     }
   }
-  exports2.ToolRunner = ToolRunner;
+  exports.ToolRunner = ToolRunner;
   function argStringToArray(argString) {
     const args = [];
     let inQuotes = false;
@@ -2332,7 +2343,7 @@ var require_toolrunner = __commonJS((exports2) => {
     }
     return args;
   }
-  exports2.argStringToArray = argStringToArray;
+  exports.argStringToArray = argStringToArray;
 
   class ExecState extends events.EventEmitter {
     constructor(options, toolPath) {
@@ -2399,8 +2410,8 @@ var require_toolrunner = __commonJS((exports2) => {
 });
 
 // node_modules/@actions/exec/lib/exec.js
-var require_exec = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_exec = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -2411,12 +2422,12 @@ var require_exec = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -2428,7 +2439,7 @@ var require_exec = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+  var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
         resolve(value);
@@ -2455,9 +2466,9 @@ var require_exec = __commonJS((exports2) => {
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.getExecOutput = exports2.exec = undefined;
-  var string_decoder_1 = require("string_decoder");
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.getExecOutput = exports.exec = undefined;
+  var string_decoder_1 = __require("string_decoder");
   var tr = __importStar(require_toolrunner());
   function exec(commandLine, args, options) {
     return __awaiter(this, undefined, undefined, function* () {
@@ -2471,7 +2482,7 @@ var require_exec = __commonJS((exports2) => {
       return runner.exec();
     });
   }
-  exports2.exec = exec;
+  exports.exec = exec;
   function getExecOutput(commandLine, args, options) {
     var _a, _b;
     return __awaiter(this, undefined, undefined, function* () {
@@ -2504,12 +2515,12 @@ var require_exec = __commonJS((exports2) => {
       };
     });
   }
-  exports2.getExecOutput = getExecOutput;
+  exports.getExecOutput = getExecOutput;
 });
 
 // node_modules/@actions/core/lib/platform.js
-var require_platform = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_platform = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -2524,12 +2535,12 @@ var require_platform = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -2541,7 +2552,7 @@ var require_platform = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+  var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
         resolve(value);
@@ -2568,12 +2579,12 @@ var require_platform = __commonJS((exports2) => {
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  var __importDefault = exports2 && exports2.__importDefault || function(mod) {
+  var __importDefault = exports && exports.__importDefault || function(mod) {
     return mod && mod.__esModule ? mod : { default: mod };
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.getDetails = exports2.isLinux = exports2.isMacOS = exports2.isWindows = exports2.arch = exports2.platform = undefined;
-  var os_1 = __importDefault(require("os"));
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.getDetails = exports.isLinux = exports.isMacOS = exports.isWindows = exports.arch = exports.platform = undefined;
+  var os_1 = __importDefault(__require("os"));
   var exec = __importStar(require_exec());
   var getWindowsInfo = () => __awaiter(undefined, undefined, undefined, function* () {
     const { stdout: version } = yield exec.getExecOutput('powershell -command "(Get-CimInstance -ClassName Win32_OperatingSystem).Version"', undefined, {
@@ -2610,28 +2621,28 @@ var require_platform = __commonJS((exports2) => {
       version
     };
   });
-  exports2.platform = os_1.default.platform();
-  exports2.arch = os_1.default.arch();
-  exports2.isWindows = exports2.platform === "win32";
-  exports2.isMacOS = exports2.platform === "darwin";
-  exports2.isLinux = exports2.platform === "linux";
+  exports.platform = os_1.default.platform();
+  exports.arch = os_1.default.arch();
+  exports.isWindows = exports.platform === "win32";
+  exports.isMacOS = exports.platform === "darwin";
+  exports.isLinux = exports.platform === "linux";
   function getDetails() {
     return __awaiter(this, undefined, undefined, function* () {
-      return Object.assign(Object.assign({}, yield exports2.isWindows ? getWindowsInfo() : exports2.isMacOS ? getMacOsInfo() : getLinuxInfo()), {
-        platform: exports2.platform,
-        arch: exports2.arch,
-        isWindows: exports2.isWindows,
-        isMacOS: exports2.isMacOS,
-        isLinux: exports2.isLinux
+      return Object.assign(Object.assign({}, yield exports.isWindows ? getWindowsInfo() : exports.isMacOS ? getMacOsInfo() : getLinuxInfo()), {
+        platform: exports.platform,
+        arch: exports.arch,
+        isWindows: exports.isWindows,
+        isMacOS: exports.isMacOS,
+        isLinux: exports.isLinux
       });
     });
   }
-  exports2.getDetails = getDetails;
+  exports.getDetails = getDetails;
 });
 
 // node_modules/@actions/core/lib/core.js
-var require_core = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_core = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -2646,12 +2657,12 @@ var require_core = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -2663,7 +2674,7 @@ var require_core = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+  var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
         resolve(value);
@@ -2690,19 +2701,19 @@ var require_core = __commonJS((exports2) => {
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.platform = exports2.toPlatformPath = exports2.toWin32Path = exports2.toPosixPath = exports2.markdownSummary = exports2.summary = exports2.getIDToken = exports2.getState = exports2.saveState = exports2.group = exports2.endGroup = exports2.startGroup = exports2.info = exports2.notice = exports2.warning = exports2.error = exports2.debug = exports2.isDebug = exports2.setFailed = exports2.setCommandEcho = exports2.setOutput = exports2.getBooleanInput = exports2.getMultilineInput = exports2.getInput = exports2.addPath = exports2.setSecret = exports2.exportVariable = exports2.ExitCode = undefined;
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.platform = exports.toPlatformPath = exports.toWin32Path = exports.toPosixPath = exports.markdownSummary = exports.summary = exports.getIDToken = exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = undefined;
   var command_1 = require_command();
   var file_command_1 = require_file_command();
   var utils_1 = require_utils();
-  var os = __importStar(require("os"));
-  var path = __importStar(require("path"));
+  var os = __importStar(__require("os"));
+  var path = __importStar(__require("path"));
   var oidc_utils_1 = require_oidc_utils();
   var ExitCode;
   (function(ExitCode2) {
     ExitCode2[ExitCode2["Success"] = 0] = "Success";
     ExitCode2[ExitCode2["Failure"] = 1] = "Failure";
-  })(ExitCode || (exports2.ExitCode = ExitCode = {}));
+  })(ExitCode || (exports.ExitCode = ExitCode = {}));
   function exportVariable(name, val) {
     const convertedVal = (0, utils_1.toCommandValue)(val);
     process.env[name] = convertedVal;
@@ -2712,11 +2723,11 @@ var require_core = __commonJS((exports2) => {
     }
     (0, command_1.issueCommand)("set-env", { name }, convertedVal);
   }
-  exports2.exportVariable = exportVariable;
+  exports.exportVariable = exportVariable;
   function setSecret(secret) {
     (0, command_1.issueCommand)("add-mask", {}, secret);
   }
-  exports2.setSecret = setSecret;
+  exports.setSecret = setSecret;
   function addPath(inputPath) {
     const filePath = process.env["GITHUB_PATH"] || "";
     if (filePath) {
@@ -2726,7 +2737,7 @@ var require_core = __commonJS((exports2) => {
     }
     process.env["PATH"] = `${inputPath}${path.delimiter}${process.env["PATH"]}`;
   }
-  exports2.addPath = addPath;
+  exports.addPath = addPath;
   function getInput(name, options) {
     const val = process.env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] || "";
     if (options && options.required && !val) {
@@ -2737,7 +2748,7 @@ var require_core = __commonJS((exports2) => {
     }
     return val.trim();
   }
-  exports2.getInput = getInput;
+  exports.getInput = getInput;
   function getMultilineInput(name, options) {
     const inputs = getInput(name, options).split(`
 `).filter((x) => x !== "");
@@ -2746,7 +2757,7 @@ var require_core = __commonJS((exports2) => {
     }
     return inputs.map((input) => input.trim());
   }
-  exports2.getMultilineInput = getMultilineInput;
+  exports.getMultilineInput = getMultilineInput;
   function getBooleanInput(name, options) {
     const trueValue = ["true", "True", "TRUE"];
     const falseValue = ["false", "False", "FALSE"];
@@ -2758,7 +2769,7 @@ var require_core = __commonJS((exports2) => {
     throw new TypeError(`Input does not meet YAML 1.2 "Core Schema" specification: ${name}
 ` + `Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
   }
-  exports2.getBooleanInput = getBooleanInput;
+  exports.getBooleanInput = getBooleanInput;
   function setOutput(name, value) {
     const filePath = process.env["GITHUB_OUTPUT"] || "";
     if (filePath) {
@@ -2767,48 +2778,48 @@ var require_core = __commonJS((exports2) => {
     process.stdout.write(os.EOL);
     (0, command_1.issueCommand)("set-output", { name }, (0, utils_1.toCommandValue)(value));
   }
-  exports2.setOutput = setOutput;
+  exports.setOutput = setOutput;
   function setCommandEcho(enabled) {
     (0, command_1.issue)("echo", enabled ? "on" : "off");
   }
-  exports2.setCommandEcho = setCommandEcho;
+  exports.setCommandEcho = setCommandEcho;
   function setFailed(message) {
     process.exitCode = ExitCode.Failure;
     error(message);
   }
-  exports2.setFailed = setFailed;
+  exports.setFailed = setFailed;
   function isDebug() {
     return process.env["RUNNER_DEBUG"] === "1";
   }
-  exports2.isDebug = isDebug;
+  exports.isDebug = isDebug;
   function debug(message) {
     (0, command_1.issueCommand)("debug", {}, message);
   }
-  exports2.debug = debug;
+  exports.debug = debug;
   function error(message, properties = {}) {
     (0, command_1.issueCommand)("error", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
   }
-  exports2.error = error;
+  exports.error = error;
   function warning(message, properties = {}) {
     (0, command_1.issueCommand)("warning", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
   }
-  exports2.warning = warning;
+  exports.warning = warning;
   function notice(message, properties = {}) {
     (0, command_1.issueCommand)("notice", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
   }
-  exports2.notice = notice;
+  exports.notice = notice;
   function info(message) {
     process.stdout.write(message + os.EOL);
   }
-  exports2.info = info;
+  exports.info = info;
   function startGroup(name) {
     (0, command_1.issue)("group", name);
   }
-  exports2.startGroup = startGroup;
+  exports.startGroup = startGroup;
   function endGroup() {
     (0, command_1.issue)("endgroup");
   }
-  exports2.endGroup = endGroup;
+  exports.endGroup = endGroup;
   function group(name, fn) {
     return __awaiter(this, undefined, undefined, function* () {
       startGroup(name);
@@ -2821,7 +2832,7 @@ var require_core = __commonJS((exports2) => {
       return result;
     });
   }
-  exports2.group = group;
+  exports.group = group;
   function saveState(name, value) {
     const filePath = process.env["GITHUB_STATE"] || "";
     if (filePath) {
@@ -2829,80 +2840,44 @@ var require_core = __commonJS((exports2) => {
     }
     (0, command_1.issueCommand)("save-state", { name }, (0, utils_1.toCommandValue)(value));
   }
-  exports2.saveState = saveState;
+  exports.saveState = saveState;
   function getState(name) {
     return process.env[`STATE_${name}`] || "";
   }
-  exports2.getState = getState;
+  exports.getState = getState;
   function getIDToken(aud) {
     return __awaiter(this, undefined, undefined, function* () {
       return yield oidc_utils_1.OidcClient.getIDToken(aud);
     });
   }
-  exports2.getIDToken = getIDToken;
+  exports.getIDToken = getIDToken;
   var summary_1 = require_summary();
-  Object.defineProperty(exports2, "summary", { enumerable: true, get: function() {
+  Object.defineProperty(exports, "summary", { enumerable: true, get: function() {
     return summary_1.summary;
   } });
   var summary_2 = require_summary();
-  Object.defineProperty(exports2, "markdownSummary", { enumerable: true, get: function() {
+  Object.defineProperty(exports, "markdownSummary", { enumerable: true, get: function() {
     return summary_2.markdownSummary;
   } });
   var path_utils_1 = require_path_utils();
-  Object.defineProperty(exports2, "toPosixPath", { enumerable: true, get: function() {
+  Object.defineProperty(exports, "toPosixPath", { enumerable: true, get: function() {
     return path_utils_1.toPosixPath;
   } });
-  Object.defineProperty(exports2, "toWin32Path", { enumerable: true, get: function() {
+  Object.defineProperty(exports, "toWin32Path", { enumerable: true, get: function() {
     return path_utils_1.toWin32Path;
   } });
-  Object.defineProperty(exports2, "toPlatformPath", { enumerable: true, get: function() {
+  Object.defineProperty(exports, "toPlatformPath", { enumerable: true, get: function() {
     return path_utils_1.toPlatformPath;
   } });
-  exports2.platform = __importStar(require_platform());
-});
-
-// utils/get-inputs.js
-var require_get_inputs = __commonJS((exports2, module2) => {
-  var core = require_core();
-  module2.exports = () => ({
-    version: String(core.getInput("version")),
-    bundleDependencies: process.env.GITHUB_ACTIONS ? core.getBooleanInput("bundle-dependencies") : false,
-    commands: core.getMultilineInput("commands"),
-    credFiles: [],
-    landoPlugin: process.env.GITHUB_ACTIONS ? core.getBooleanInput("lando-plugin") : false,
-    meta: core.getMultilineInput("meta"),
-    root: core.getInput("root") || process.cwd(),
-    sync: process.env.GITHUB_ACTIONS ? core.getBooleanInput("sync") : false,
-    syncBranch: core.getInput("sync-branch") || "main",
-    syncEmail: core.getInput("sync-email") || "github-actions@github.com",
-    syncMessage: core.getInput("sync-message") || "release v%s generated by @lando/prepare-release-action",
-    syncTags: core.getMultilineInput("sync-tags"),
-    syncToken: core.getInput("sync-token") || process.env.GITHUB_TOKEN,
-    syncUsername: core.getInput("sync-username") || "github-actions",
-    tokens: core.getMultilineInput("update-files-meta") ?? [],
-    updateHeader: core.getMultilineInput("update-files-header") ?? [],
-    updateFiles: core.getMultilineInput("update-files") ?? [],
-    versionMatch: core.getInput("version-match") || "v[0-9].*"
-  });
-});
-
-// utils/get-stdout.js
-var require_get_stdout = __commonJS((exports2, module2) => {
-  var { execSync } = require("child_process");
-  module2.exports = (command) => {
-    if (!command)
-      throw new Error("Must specify a command!");
-    const data = execSync(command, { maxBuffer: 1024 * 1024 * 10, encoding: "utf-8" });
-    return typeof data === "string" ? data.trim() : data;
-  };
+  exports.platform = __importStar(require_platform());
 });
 
 // node_modules/@actions/github/lib/context.js
-var require_context = __commonJS((exports2) => {
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.Context = undefined;
-  var fs_1 = require("fs");
-  var os_1 = require("os");
+var require_context = __commonJS((exports) => {
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.Context = undefined;
+  var fs_1 = __require("fs");
+  var os_1 = __require("os");
 
   class Context {
     constructor() {
@@ -2948,12 +2923,12 @@ var require_context = __commonJS((exports2) => {
       throw new Error("context.repo requires a GITHUB_REPOSITORY environment variable like 'owner/repo'");
     }
   }
-  exports2.Context = Context;
+  exports.Context = Context;
 });
 
 // node_modules/@actions/github/lib/internal/utils.js
-var require_utils2 = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_utils2 = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -2968,12 +2943,12 @@ var require_utils2 = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -2985,7 +2960,7 @@ var require_utils2 = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+  var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
         resolve(value);
@@ -3012,10 +2987,10 @@ var require_utils2 = __commonJS((exports2) => {
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.getApiBaseUrl = exports2.getProxyFetch = exports2.getProxyAgentDispatcher = exports2.getProxyAgent = exports2.getAuthString = undefined;
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.getApiBaseUrl = exports.getProxyFetch = exports.getProxyAgentDispatcher = exports.getProxyAgent = exports.getAuthString = undefined;
   var httpClient = __importStar(require_lib());
-  var undici_1 = require("undici");
+  var undici_1 = __require("undici");
   function getAuthString(token, options) {
     if (!token && !options.auth) {
       throw new Error("Parameter token or opts.auth is required");
@@ -3024,17 +2999,17 @@ var require_utils2 = __commonJS((exports2) => {
     }
     return typeof options.auth === "string" ? options.auth : `token ${token}`;
   }
-  exports2.getAuthString = getAuthString;
+  exports.getAuthString = getAuthString;
   function getProxyAgent(destinationUrl) {
     const hc = new httpClient.HttpClient;
     return hc.getAgent(destinationUrl);
   }
-  exports2.getProxyAgent = getProxyAgent;
+  exports.getProxyAgent = getProxyAgent;
   function getProxyAgentDispatcher(destinationUrl) {
     const hc = new httpClient.HttpClient;
     return hc.getAgentDispatcher(destinationUrl);
   }
-  exports2.getProxyAgentDispatcher = getProxyAgentDispatcher;
+  exports.getProxyAgentDispatcher = getProxyAgentDispatcher;
   function getProxyFetch(destinationUrl) {
     const httpDispatcher = getProxyAgentDispatcher(destinationUrl);
     const proxyFetch = (url, opts) => __awaiter(this, undefined, undefined, function* () {
@@ -3042,16 +3017,16 @@ var require_utils2 = __commonJS((exports2) => {
     });
     return proxyFetch;
   }
-  exports2.getProxyFetch = getProxyFetch;
+  exports.getProxyFetch = getProxyFetch;
   function getApiBaseUrl() {
     return process.env["GITHUB_API_URL"] || "https://api.github.com";
   }
-  exports2.getApiBaseUrl = getApiBaseUrl;
+  exports.getApiBaseUrl = getApiBaseUrl;
 });
 
 // node_modules/universal-user-agent/dist-node/index.js
-var require_dist_node = __commonJS((exports2) => {
-  Object.defineProperty(exports2, "__esModule", { value: true });
+var require_dist_node = __commonJS((exports) => {
+  Object.defineProperty(exports, "__esModule", { value: true });
   function getUserAgent() {
     if (typeof navigator === "object" && "userAgent" in navigator) {
       return navigator.userAgent;
@@ -3061,12 +3036,12 @@ var require_dist_node = __commonJS((exports2) => {
     }
     return "<environment undetectable>";
   }
-  exports2.getUserAgent = getUserAgent;
+  exports.getUserAgent = getUserAgent;
 });
 
 // node_modules/before-after-hook/lib/register.js
-var require_register = __commonJS((exports2, module2) => {
-  module2.exports = register;
+var require_register = __commonJS((exports, module) => {
+  module.exports = register;
   function register(state, name, method, options) {
     if (typeof method !== "function") {
       throw new Error("method for before hook must be a function");
@@ -3091,8 +3066,8 @@ var require_register = __commonJS((exports2, module2) => {
 });
 
 // node_modules/before-after-hook/lib/add.js
-var require_add = __commonJS((exports2, module2) => {
-  module2.exports = addHook;
+var require_add = __commonJS((exports, module) => {
+  module.exports = addHook;
   function addHook(state, kind, name, hook) {
     var orig = hook;
     if (!state.registry[name]) {
@@ -3129,8 +3104,8 @@ var require_add = __commonJS((exports2, module2) => {
 });
 
 // node_modules/before-after-hook/lib/remove.js
-var require_remove = __commonJS((exports2, module2) => {
-  module2.exports = removeHook;
+var require_remove = __commonJS((exports, module) => {
+  module.exports = removeHook;
   function removeHook(state, name, method) {
     if (!state.registry[name]) {
       return;
@@ -3146,7 +3121,7 @@ var require_remove = __commonJS((exports2, module2) => {
 });
 
 // node_modules/before-after-hook/index.js
-var require_before_after_hook = __commonJS((exports2, module2) => {
+var require_before_after_hook = __commonJS((exports, module) => {
   var register = require_register();
   var addHook = require_add();
   var removeHook = require_remove();
@@ -3188,36 +3163,36 @@ var require_before_after_hook = __commonJS((exports2, module2) => {
   }
   Hook.Singular = HookSingular.bind();
   Hook.Collection = HookCollection.bind();
-  module2.exports = Hook;
-  module2.exports.Hook = Hook;
-  module2.exports.Singular = Hook.Singular;
-  module2.exports.Collection = Hook.Collection;
+  module.exports = Hook;
+  module.exports.Hook = Hook;
+  module.exports.Singular = Hook.Singular;
+  module.exports.Collection = Hook.Collection;
 });
 
 // node_modules/@octokit/endpoint/dist-node/index.js
-var require_dist_node2 = __commonJS((exports2, module2) => {
-  var __defProp = Object.defineProperty;
+var require_dist_node2 = __commonJS((exports, module) => {
+  var __defProp2 = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-  var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __getOwnPropNames2 = Object.getOwnPropertyNames;
+  var __hasOwnProp2 = Object.prototype.hasOwnProperty;
   var __export = (target, all) => {
     for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
+      __defProp2(target, name, { get: all[name], enumerable: true });
   };
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
-      for (let key of __getOwnPropNames(from))
-        if (!__hasOwnProp.call(to, key) && key !== except)
-          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+      for (let key of __getOwnPropNames2(from))
+        if (!__hasOwnProp2.call(to, key) && key !== except)
+          __defProp2(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
     }
     return to;
   };
-  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var __toCommonJS = (mod) => __copyProps(__defProp2({}, "__esModule", { value: true }), mod);
   var dist_src_exports = {};
   __export(dist_src_exports, {
     endpoint: () => endpoint
   });
-  module2.exports = __toCommonJS(dist_src_exports);
+  module.exports = __toCommonJS(dist_src_exports);
   var import_universal_user_agent = require_dist_node();
   var VERSION = "9.0.6";
   var userAgent = `octokit-endpoint.js/${VERSION} ${(0, import_universal_user_agent.getUserAgent)()}`;
@@ -3520,8 +3495,8 @@ var require_dist_node2 = __commonJS((exports2, module2) => {
 });
 
 // node_modules/deprecation/dist-node/index.js
-var require_dist_node3 = __commonJS((exports2) => {
-  Object.defineProperty(exports2, "__esModule", { value: true });
+var require_dist_node3 = __commonJS((exports) => {
+  Object.defineProperty(exports, "__esModule", { value: true });
 
   class Deprecation extends Error {
     constructor(message) {
@@ -3532,12 +3507,12 @@ var require_dist_node3 = __commonJS((exports2) => {
       this.name = "Deprecation";
     }
   }
-  exports2.Deprecation = Deprecation;
+  exports.Deprecation = Deprecation;
 });
 
 // node_modules/wrappy/wrappy.js
-var require_wrappy = __commonJS((exports2, module2) => {
-  module2.exports = wrappy;
+var require_wrappy = __commonJS((exports, module) => {
+  module.exports = wrappy;
   function wrappy(fn, cb) {
     if (fn && cb)
       return wrappy(fn)(cb);
@@ -3565,10 +3540,10 @@ var require_wrappy = __commonJS((exports2, module2) => {
 });
 
 // node_modules/once/once.js
-var require_once = __commonJS((exports2, module2) => {
+var require_once = __commonJS((exports, module) => {
   var wrappy = require_wrappy();
-  module2.exports = wrappy(once);
-  module2.exports.strict = wrappy(onceStrict);
+  module.exports = wrappy(once);
+  module.exports.strict = wrappy(onceStrict);
   once.proto = once(function() {
     Object.defineProperty(Function.prototype, "once", {
       value: function() {
@@ -3608,34 +3583,34 @@ var require_once = __commonJS((exports2, module2) => {
 });
 
 // node_modules/@octokit/request-error/dist-node/index.js
-var require_dist_node4 = __commonJS((exports2, module2) => {
-  var __create = Object.create;
-  var __defProp = Object.defineProperty;
+var require_dist_node4 = __commonJS((exports, module) => {
+  var __create2 = Object.create;
+  var __defProp2 = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-  var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __getProtoOf = Object.getPrototypeOf;
-  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __getOwnPropNames2 = Object.getOwnPropertyNames;
+  var __getProtoOf2 = Object.getPrototypeOf;
+  var __hasOwnProp2 = Object.prototype.hasOwnProperty;
   var __export = (target, all) => {
     for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
+      __defProp2(target, name, { get: all[name], enumerable: true });
   };
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
-      for (let key of __getOwnPropNames(from))
-        if (!__hasOwnProp.call(to, key) && key !== except)
-          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+      for (let key of __getOwnPropNames2(from))
+        if (!__hasOwnProp2.call(to, key) && key !== except)
+          __defProp2(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
     }
     return to;
   };
-  var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target, mod));
-  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var __toESM2 = (mod, isNodeMode, target) => (target = mod != null ? __create2(__getProtoOf2(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp2(target, "default", { value: mod, enumerable: true }) : target, mod));
+  var __toCommonJS = (mod) => __copyProps(__defProp2({}, "__esModule", { value: true }), mod);
   var dist_src_exports = {};
   __export(dist_src_exports, {
     RequestError: () => RequestError
   });
-  module2.exports = __toCommonJS(dist_src_exports);
+  module.exports = __toCommonJS(dist_src_exports);
   var import_deprecation = require_dist_node3();
-  var import_once = __toESM(require_once());
+  var import_once = __toESM2(require_once());
   var logOnceCode = (0, import_once.default)((deprecation) => console.warn(deprecation));
   var logOnceHeaders = (0, import_once.default)((deprecation) => console.warn(deprecation));
   var RequestError = class extends Error {
@@ -3679,29 +3654,29 @@ var require_dist_node4 = __commonJS((exports2, module2) => {
 });
 
 // node_modules/@octokit/request/dist-node/index.js
-var require_dist_node5 = __commonJS((exports2, module2) => {
-  var __defProp = Object.defineProperty;
+var require_dist_node5 = __commonJS((exports, module) => {
+  var __defProp2 = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-  var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __getOwnPropNames2 = Object.getOwnPropertyNames;
+  var __hasOwnProp2 = Object.prototype.hasOwnProperty;
   var __export = (target, all) => {
     for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
+      __defProp2(target, name, { get: all[name], enumerable: true });
   };
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
-      for (let key of __getOwnPropNames(from))
-        if (!__hasOwnProp.call(to, key) && key !== except)
-          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+      for (let key of __getOwnPropNames2(from))
+        if (!__hasOwnProp2.call(to, key) && key !== except)
+          __defProp2(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
     }
     return to;
   };
-  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var __toCommonJS = (mod) => __copyProps(__defProp2({}, "__esModule", { value: true }), mod);
   var dist_src_exports = {};
   __export(dist_src_exports, {
     request: () => request
   });
-  module2.exports = __toCommonJS(dist_src_exports);
+  module.exports = __toCommonJS(dist_src_exports);
   var import_endpoint = require_dist_node2();
   var import_universal_user_agent = require_dist_node();
   var VERSION = "8.4.1";
@@ -3878,31 +3853,31 @@ var require_dist_node5 = __commonJS((exports2, module2) => {
 });
 
 // node_modules/@octokit/graphql/dist-node/index.js
-var require_dist_node6 = __commonJS((exports2, module2) => {
-  var __defProp = Object.defineProperty;
+var require_dist_node6 = __commonJS((exports, module) => {
+  var __defProp2 = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-  var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __getOwnPropNames2 = Object.getOwnPropertyNames;
+  var __hasOwnProp2 = Object.prototype.hasOwnProperty;
   var __export = (target, all) => {
     for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
+      __defProp2(target, name, { get: all[name], enumerable: true });
   };
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
-      for (let key of __getOwnPropNames(from))
-        if (!__hasOwnProp.call(to, key) && key !== except)
-          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+      for (let key of __getOwnPropNames2(from))
+        if (!__hasOwnProp2.call(to, key) && key !== except)
+          __defProp2(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
     }
     return to;
   };
-  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var __toCommonJS = (mod) => __copyProps(__defProp2({}, "__esModule", { value: true }), mod);
   var index_exports = {};
   __export(index_exports, {
     GraphqlResponseError: () => GraphqlResponseError,
     graphql: () => graphql2,
     withCustomRequest: () => withCustomRequest
   });
-  module2.exports = __toCommonJS(index_exports);
+  module.exports = __toCommonJS(index_exports);
   var import_request3 = require_dist_node5();
   var import_universal_user_agent = require_dist_node();
   var VERSION = "7.1.1";
@@ -4002,29 +3977,29 @@ var require_dist_node6 = __commonJS((exports2, module2) => {
 });
 
 // node_modules/@octokit/auth-token/dist-node/index.js
-var require_dist_node7 = __commonJS((exports2, module2) => {
-  var __defProp = Object.defineProperty;
+var require_dist_node7 = __commonJS((exports, module) => {
+  var __defProp2 = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-  var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __getOwnPropNames2 = Object.getOwnPropertyNames;
+  var __hasOwnProp2 = Object.prototype.hasOwnProperty;
   var __export = (target, all) => {
     for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
+      __defProp2(target, name, { get: all[name], enumerable: true });
   };
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
-      for (let key of __getOwnPropNames(from))
-        if (!__hasOwnProp.call(to, key) && key !== except)
-          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+      for (let key of __getOwnPropNames2(from))
+        if (!__hasOwnProp2.call(to, key) && key !== except)
+          __defProp2(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
     }
     return to;
   };
-  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var __toCommonJS = (mod) => __copyProps(__defProp2({}, "__esModule", { value: true }), mod);
   var dist_src_exports = {};
   __export(dist_src_exports, {
     createTokenAuth: () => createTokenAuth
   });
-  module2.exports = __toCommonJS(dist_src_exports);
+  module.exports = __toCommonJS(dist_src_exports);
   var REGEX_IS_INSTALLATION_LEGACY = /^v1\./;
   var REGEX_IS_INSTALLATION = /^ghs_/;
   var REGEX_IS_USER_TO_SERVER = /^ghu_/;
@@ -4065,29 +4040,29 @@ var require_dist_node7 = __commonJS((exports2, module2) => {
 });
 
 // node_modules/@octokit/core/dist-node/index.js
-var require_dist_node8 = __commonJS((exports2, module2) => {
-  var __defProp = Object.defineProperty;
+var require_dist_node8 = __commonJS((exports, module) => {
+  var __defProp2 = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-  var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __getOwnPropNames2 = Object.getOwnPropertyNames;
+  var __hasOwnProp2 = Object.prototype.hasOwnProperty;
   var __export = (target, all) => {
     for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
+      __defProp2(target, name, { get: all[name], enumerable: true });
   };
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
-      for (let key of __getOwnPropNames(from))
-        if (!__hasOwnProp.call(to, key) && key !== except)
-          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+      for (let key of __getOwnPropNames2(from))
+        if (!__hasOwnProp2.call(to, key) && key !== except)
+          __defProp2(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
     }
     return to;
   };
-  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var __toCommonJS = (mod) => __copyProps(__defProp2({}, "__esModule", { value: true }), mod);
   var index_exports = {};
   __export(index_exports, {
     Octokit: () => Octokit
   });
-  module2.exports = __toCommonJS(index_exports);
+  module.exports = __toCommonJS(index_exports);
   var import_universal_user_agent = require_dist_node();
   var import_before_after_hook = require_before_after_hook();
   var import_request = require_dist_node5();
@@ -4201,30 +4176,30 @@ var require_dist_node8 = __commonJS((exports2, module2) => {
 });
 
 // node_modules/@octokit/plugin-rest-endpoint-methods/dist-node/index.js
-var require_dist_node9 = __commonJS((exports2, module2) => {
-  var __defProp = Object.defineProperty;
+var require_dist_node9 = __commonJS((exports, module) => {
+  var __defProp2 = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-  var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __getOwnPropNames2 = Object.getOwnPropertyNames;
+  var __hasOwnProp2 = Object.prototype.hasOwnProperty;
   var __export = (target, all) => {
     for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
+      __defProp2(target, name, { get: all[name], enumerable: true });
   };
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
-      for (let key of __getOwnPropNames(from))
-        if (!__hasOwnProp.call(to, key) && key !== except)
-          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+      for (let key of __getOwnPropNames2(from))
+        if (!__hasOwnProp2.call(to, key) && key !== except)
+          __defProp2(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
     }
     return to;
   };
-  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var __toCommonJS = (mod) => __copyProps(__defProp2({}, "__esModule", { value: true }), mod);
   var dist_src_exports = {};
   __export(dist_src_exports, {
     legacyRestEndpointMethods: () => legacyRestEndpointMethods,
     restEndpointMethods: () => restEndpointMethods
   });
-  module2.exports = __toCommonJS(dist_src_exports);
+  module.exports = __toCommonJS(dist_src_exports);
   var VERSION = "10.4.1";
   var Endpoints = {
     actions: {
@@ -6338,24 +6313,24 @@ var require_dist_node9 = __commonJS((exports2, module2) => {
 });
 
 // node_modules/@octokit/plugin-paginate-rest/dist-node/index.js
-var require_dist_node10 = __commonJS((exports2, module2) => {
-  var __defProp = Object.defineProperty;
+var require_dist_node10 = __commonJS((exports, module) => {
+  var __defProp2 = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-  var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __getOwnPropNames2 = Object.getOwnPropertyNames;
+  var __hasOwnProp2 = Object.prototype.hasOwnProperty;
   var __export = (target, all) => {
     for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
+      __defProp2(target, name, { get: all[name], enumerable: true });
   };
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
-      for (let key of __getOwnPropNames(from))
-        if (!__hasOwnProp.call(to, key) && key !== except)
-          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+      for (let key of __getOwnPropNames2(from))
+        if (!__hasOwnProp2.call(to, key) && key !== except)
+          __defProp2(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
     }
     return to;
   };
-  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var __toCommonJS = (mod) => __copyProps(__defProp2({}, "__esModule", { value: true }), mod);
   var dist_src_exports = {};
   __export(dist_src_exports, {
     composePaginateRest: () => composePaginateRest,
@@ -6363,7 +6338,7 @@ var require_dist_node10 = __commonJS((exports2, module2) => {
     paginateRest: () => paginateRest,
     paginatingEndpoints: () => paginatingEndpoints
   });
-  module2.exports = __toCommonJS(dist_src_exports);
+  module.exports = __toCommonJS(dist_src_exports);
   var VERSION = "9.2.2";
   function normalizePaginatedListResponse(response) {
     if (!response.data) {
@@ -6705,8 +6680,8 @@ var require_dist_node10 = __commonJS((exports2, module2) => {
 });
 
 // node_modules/@actions/github/lib/utils.js
-var require_utils3 = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_utils3 = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -6721,12 +6696,12 @@ var require_utils3 = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -6738,23 +6713,23 @@ var require_utils3 = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.getOctokitOptions = exports2.GitHub = exports2.defaults = exports2.context = undefined;
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.getOctokitOptions = exports.GitHub = exports.defaults = exports.context = undefined;
   var Context = __importStar(require_context());
   var Utils = __importStar(require_utils2());
   var core_1 = require_dist_node8();
   var plugin_rest_endpoint_methods_1 = require_dist_node9();
   var plugin_paginate_rest_1 = require_dist_node10();
-  exports2.context = new Context.Context;
+  exports.context = new Context.Context;
   var baseUrl = Utils.getApiBaseUrl();
-  exports2.defaults = {
+  exports.defaults = {
     baseUrl,
     request: {
       agent: Utils.getProxyAgent(baseUrl),
       fetch: Utils.getProxyFetch(baseUrl)
     }
   };
-  exports2.GitHub = core_1.Octokit.plugin(plugin_rest_endpoint_methods_1.restEndpointMethods, plugin_paginate_rest_1.paginateRest).defaults(exports2.defaults);
+  exports.GitHub = core_1.Octokit.plugin(plugin_rest_endpoint_methods_1.restEndpointMethods, plugin_paginate_rest_1.paginateRest).defaults(exports.defaults);
   function getOctokitOptions(token, options) {
     const opts = Object.assign({}, options || {});
     const auth = Utils.getAuthString(token, opts);
@@ -6763,12 +6738,12 @@ var require_utils3 = __commonJS((exports2) => {
     }
     return opts;
   }
-  exports2.getOctokitOptions = getOctokitOptions;
+  exports.getOctokitOptions = getOctokitOptions;
 });
 
 // node_modules/@actions/github/lib/github.js
-var require_github = __commonJS((exports2) => {
-  var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+var require_github = __commonJS((exports) => {
+  var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
     if (k2 === undefined)
       k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -6783,12 +6758,12 @@ var require_github = __commonJS((exports2) => {
       k2 = k;
     o[k2] = m[k];
   });
-  var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+  var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
   } : function(o, v) {
     o["default"] = v;
   });
-  var __importStar = exports2 && exports2.__importStar || function(mod) {
+  var __importStar = exports && exports.__importStar || function(mod) {
     if (mod && mod.__esModule)
       return mod;
     var result = {};
@@ -6800,21 +6775,21 @@ var require_github = __commonJS((exports2) => {
     __setModuleDefault(result, mod);
     return result;
   };
-  Object.defineProperty(exports2, "__esModule", { value: true });
-  exports2.getOctokit = exports2.context = undefined;
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.getOctokit = exports.context = undefined;
   var Context = __importStar(require_context());
   var utils_1 = require_utils3();
-  exports2.context = new Context.Context;
+  exports.context = new Context.Context;
   function getOctokit(token, options, ...additionalPlugins) {
     const GitHubWithPlugins = utils_1.GitHub.plugin(...additionalPlugins);
     return new GitHubWithPlugins((0, utils_1.getOctokitOptions)(token, options));
   }
-  exports2.getOctokit = getOctokit;
+  exports.getOctokit = getOctokit;
 });
 
 // node_modules/graceful-fs/polyfills.js
-var require_polyfills = __commonJS((exports2, module2) => {
-  var constants = require("constants");
+var require_polyfills = __commonJS((exports, module) => {
+  var constants = __require("constants");
   var origCwd = process.cwd;
   var cwd = null;
   var platform = process.env.GRACEFUL_FS_PLATFORM || process.platform;
@@ -6836,7 +6811,7 @@ var require_polyfills = __commonJS((exports2, module2) => {
       Object.setPrototypeOf(process.chdir, chdir);
   }
   var chdir;
-  module2.exports = patch;
+  module.exports = patch;
   function patch(fs) {
     if (constants.hasOwnProperty("O_SYMLINK") && process.version.match(/^v0\.6\.[0-2]|^v0\.5\./)) {
       patchLchmod(fs);
@@ -7116,9 +7091,9 @@ var require_polyfills = __commonJS((exports2, module2) => {
 });
 
 // node_modules/graceful-fs/legacy-streams.js
-var require_legacy_streams = __commonJS((exports2, module2) => {
-  var Stream = require("stream").Stream;
-  module2.exports = legacy;
+var require_legacy_streams = __commonJS((exports, module) => {
+  var Stream = __require("stream").Stream;
+  module.exports = legacy;
   function legacy(fs) {
     return {
       ReadStream,
@@ -7213,8 +7188,8 @@ var require_legacy_streams = __commonJS((exports2, module2) => {
 });
 
 // node_modules/graceful-fs/clone.js
-var require_clone = __commonJS((exports2, module2) => {
-  module2.exports = clone;
+var require_clone = __commonJS((exports, module) => {
+  module.exports = clone;
   var getPrototypeOf = Object.getPrototypeOf || function(obj) {
     return obj.__proto__;
   };
@@ -7233,12 +7208,12 @@ var require_clone = __commonJS((exports2, module2) => {
 });
 
 // node_modules/graceful-fs/graceful-fs.js
-var require_graceful_fs = __commonJS((exports2, module2) => {
-  var fs = require("fs");
+var require_graceful_fs = __commonJS((exports, module) => {
+  var fs = __require("fs");
   var polyfills = require_polyfills();
   var legacy = require_legacy_streams();
   var clone = require_clone();
-  var util = require("util");
+  var util = __require("util");
   var gracefulQueue;
   var previousSymbol;
   if (typeof Symbol === "function" && typeof Symbol.for === "function") {
@@ -7297,7 +7272,7 @@ GFS4: `);
     if (/\bgfs4\b/i.test(process.env.NODE_DEBUG || "")) {
       process.on("exit", function() {
         debug(fs[gracefulQueue]);
-        require("assert").equal(fs[gracefulQueue].length, 0);
+        __require("assert").equal(fs[gracefulQueue].length, 0);
       });
     }
   }
@@ -7305,9 +7280,9 @@ GFS4: `);
   if (!global[gracefulQueue]) {
     publishQueue(global, fs[gracefulQueue]);
   }
-  module2.exports = patch(clone(fs));
+  module.exports = patch(clone(fs));
   if (process.env.TEST_GRACEFUL_FS_GLOBAL_PATCH && !fs.__patched) {
-    module2.exports = patch(fs);
+    module.exports = patch(fs);
     fs.__patched = true;
   }
   function patch(fs2) {
@@ -7591,8 +7566,8 @@ GFS4: `);
 });
 
 // node_modules/universalify/index.js
-var require_universalify = __commonJS((exports2) => {
-  exports2.fromCallback = function(fn) {
+var require_universalify = __commonJS((exports) => {
+  exports.fromCallback = function(fn) {
     return Object.defineProperty(function(...args) {
       if (typeof args[args.length - 1] === "function")
         fn.apply(this, args);
@@ -7604,7 +7579,7 @@ var require_universalify = __commonJS((exports2) => {
       }
     }, "name", { value: fn.name });
   };
-  exports2.fromPromise = function(fn) {
+  exports.fromPromise = function(fn) {
     return Object.defineProperty(function(...args) {
       const cb = args[args.length - 1];
       if (typeof cb !== "function")
@@ -7618,7 +7593,7 @@ var require_universalify = __commonJS((exports2) => {
 });
 
 // node_modules/jsonfile/utils.js
-var require_utils4 = __commonJS((exports2, module2) => {
+var require_utils4 = __commonJS((exports, module) => {
   function stringify(obj, { EOL = `
 `, finalEOL = true, replacer = null, spaces } = {}) {
     const EOF = finalEOL ? EOL : "";
@@ -7630,16 +7605,16 @@ var require_utils4 = __commonJS((exports2, module2) => {
       content = content.toString("utf8");
     return content.replace(/^\uFEFF/, "");
   }
-  module2.exports = { stringify, stripBom };
+  module.exports = { stringify, stripBom };
 });
 
 // node_modules/jsonfile/index.js
-var require_jsonfile = __commonJS((exports2, module2) => {
+var require_jsonfile = __commonJS((exports, module) => {
   var _fs;
   try {
     _fs = require_graceful_fs();
   } catch (_) {
-    _fs = require("fs");
+    _fs = __require("fs");
   }
   var universalify = require_universalify();
   var { stringify, stripBom } = require_utils4();
@@ -7695,7 +7670,7 @@ var require_jsonfile = __commonJS((exports2, module2) => {
     const str = stringify(obj, options);
     return fs.writeFileSync(file, str, options);
   }
-  module2.exports = {
+  module.exports = {
     readFile,
     readFileSync,
     writeFile,
@@ -7703,97 +7678,14 @@ var require_jsonfile = __commonJS((exports2, module2) => {
   };
 });
 
-// utils/has-dependencies.js
-var require_has_dependencies = __commonJS((exports2, module2) => {
-  var core = require_core();
-  var jsonfile = require_jsonfile();
-  module2.exports = (pjson) => {
-    const { dependencies } = jsonfile.readFileSync(pjson);
-    if (!dependencies || dependencies && Object.keys(dependencies).length === 0) {
-      core.info("No dependencies found in package.json, skipping bundle-dependencies step");
-    }
-    return typeof dependencies === "object" && dependencies !== null && Object.keys(dependencies).length > 0;
-  };
-});
-
-// utils/hide-credentials.js
-var require_hide_credentials = __commonJS((exports2, module2) => {
-  var core = require_core();
-  var fs = require("fs");
-  var path = require("path");
-  module2.exports = async (collector = []) => {
-    const runnerTemp = process.env["RUNNER_TEMP"];
-    if (!runnerTemp)
-      return collector;
-    try {
-      const files = await fs.promises.readdir(runnerTemp);
-      for (const file of files) {
-        if (file.startsWith("git-credentials-") && file.endsWith(".config")) {
-          const src = path.join(runnerTemp, file);
-          const backup = `${src}.bak`;
-          await fs.promises.rename(src, backup);
-          collector.push(backup);
-          core.info(`Temporarily hiding actions/checkout credential file ${file} in favor of our auth`);
-        }
-      }
-    } catch (e) {
-      core.debug(`Could not backup credential files: ${e.message}`);
-    }
-    return collector;
-  };
-});
-
-// utils/is-lando-plugin.js
-var require_is_lando_plugin = __commonJS((exports2, module2) => {
-  module2.exports = (manifest = {}) => {
-    if (manifest.hasOwnProperty("lando"))
-      return true;
-    if (manifest.keywords && manifest.keywords.includes("lando-plugin"))
-      return true;
-    return false;
-  };
-});
-
-// utils/parse-release-date.js
-var require_parse_release_date = __commonJS((exports2, module2) => {
-  module2.exports = (data) => {
-    return new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric" }).format(new Date(data));
-  };
-});
-
-// utils/parse-human-size-to-bytes.js
-var require_parse_human_size_to_bytes = __commonJS((exports2, module2) => {
-  module2.exports = (size) => {
-    if (typeof size !== "string")
-      return null;
-    const match = size.trim().match(/^([0-9]*\.?[0-9]+)\s*(B|KB|MB|GB|TB)$/i);
-    if (!match)
-      return null;
-    const value = Number(match[1]);
-    const units = { B: 0, KB: 1, MB: 2, GB: 3, TB: 4 };
-    const unit = match[2].toUpperCase();
-    const exponent = units[unit];
-    if (Number.isNaN(value) || exponent === undefined)
-      return null;
-    return Math.round(value * 1024 ** exponent);
-  };
-});
-
-// utils/parse-tokens.js
-var require_parse_tokens = __commonJS((exports2, module2) => {
-  module2.exports = (tokens) => {
-    return tokens.map((token) => token.split("=")).filter(([token, value]) => typeof token === "string" && typeof value === "string").map(([token, value]) => [token.trim(), value.trim()]);
-  };
-});
-
 // node_modules/semver/internal/debug.js
-var require_debug = __commonJS((exports2, module2) => {
+var require_debug = __commonJS((exports, module) => {
   var debug = typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG) ? (...args) => console.error("SEMVER", ...args) : () => {};
-  module2.exports = debug;
+  module.exports = debug;
 });
 
 // node_modules/semver/internal/constants.js
-var require_constants = __commonJS((exports2, module2) => {
+var require_constants = __commonJS((exports, module) => {
   var SEMVER_SPEC_VERSION = "2.0.0";
   var MAX_LENGTH = 256;
   var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;
@@ -7808,7 +7700,7 @@ var require_constants = __commonJS((exports2, module2) => {
     "prepatch",
     "prerelease"
   ];
-  module2.exports = {
+  module.exports = {
     MAX_LENGTH,
     MAX_SAFE_COMPONENT_LENGTH,
     MAX_SAFE_BUILD_LENGTH,
@@ -7821,19 +7713,19 @@ var require_constants = __commonJS((exports2, module2) => {
 });
 
 // node_modules/semver/internal/re.js
-var require_re = __commonJS((exports2, module2) => {
+var require_re = __commonJS((exports, module) => {
   var {
     MAX_SAFE_COMPONENT_LENGTH,
     MAX_SAFE_BUILD_LENGTH,
     MAX_LENGTH
   } = require_constants();
   var debug = require_debug();
-  exports2 = module2.exports = {};
-  var re = exports2.re = [];
-  var safeRe = exports2.safeRe = [];
-  var src = exports2.src = [];
-  var safeSrc = exports2.safeSrc = [];
-  var t = exports2.t = {};
+  exports = module.exports = {};
+  var re = exports.re = [];
+  var safeRe = exports.safeRe = [];
+  var src = exports.src = [];
+  var safeSrc = exports.safeSrc = [];
+  var t = exports.t = {};
   var R = 0;
   var LETTERDASHNUMBER = "[a-zA-Z0-9-]";
   var safeRegexReplacements = [
@@ -7886,18 +7778,18 @@ var require_re = __commonJS((exports2, module2) => {
   createToken("COERCERTLFULL", src[t.COERCEFULL], true);
   createToken("LONETILDE", "(?:~>?)");
   createToken("TILDETRIM", `(\\s*)${src[t.LONETILDE]}\\s+`, true);
-  exports2.tildeTrimReplace = "$1~";
+  exports.tildeTrimReplace = "$1~";
   createToken("TILDE", `^${src[t.LONETILDE]}${src[t.XRANGEPLAIN]}$`);
   createToken("TILDELOOSE", `^${src[t.LONETILDE]}${src[t.XRANGEPLAINLOOSE]}$`);
   createToken("LONECARET", "(?:\\^)");
   createToken("CARETTRIM", `(\\s*)${src[t.LONECARET]}\\s+`, true);
-  exports2.caretTrimReplace = "$1^";
+  exports.caretTrimReplace = "$1^";
   createToken("CARET", `^${src[t.LONECARET]}${src[t.XRANGEPLAIN]}$`);
   createToken("CARETLOOSE", `^${src[t.LONECARET]}${src[t.XRANGEPLAINLOOSE]}$`);
   createToken("COMPARATORLOOSE", `^${src[t.GTLT]}\\s*(${src[t.LOOSEPLAIN]})$|^$`);
   createToken("COMPARATOR", `^${src[t.GTLT]}\\s*(${src[t.FULLPLAIN]})$|^$`);
   createToken("COMPARATORTRIM", `(\\s*)${src[t.GTLT]}\\s*(${src[t.LOOSEPLAIN]}|${src[t.XRANGEPLAIN]})`, true);
-  exports2.comparatorTrimReplace = "$1$2$3";
+  exports.comparatorTrimReplace = "$1$2$3";
   createToken("HYPHENRANGE", `^\\s*(${src[t.XRANGEPLAIN]})` + `\\s+-\\s+` + `(${src[t.XRANGEPLAIN]})` + `\\s*$`);
   createToken("HYPHENRANGELOOSE", `^\\s*(${src[t.XRANGEPLAINLOOSE]})` + `\\s+-\\s+` + `(${src[t.XRANGEPLAINLOOSE]})` + `\\s*$`);
   createToken("STAR", "(<|>)?=?\\s*\\*");
@@ -7906,7 +7798,7 @@ var require_re = __commonJS((exports2, module2) => {
 });
 
 // node_modules/semver/internal/parse-options.js
-var require_parse_options = __commonJS((exports2, module2) => {
+var require_parse_options = __commonJS((exports, module) => {
   var looseOption = Object.freeze({ loose: true });
   var emptyOpts = Object.freeze({});
   var parseOptions = (options) => {
@@ -7918,11 +7810,11 @@ var require_parse_options = __commonJS((exports2, module2) => {
     }
     return options;
   };
-  module2.exports = parseOptions;
+  module.exports = parseOptions;
 });
 
 // node_modules/semver/internal/identifiers.js
-var require_identifiers = __commonJS((exports2, module2) => {
+var require_identifiers = __commonJS((exports, module) => {
   var numeric = /^[0-9]+$/;
   var compareIdentifiers = (a, b) => {
     if (typeof a === "number" && typeof b === "number") {
@@ -7937,14 +7829,14 @@ var require_identifiers = __commonJS((exports2, module2) => {
     return a === b ? 0 : anum && !bnum ? -1 : bnum && !anum ? 1 : a < b ? -1 : 1;
   };
   var rcompareIdentifiers = (a, b) => compareIdentifiers(b, a);
-  module2.exports = {
+  module.exports = {
     compareIdentifiers,
     rcompareIdentifiers
   };
 });
 
 // node_modules/semver/classes/semver.js
-var require_semver = __commonJS((exports2, module2) => {
+var require_semver = __commonJS((exports, module) => {
   var debug = require_debug();
   var { MAX_LENGTH, MAX_SAFE_INTEGER } = require_constants();
   var { safeRe: re, t } = require_re();
@@ -8209,11 +8101,11 @@ var require_semver = __commonJS((exports2, module2) => {
       return this;
     }
   }
-  module2.exports = SemVer;
+  module.exports = SemVer;
 });
 
 // node_modules/semver/functions/parse.js
-var require_parse = __commonJS((exports2, module2) => {
+var require_parse = __commonJS((exports, module) => {
   var SemVer = require_semver();
   var parse = (version, options, throwErrors = false) => {
     if (version instanceof SemVer) {
@@ -8228,31 +8120,31 @@ var require_parse = __commonJS((exports2, module2) => {
       throw er;
     }
   };
-  module2.exports = parse;
+  module.exports = parse;
 });
 
 // node_modules/semver/functions/clean.js
-var require_clean = __commonJS((exports2, module2) => {
+var require_clean = __commonJS((exports, module) => {
   var parse = require_parse();
   var clean = (version, options) => {
     const s = parse(version.trim().replace(/^[=v]+/, ""), options);
     return s ? s.version : null;
   };
-  module2.exports = clean;
+  module.exports = clean;
 });
 
 // node_modules/semver/functions/valid.js
-var require_valid = __commonJS((exports2, module2) => {
+var require_valid = __commonJS((exports, module) => {
   var parse = require_parse();
   var valid = (version, options) => {
     const v = parse(version, options);
     return v ? v.version : null;
   };
-  module2.exports = valid;
+  module.exports = valid;
 });
 
 // node_modules/lodash.set/index.js
-var require_lodash = __commonJS((exports2, module2) => {
+var require_lodash = __commonJS((exports, module) => {
   var FUNC_ERROR_TEXT = "Expected a function";
   var HASH_UNDEFINED = "__lodash_hash_undefined__";
   var INFINITY = 1 / 0;
@@ -8437,19 +8329,19 @@ var require_lodash = __commonJS((exports2, module2) => {
     var pattern = isFunction(value) || isHostObject(value) ? reIsNative : reIsHostCtor;
     return pattern.test(toSource(value));
   }
-  function baseSet(object, path, value, customizer) {
+  function baseSet(object, path2, value, customizer) {
     if (!isObject(object)) {
       return object;
     }
-    path = isKey(path, object) ? [path] : castPath(path);
-    var index = -1, length = path.length, lastIndex = length - 1, nested = object;
+    path2 = isKey(path2, object) ? [path2] : castPath(path2);
+    var index = -1, length = path2.length, lastIndex = length - 1, nested = object;
     while (nested != null && ++index < length) {
-      var key = toKey(path[index]), newValue = value;
+      var key = toKey(path2[index]), newValue = value;
       if (index != lastIndex) {
         var objValue = nested[key];
         newValue = customizer ? customizer(objValue, key, nested) : undefined;
         if (newValue === undefined) {
-          newValue = isObject(objValue) ? objValue : isIndex(path[index + 1]) ? [] : {};
+          newValue = isObject(objValue) ? objValue : isIndex(path2[index + 1]) ? [] : {};
         }
       }
       assignValue(nested, key, newValue);
@@ -8566,73 +8458,173 @@ var require_lodash = __commonJS((exports2, module2) => {
   function toString(value) {
     return value == null ? "" : baseToString(value);
   }
-  function set(object, path, value) {
-    return object == null ? object : baseSet(object, path, value);
+  function set(object, path2, value) {
+    return object == null ? object : baseSet(object, path2, value);
   }
-  module2.exports = set;
-});
-
-// utils/restore-credentials.js
-var require_restore_credentials = __commonJS((exports2, module2) => {
-  var core = require_core();
-  var fs = require("fs");
-  var path = require("path");
-  module2.exports = async (files = []) => {
-    for (const backup of files) {
-      try {
-        const src = backup.replace(/\.bak$/, "");
-        await fs.promises.rename(backup, src);
-        const file = path.basename(src);
-        core.info(`Restored actions/checkout credential file ${file}`);
-      } catch (e) {
-        core.warning(`Failed to restore credential file ${backup}: ${e.message}`);
-      }
-    }
-    return [];
-  };
+  module.exports = set;
 });
 
 // prepare-release.js
-var core = require_core();
-var exec = require_exec();
-var fs = require("fs");
-var getInputs = require_get_inputs();
-var getStdOut = require_get_stdout();
-var github = require_github();
-var hasDependencies = require_has_dependencies();
-var hideCredentialFiles = require_hide_credentials();
-var isLandoPlugin = require_is_lando_plugin();
-var jsonfile = require_jsonfile();
-var os = require("os");
-var path = require("path");
-var parseReleaseDate = require_parse_release_date();
-var parseHumanSizeToBytes = require_parse_human_size_to_bytes();
-var parseTokens = require_parse_tokens();
-var semverClean = require_clean();
-var semverValid = require_valid();
-var set = require_lodash();
-var restoreCredentialFiles = require_restore_credentials();
-var main = async () => {
-  const inputs = getInputs();
-  process.chdir(inputs.root);
-  inputs.pjson = path.join(inputs.root, "package.json");
-  inputs.release = github?.context?.payload?.release;
+var import_core5 = __toESM(require_core(), 1);
+var import_exec = __toESM(require_exec(), 1);
+import fs3 from "fs";
+
+// utils/get-inputs.js
+var import_core = __toESM(require_core(), 1);
+var get_inputs_default = () => ({
+  version: String(import_core.default.getInput("version")),
+  bundleDependencies: process.env.GITHUB_ACTIONS ? import_core.default.getBooleanInput("bundle-dependencies") : false,
+  commands: import_core.default.getMultilineInput("commands"),
+  credFiles: [],
+  landoPlugin: process.env.GITHUB_ACTIONS ? import_core.default.getBooleanInput("lando-plugin") : false,
+  meta: import_core.default.getMultilineInput("meta"),
+  root: import_core.default.getInput("root") || process.cwd(),
+  sync: process.env.GITHUB_ACTIONS ? import_core.default.getBooleanInput("sync") : false,
+  syncBranch: import_core.default.getInput("sync-branch") || "main",
+  syncEmail: import_core.default.getInput("sync-email") || "github-actions@github.com",
+  syncMessage: import_core.default.getInput("sync-message") || "release v%s generated by @lando/prepare-release-action",
+  syncTags: import_core.default.getMultilineInput("sync-tags"),
+  syncToken: import_core.default.getInput("sync-token") || process.env.GITHUB_TOKEN,
+  syncUsername: import_core.default.getInput("sync-username") || "github-actions",
+  tokens: import_core.default.getMultilineInput("update-files-meta") ?? [],
+  updateHeader: import_core.default.getMultilineInput("update-files-header") ?? [],
+  updateFiles: import_core.default.getMultilineInput("update-files") ?? [],
+  versionMatch: import_core.default.getInput("version-match") || "v[0-9].*"
+});
+
+// utils/get-stdout.js
+import { execSync } from "child_process";
+var get_stdout_default = (command) => {
+  if (!command)
+    throw new Error("Must specify a command!");
+  const data = execSync(command, { maxBuffer: 1024 * 1024 * 10, encoding: "utf-8" });
+  return typeof data === "string" ? data.trim() : data;
+};
+
+// prepare-release.js
+var import_github = __toESM(require_github(), 1);
+
+// utils/has-dependencies.js
+var import_core2 = __toESM(require_core(), 1);
+var import_jsonfile = __toESM(require_jsonfile(), 1);
+var has_dependencies_default = (pjson) => {
+  const { dependencies } = import_jsonfile.default.readFileSync(pjson);
+  if (!dependencies || dependencies && Object.keys(dependencies).length === 0) {
+    import_core2.default.info("No dependencies found in package.json, skipping bundle-dependencies step");
+  }
+  return typeof dependencies === "object" && dependencies !== null && Object.keys(dependencies).length > 0;
+};
+
+// utils/hide-credentials.js
+var import_core3 = __toESM(require_core(), 1);
+import fs from "fs";
+import path from "path";
+var hide_credentials_default = async (collector = []) => {
+  const runnerTemp = process.env["RUNNER_TEMP"];
+  if (!runnerTemp)
+    return collector;
   try {
-    const isShallow = getStdOut("git rev-parse --is-shallow-repository");
+    const files = await fs.promises.readdir(runnerTemp);
+    for (const file of files) {
+      if (file.startsWith("git-credentials-") && file.endsWith(".config")) {
+        const src = path.join(runnerTemp, file);
+        const backup = `${src}.bak`;
+        await fs.promises.rename(src, backup);
+        collector.push(backup);
+        import_core3.default.info(`Temporarily hiding actions/checkout credential file ${file} in favor of our auth`);
+      }
+    }
+  } catch (e) {
+    import_core3.default.debug(`Could not backup credential files: ${e.message}`);
+  }
+  return collector;
+};
+
+// utils/is-lando-plugin.js
+var is_lando_plugin_default = (manifest = {}) => {
+  if (manifest.hasOwnProperty("lando"))
+    return true;
+  if (manifest.keywords && manifest.keywords.includes("lando-plugin"))
+    return true;
+  return false;
+};
+
+// prepare-release.js
+var import_jsonfile2 = __toESM(require_jsonfile(), 1);
+import os from "os";
+import path3 from "path";
+
+// utils/parse-release-date.js
+var parse_release_date_default = (data) => {
+  return new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric" }).format(new Date(data));
+};
+
+// utils/parse-human-size-to-bytes.js
+var parse_human_size_to_bytes_default = (size) => {
+  if (typeof size !== "string")
+    return null;
+  const match = size.trim().match(/^([0-9]*\.?[0-9]+)\s*(B|KB|MB|GB|TB)$/i);
+  if (!match)
+    return null;
+  const value = Number(match[1]);
+  const units = { B: 0, KB: 1, MB: 2, GB: 3, TB: 4 };
+  const unit = match[2].toUpperCase();
+  const exponent = units[unit];
+  if (Number.isNaN(value) || exponent === undefined)
+    return null;
+  return Math.round(value * 1024 ** exponent);
+};
+
+// utils/parse-tokens.js
+var parse_tokens_default = (tokens) => {
+  return tokens.map((token) => token.split("=")).filter(([token, value]) => typeof token === "string" && typeof value === "string").map(([token, value]) => [token.trim(), value.trim()]);
+};
+
+// prepare-release.js
+var import_clean = __toESM(require_clean(), 1);
+var import_valid = __toESM(require_valid(), 1);
+var import_lodash = __toESM(require_lodash(), 1);
+
+// utils/restore-credentials.js
+var import_core4 = __toESM(require_core(), 1);
+import fs2 from "fs";
+import path2 from "path";
+var restore_credentials_default = async (files = []) => {
+  for (const backup of files) {
+    try {
+      const src = backup.replace(/\.bak$/, "");
+      await fs2.promises.rename(backup, src);
+      const file = path2.basename(src);
+      import_core4.default.info(`Restored actions/checkout credential file ${file}`);
+    } catch (e) {
+      import_core4.default.warning(`Failed to restore credential file ${backup}: ${e.message}`);
+    }
+  }
+  return [];
+};
+
+// prepare-release.js
+var main = async () => {
+  const inputs = get_inputs_default();
+  process.chdir(inputs.root);
+  inputs.pjson = path3.join(inputs.root, "package.json");
+  inputs.release = import_github.default?.context?.payload?.release;
+  try {
+    const isShallow = get_stdout_default("git rev-parse --is-shallow-repository");
     if (isShallow === "true") {
-      core.startGroup("Configuring repo");
-      core.info(`working-dir: ${process.cwd()}`);
-      await exec.exec("git", ["fetch", "--unshallow"]);
-      await exec.exec("git", ["fetch", "--all"]);
-      core.endGroup();
+      import_core5.default.startGroup("Configuring repo");
+      import_core5.default.info(`working-dir: ${process.cwd()}`);
+      await import_exec.default.exec("git", ["fetch", "--unshallow"]);
+      await import_exec.default.exec("git", ["fetch", "--all"]);
+      import_core5.default.endGroup();
     }
     if (!inputs.version)
       throw new Error("Version is a required input!");
     if (inputs.version === "dev")
-      inputs.version = getStdOut(`git describe --tags --always --abbrev=1 --match="${inputs.versionMatch}"`);
-    if (semverValid(semverClean(inputs.version)) === null)
+      inputs.version = get_stdout_default(`git describe --tags --always --abbrev=1 --match="${inputs.versionMatch}"`);
+    if (import_valid.default(import_clean.default(inputs.version)) === null)
       throw new Error(`Version ${inputs.version} must be semver valid!`);
-    if (!fs.existsSync(inputs.pjson))
+    if (!fs3.existsSync(inputs.pjson))
       throw new Error(`Could not detect a package.json in ${inputs.root}`);
     if (!inputs.bundleDependencies && inputs.landoPlugin)
       inputs.bundleDependencies = true;
@@ -8640,7 +8632,7 @@ var main = async () => {
       inputs.updateFiles = ["CHANGELOG", "CHANGELOG.md"];
     if (inputs.landoPlugin && inputs.release) {
       inputs.tokens.push(...[
-        `UNRELEASED_DATE=${parseReleaseDate(inputs.release.published_at)}`,
+        `UNRELEASED_DATE=${parse_release_date_default(inputs.release.published_at)}`,
         `UNRELEASED_LINK=${inputs.release.html_url}`,
         `UNRELEASED_VERSION=${inputs.release.tag_name}`
       ]);
@@ -8649,125 +8641,124 @@ var main = async () => {
       inputs.updateHeader = ["## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})"];
     }
     for (const [index, filename] of inputs.updateFiles.entries()) {
-      inputs.updateFiles[index] = path.isAbsolute(filename) ? filename : path.resolve(inputs.root, filename);
+      inputs.updateFiles[index] = path3.isAbsolute(filename) ? filename : path3.resolve(inputs.root, filename);
     }
-    core.startGroup("Ensuring bun");
-    core.info(`bun-version: ${getStdOut("bun --version")}`);
-    core.endGroup();
-    core.startGroup("Configuring git");
-    await exec.exec("git", ["config", "user.name", inputs.syncUsername]);
-    await exec.exec("git", ["config", "user.email", inputs.syncEmail]);
+    import_core5.default.startGroup("Ensuring bun");
+    import_core5.default.info(`bun-version: ${get_stdout_default("bun --version")}`);
+    import_core5.default.endGroup();
+    import_core5.default.startGroup("Configuring git");
+    await import_exec.default.exec("git", ["config", "user.name", inputs.syncUsername]);
+    await import_exec.default.exec("git", ["config", "user.email", inputs.syncEmail]);
     if (inputs.sync)
-      await exec.exec("git", ["checkout", inputs.syncBranch]);
-    core.endGroup();
+      await import_exec.default.exec("git", ["checkout", inputs.syncBranch]);
+    import_core5.default.endGroup();
     for (const command of inputs.commands)
-      await exec.exec(command);
-    if (inputs.landoPlugin && !isLandoPlugin(jsonfile.readFileSync(inputs.pjson))) {
-      const pjson = jsonfile.readFileSync("package.json");
+      await import_exec.default.exec(command);
+    if (inputs.landoPlugin && !is_lando_plugin_default(import_jsonfile2.default.readFileSync(inputs.pjson))) {
+      const pjson = import_jsonfile2.default.readFileSync("package.json");
       const keywords = pjson.keywords ?? [];
       inputs.meta.unshift(`keywords[${keywords.length}]=lando-plugin`);
     }
     if (inputs.meta.length > 0) {
-      const pjson = jsonfile.readFileSync(inputs.pjson);
+      const pjson = import_jsonfile2.default.readFileSync(inputs.pjson);
       inputs.meta.forEach((line) => {
         if (Array.isArray(line))
-          set(pjson, line[0], line[1]);
+          import_lodash.default(pjson, line[0], line[1]);
         else if (typeof line === "string") {
           const key = line.split("=")[0];
           const value = line.split("=")[1];
-          set(pjson, key, value);
+          import_lodash.default(pjson, key, value);
         }
       });
-      jsonfile.writeFileSync(inputs.pjson, pjson, { spaces: 2 });
-      core.debug(`updated pjson`);
-      core.debug(jsonfile.readFileSync(inputs.pjson));
+      import_jsonfile2.default.writeFileSync(inputs.pjson, pjson, { spaces: 2 });
+      import_core5.default.debug(`updated pjson`);
+      import_core5.default.debug(import_jsonfile2.default.readFileSync(inputs.pjson));
     }
-    for (const file of inputs.updateFiles.filter((file2) => fs.existsSync(file2))) {
-      let content = fs.readFileSync(file, { encoding: "utf-8" });
-      core.startGroup(`Updating ${file} with update-files-meta tokens`);
-      for (const [token, value] of parseTokens(inputs.tokens)) {
-        core.info(`{{ ${token} }}: ${value}`);
+    for (const file of inputs.updateFiles.filter((file2) => fs3.existsSync(file2))) {
+      let content = fs3.readFileSync(file, { encoding: "utf-8" });
+      import_core5.default.startGroup(`Updating ${file} with update-files-meta tokens`);
+      for (const [token, value] of parse_tokens_default(inputs.tokens)) {
+        import_core5.default.info(`{{ ${token} }}: ${value}`);
         content = content.replace(new RegExp(`\\{\\{\\s*${token}\\s*\\}\\}`, "g"), value);
       }
-      core.endGroup();
+      import_core5.default.endGroup();
       if (inputs.updateHeader.length > 0) {
-        core.startGroup(`Updating ${file} with update-files-header content`);
-        core.info(`update-header: ${inputs.updateHeader.join(os.EOL)}`);
-        core.endGroup();
+        import_core5.default.startGroup(`Updating ${file} with update-files-header content`);
+        import_core5.default.info(`update-header: ${inputs.updateHeader.join(os.EOL)}`);
+        import_core5.default.endGroup();
         content = `${inputs.updateHeader.join(os.EOL)}${os.EOL}${os.EOL}${content}`;
       }
-      fs.writeFileSync(file, content);
-      core.debug(`updated ${file}:`);
-      core.debug(`---`);
-      core.debug(`${fs.readFileSync(file, { encoding: "utf-8" })}`);
-      core.debug(`---`);
+      fs3.writeFileSync(file, content);
+      import_core5.default.debug(`updated ${file}:`);
+      import_core5.default.debug(`---`);
+      import_core5.default.debug(`${fs3.readFileSync(file, { encoding: "utf-8" })}`);
+      import_core5.default.debug(`---`);
     }
-    if (inputs.landoPlugin && !isLandoPlugin(jsonfile.readFileSync(inputs.pjson))) {
+    if (inputs.landoPlugin && !is_lando_plugin_default(import_jsonfile2.default.readFileSync(inputs.pjson))) {
       throw new Error("Does not appear to be a valid Lando plugin! package.json must contain a lando key or the lando-plugin keyword");
     }
     const bumpArgs = inputs.sync ? [inputs.version, "--commit", inputs.syncMessage, "--all"] : [inputs.version];
-    await exec.exec("bunx", ["--bun", "--package", "version-bump-prompt@6.1.0", "bump", ...bumpArgs]);
-    const currentCommit = getStdOut("git --no-pager log --pretty=format:%h -n 1");
+    await import_exec.default.exec("bunx", ["--bun", "--package", "version-bump-prompt@6.1.0", "bump", ...bumpArgs]);
+    const currentCommit = get_stdout_default("git --no-pager log --pretty=format:%h -n 1");
     const tags = inputs.syncTags.concat([inputs.version]);
     for (const tag of tags)
-      await exec.exec("git", ["tag", "--force", tag, currentCommit]);
+      await import_exec.default.exec("git", ["tag", "--force", tag, currentCommit]);
     if (inputs.sync) {
-      core.startGroup("Sync changes information");
-      await exec.exec("git", ["--no-pager", "log", "-1"]);
-      await exec.exec("git", ["--no-pager", "tag", "--points-at", "HEAD"]);
-      await exec.exec("git", ["diff", "HEAD~1"]);
-      core.endGroup();
-      inputs.credFiles = await hideCredentialFiles();
+      import_core5.default.startGroup("Sync changes information");
+      await import_exec.default.exec("git", ["--no-pager", "log", "-1"]);
+      await import_exec.default.exec("git", ["--no-pager", "tag", "--points-at", "HEAD"]);
+      await import_exec.default.exec("git", ["diff", "HEAD~1"]);
+      import_core5.default.endGroup();
+      inputs.credFiles = await hide_credentials_default();
       const basicCredential = Buffer.from(`x-access-token:${inputs.syncToken}`, "utf8").toString("base64");
       const authString = `AUTHORIZATION: basic ${basicCredential}`;
-      core.setSecret(basicCredential);
-      await exec.exec("git", ["config", "--local", "http.https://github.com/.extraheader", authString]);
-      await exec.exec("git", ["push", "origin", inputs.syncBranch]);
+      import_core5.default.setSecret(basicCredential);
+      await import_exec.default.exec("git", ["config", "--local", "http.https://github.com/.extraheader", authString]);
+      await import_exec.default.exec("git", ["push", "origin", inputs.syncBranch]);
       for (const tag of tags)
-        await exec.exec("git", ["push", "--force", "origin", tag]);
+        await import_exec.default.exec("git", ["push", "--force", "origin", tag]);
       if (Array.isArray(inputs.credFiles) && inputs.credFiles.length > 0) {
-        inputs.credFiles = await restoreCredentialFiles(inputs.credFiles);
+        inputs.credFiles = await restore_credentials_default(inputs.credFiles);
       }
     }
-    if (inputs.bundleDependencies && hasDependencies(inputs.pjson)) {
-      await exec.exec("bunx", ["--bun", "--package", "bundle-dependencies@1.0.2", "bundle-dependencies", "update"]);
-      await exec.exec("bunx", ["--bun", "--package", "bundle-dependencies@1.0.2", "bundle-dependencies", "list-bundled-dependencies"]);
+    if (inputs.bundleDependencies && has_dependencies_default(inputs.pjson)) {
+      await import_exec.default.exec("bunx", ["--bun", "--package", "bundle-dependencies@1.0.2", "bundle-dependencies", "update"]);
+      await import_exec.default.exec("bunx", ["--bun", "--package", "bundle-dependencies@1.0.2", "bundle-dependencies", "list-bundled-dependencies"]);
     }
     if (inputs.landoPlugin) {
-      const pjson = jsonfile.readFileSync(inputs.pjson);
+      const pjson = import_jsonfile2.default.readFileSync(inputs.pjson);
       if (!pjson.dist) {
         try {
-          const filename = getStdOut("bun pm pack --dry-run --ignore-scripts --quiet");
-          const info = getStdOut("bun pm pack --dry-run --ignore-scripts");
+          const filename = get_stdout_default("bun pm pack --dry-run --ignore-scripts --quiet");
+          const info = get_stdout_default("bun pm pack --dry-run --ignore-scripts");
           const fileCount = Number(info.match(/Total files:\s*(\d+)/)?.[1]);
-          const unpackedSize = parseHumanSizeToBytes(info.match(/Unpacked size:\s*([^\r\n]+)/)?.[1]);
+          const unpackedSize = parse_human_size_to_bytes_default(info.match(/Unpacked size:\s*([^\r\n]+)/)?.[1]);
           pjson.dist = { filename };
           if (!Number.isNaN(fileCount))
             pjson.dist.fileCount = fileCount;
           if (typeof unpackedSize === "number")
             pjson.dist.unpackedSize = unpackedSize;
         } catch (error) {
-          core.warning(`error getting dist information, not fatal, setting dist to ${inputs.version} instead`);
-          core.debug(error);
+          import_core5.default.warning(`error getting dist information, not fatal, setting dist to ${inputs.version} instead`);
+          import_core5.default.debug(error);
           pjson.dist = inputs.version;
         }
-        jsonfile.writeFileSync(inputs.pjson, pjson, { spaces: 2 });
-        core.debug(`added dist info to pjson`);
-        core.debug(jsonfile.readFileSync(inputs.pjson));
+        import_jsonfile2.default.writeFileSync(inputs.pjson, pjson, { spaces: 2 });
+        import_core5.default.debug(`added dist info to pjson`);
+        import_core5.default.debug(import_jsonfile2.default.readFileSync(inputs.pjson));
       }
     }
-    core.startGroup("Change information");
-    await exec.exec("git", ["--no-pager", "log", "-1"]);
-    await exec.exec("git", ["--no-pager", "tag", "--points-at", "HEAD"]);
-    await exec.exec("git", ["diff", "HEAD~1"]);
-    core.endGroup();
+    import_core5.default.startGroup("Change information");
+    await import_exec.default.exec("git", ["--no-pager", "log", "-1"]);
+    await import_exec.default.exec("git", ["--no-pager", "tag", "--points-at", "HEAD"]);
+    await import_exec.default.exec("git", ["diff", "HEAD~1"]);
+    import_core5.default.endGroup();
   } catch (error) {
-    core.setFailed(error.message);
+    import_core5.default.setFailed(error.message);
     process.exit(1);
   }
 };
 main();
-})
 
-//# debugId=758074140756F5C464756E2164756E21
+//# debugId=FD8020E243AA45BC64756E2164756E21
 //# sourceMappingURL=index.js.map
