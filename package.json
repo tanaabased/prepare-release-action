@@ -2,6 +2,14 @@
   "name": "@tanaabased/prepare-release-action",
   "version": "3.3.4",
   "description": "An action that can automate release steps and sync them back to the releasing repo.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
   "contributors": [
     "Mike Pirog @pirog"
   ],
@@ -31,7 +39,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "build": "bun build ./prepare-release.js --target=bun --format=cjs --sourcemap=linked --outdir dist --entry-naming index.js",
+    "build": "bun build ./prepare-release.js --target=bun --format=esm --sourcemap=linked --outdir dist --entry-naming index.js",
     "prepare": "bun run build"
   }
 }

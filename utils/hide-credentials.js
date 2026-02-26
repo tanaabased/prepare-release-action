@@ -1,10 +1,8 @@
-'use strict';
+import core from '@actions/core';
+import fs from 'fs';
+import path from 'path';
 
-const core = require('@actions/core');
-const fs = require('fs');
-const path = require('path');
-
-module.exports = async (collector = []) => {
+export default async (collector = []) => {
   const runnerTemp = process.env['RUNNER_TEMP'];
 
   // bail if not on GHA

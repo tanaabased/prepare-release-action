@@ -1,24 +1,22 @@
-'use strict';
-
-const core = require('@actions/core');
-const exec = require('@actions/exec');
-const fs = require('fs');
-const getInputs = require('./utils/get-inputs');
-const getStdOut = require('./utils/get-stdout');
-const github = require('@actions/github');
-const hasDependencies = require('./utils/has-dependencies');
-const hideCredentialFiles = require('./utils/hide-credentials');
-const isLandoPlugin = require('./utils/is-lando-plugin');
-const jsonfile = require('jsonfile');
-const os = require('os');
-const path = require('path');
-const parseReleaseDate = require('./utils/parse-release-date');
-const parseHumanSizeToBytes = require('./utils/parse-human-size-to-bytes');
-const parseTokens = require('./utils/parse-tokens');
-const semverClean = require('semver/functions/clean');
-const semverValid = require('semver/functions/valid');
-const set = require('lodash.set');
-const restoreCredentialFiles = require('./utils/restore-credentials');
+import core from '@actions/core';
+import exec from '@actions/exec';
+import fs from 'fs';
+import getInputs from './utils/get-inputs.js';
+import getStdOut from './utils/get-stdout.js';
+import github from '@actions/github';
+import hasDependencies from './utils/has-dependencies.js';
+import hideCredentialFiles from './utils/hide-credentials.js';
+import isLandoPlugin from './utils/is-lando-plugin.js';
+import jsonfile from 'jsonfile';
+import os from 'os';
+import path from 'path';
+import parseReleaseDate from './utils/parse-release-date.js';
+import parseHumanSizeToBytes from './utils/parse-human-size-to-bytes.js';
+import parseTokens from './utils/parse-tokens.js';
+import semverClean from 'semver/functions/clean.js';
+import semverValid from 'semver/functions/valid.js';
+import set from 'lodash.set';
+import restoreCredentialFiles from './utils/restore-credentials.js';
 
 const main = async () => {
   // start by getting the inputs

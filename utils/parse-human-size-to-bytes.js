@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = size => {
+export default size => {
   if (typeof size !== 'string') return null;
 
   const match = size.trim().match(/^([0-9]*\.?[0-9]+)\s*(B|KB|MB|GB|TB)$/i);

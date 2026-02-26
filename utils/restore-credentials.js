@@ -1,10 +1,8 @@
-'use strict';
+import core from '@actions/core';
+import fs from 'fs';
+import path from 'path';
 
-const core = require('@actions/core');
-const fs = require('fs');
-const path = require('path');
-
-module.exports = async (files = []) => {
+export default async (files = []) => {
   for (const backup of files) {
     try {
       const src = backup.replace(/\.bak$/, '');
