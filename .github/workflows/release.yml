@@ -28,6 +28,7 @@ jobs:
         run: |
           bun install --frozen-lockfile --ignore-scripts
           bun run lint
+          bun run test
           bun run build
       - name: Export formatted release date
         run: echo "RELEASE_DATE=$(date -d "${{ github.event.release.published_at }}" "+%B %e, %Y" | tr -s ' ')" >> $GITHUB_ENV
