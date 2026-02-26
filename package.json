@@ -34,10 +34,13 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.0",
+    "c8": "^11.0.0",
     "eslint": "^7.32.0",
-    "eslint-config-google": "^0.9.1"
+    "eslint-config-google": "^0.9.1",
+    "mocha": "^11.7.5"
   },
   "scripts": {
+    "test": "c8 --all --include \"utils/*.js\" --reporter=text --check-coverage --per-file --lines 80 mocha \"test/**/*.spec.js\"",
     "lint": "eslint .",
     "build": "bun build ./prepare-release.js --target=bun --format=esm --sourcemap=linked --outdir dist --entry-naming index.js",
     "prepare": "bun run build"
