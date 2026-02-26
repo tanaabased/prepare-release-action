@@ -51,7 +51,7 @@ jobs:
           sync-tags: |
             number1
             v99
-          sync-token: ${{ secrets.RTFM47_COAXIUM_INJECTOR }}
+          sync-token: ${{ secrets.TANAAB_COAXIUM_INJECTOR }}
           sync-username: William T. Riker
           update-files: CHANGELOG.md
           update-files-header: |
