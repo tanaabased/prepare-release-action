@@ -32931,6 +32931,31 @@ module.exports = (manifest = {}) => {
 
 /***/ }),
 
+/***/ 6379:
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = size => {
+  if (typeof size !== 'string') return null;
+
+  const match = size.trim().match(/^([0-9]*\.?[0-9]+)\s*(B|KB|MB|GB|TB)$/i);
+  if (!match) return null;
+
+  const value = Number(match[1]);
+  const units = {B: 0, KB: 1, MB: 2, GB: 3, TB: 4};
+  const unit = match[2].toUpperCase();
+  const exponent = units[unit];
+
+  if (Number.isNaN(value) || exponent === undefined) return null;
+
+  return Math.round(value * (1024 ** exponent));
+};
+
+
+/***/ }),
+
 /***/ 2:
 /***/ ((module) => {
 
@@ -34925,6 +34950,7 @@ const jsonfile = __nccwpck_require__(2064);
 const os = __nccwpck_require__(857);
 const path = __nccwpck_require__(6928);
 const parseReleaseDate = __nccwpck_require__(2);
+const parseHumanSizeToBytes = __nccwpck_require__(6379);
 const parseTokens = __nccwpck_require__(6340);
 const semverClean = __nccwpck_require__(1799);
 const semverValid = __nccwpck_require__(8780);
@@ -34984,18 +35010,12 @@ const main = async () => {
 
     // normalize updatefile paths
     for (const [index, filename] of inputs.updateFiles.entries()) {
-      inputs.updateFiles[index] = path.isAbsolute(filename) ? file : path.resolve(inputs.root, filename);
+      inputs.updateFiles[index] = path.isAbsolute(filename) ? filename : path.resolve(inputs.root, filename);
     }
 
-    // add global utils, we do this regardless so we can invoke directly and control the version
-    core.startGroup('Ensuring utils');
-    if (inputs.bundleDependencies) await exec.exec('npm', ['install', '--global', 'bundle-dependencies@1.0.2']);
-    await exec.exec('npm', ['install', '--global', 'version-bump-prompt@6.1.0']);
-    // @NOTE: windows uses prefix and posix uses prefix/bin, not sure why that is
-    const prefix = getStdOut('npm config get prefix');
-    const binDir = process.platform === 'win32' ? prefix : path.join(prefix, 'bin');
-    core.info(`bin-dir: ${binDir}`);
-    await exec.exec('ls', ['-lsa', binDir]);
+    // ensure bun is available before we run any bunx commands
+    core.startGroup('Ensuring bun');
+    core.info(`bun-version: ${getStdOut('bun --version')}`);
     core.endGroup();
 
     // configure git
@@ -35076,7 +35096,10 @@ const main = async () => {
     }
 
     // bump version AND commit everything changed
-    await exec.exec(`${binDir}/bump`, inputs.sync ? [inputs.version, '--commit', inputs.syncMessage, '--all'] : [inputs.version]);
+    const bumpArgs = inputs.sync
+      ? [inputs.version, '--commit', inputs.syncMessage, '--all']
+      : [inputs.version];
+    await exec.exec('bunx', ['--bun', '--package', 'version-bump-prompt@6.1.0', 'bump', ...bumpArgs]);
 
     // get helpful stuff, for some reasons windows interprets the format wrapping quptes literally?
     const currentCommit = getStdOut('git --no-pager log --pretty=format:%h -n 1');
@@ -35118,8 +35141,8 @@ const main = async () => {
     // this happens AFTER sync because we ASSUME you do not have your node_modules checks into your repo
     // and if you do then this should be in your package.json already
     if (inputs.bundleDependencies && hasDependencies(inputs.pjson)) {
-      await exec.exec(`${binDir}/bundle-dependencies`, ['update']);
-      await exec.exec(`${binDir}/bundle-dependencies`, ['list-bundled-dependencies']);
+      await exec.exec('bunx', ['--bun', '--package', 'bundle-dependencies@1.0.2', 'bundle-dependencies', 'update']);
+      await exec.exec('bunx', ['--bun', '--package', 'bundle-dependencies@1.0.2', 'bundle-dependencies', 'list-bundled-dependencies']);
     }
 
     // lets also add the "dist" information, this key is required if you want the plugin to be updateable
@@ -35132,9 +35155,14 @@ const main = async () => {
       // onyl add information if dist isnt already in there
       if (!pjson.dist) {
         try {
-          const dist = JSON.parse(getStdOut(`npm pack --json --dry-run`));
-          const {integrity, shasum, fileCount, unpackedSize, filename} = dist[0];
-          pjson.dist = {integrity, shasum, filename, fileCount, unpackedSize};
+          const filename = getStdOut('bun pm pack --dry-run --ignore-scripts --quiet');
+          const info = getStdOut('bun pm pack --dry-run --ignore-scripts');
+          const fileCount = Number(info.match(/Total files:\s*(\d+)/)?.[1]);
+          const unpackedSize = parseHumanSizeToBytes(info.match(/Unpacked size:\s*([^\r\n]+)/)?.[1]);
+
+          pjson.dist = {filename};
+          if (!Number.isNaN(fileCount)) pjson.dist.fileCount = fileCount;
+          if (typeof unpackedSize === 'number') pjson.dist.unpackedSize = unpackedSize;
         } catch (error) {
           core.warning(`error getting dist information, not fatal, setting dist to ${inputs.version} instead`);
           core.debug(error);

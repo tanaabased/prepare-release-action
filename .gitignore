@@ -17,7 +17,7 @@
 *.log
 logs
 
-# NPM files
+# JavaScript package files
 node_modules
 
 # lando config
@@ -43,4 +43,3 @@ _site
 .stversions/
 .stignore
 *.sync-conflict-*
-

@@ -13,23 +13,20 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-        node-version:
-          - '20'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Install node ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
+          bun-version-file: .bun-version
       - name: Install deps and prep
         run: |
-          npm clean-install
-          npm run prepare
+          bun install --frozen-lockfile --ignore-scripts
+          bun run build
       - name: Export pkg.json version
-        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+        run: echo "VERSION=$(bun -e 'console.log(require(\"./package.json\").version)')" >> $GITHUB_ENV
       - name: Prepare release
         uses: ./
         with:

@@ -10,22 +10,19 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-        node-version:
-          - '20'
 
     steps:
       # Install deps and cache
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Install node ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
+          bun-version-file: .bun-version
       - name: Install deps and prep
         run: |
-          npm clean-install
-          npm run prepare
+          bun install --frozen-lockfile --ignore-scripts
+          bun run build
       - name: Export formatted release date
         run: echo "RELEASE_DATE=$(date "+%B %e, %Y" | tr -s ' ')" >> $GITHUB_ENV
       - name: Checkout fresh repo for testing

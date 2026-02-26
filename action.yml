@@ -30,6 +30,10 @@ inputs:
     description: "The location of the code being prepared for release."
     required: false
     default: ${{ github.workspace }}
+  bun-version:
+    description: "The Bun version to use when running this action."
+    required: false
+    default: "1.3.4"
   sync:
     description: "A toggle to enable/disable code syncing."
     required: false
@@ -72,6 +76,30 @@ inputs:
     default: "v[0-9].*"
 
 runs:
-  using: "node20"
-  main: "dist/index.js"
-
+  using: "composite"
+  steps:
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+    - name: Run Prepare Release
+      shell: bash
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_BUNDLE-DEPENDENCIES: ${{ inputs.bundle-dependencies }}
+        INPUT_COMMANDS: ${{ inputs.commands }}
+        INPUT_LANDO-PLUGIN: ${{ inputs.lando-plugin }}
+        INPUT_META: ${{ inputs.meta }}
+        INPUT_ROOT: ${{ inputs.root }}
+        INPUT_SYNC: ${{ inputs.sync }}
+        INPUT_SYNC-BRANCH: ${{ inputs.sync-branch }}
+        INPUT_SYNC-EMAIL: ${{ inputs.sync-email }}
+        INPUT_SYNC-MESSAGE: ${{ inputs.sync-message }}
+        INPUT_SYNC-TAGS: ${{ inputs.sync-tags }}
+        INPUT_SYNC-TOKEN: ${{ inputs.sync-token }}
+        INPUT_SYNC-USERNAME: ${{ inputs.sync-username }}
+        INPUT_UPDATE-FILES: ${{ inputs.update-files }}
+        INPUT_UPDATE-FILES-HEADER: ${{ inputs.update-files-header }}
+        INPUT_UPDATE-FILES-META: ${{ inputs.update-files-meta }}
+        INPUT_VERSION-MATCH: ${{ inputs.version-match }}
+      run: bun "${{ github.action_path }}/dist/index.js"
