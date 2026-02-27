@@ -1,5 +1,7 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
+- Removed opinionated `v` prefix from default `sync-message`
+
 ## v1.1.0 - [February 27, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.1.0)
 
 - Added a `sync-verified` input to optionally create sync commits through GitHub with verified signatures. [#6](https://github.com/tanaabased/prepare-release-action/pull/6)
