@@ -100,6 +100,7 @@ update-files-meta: |
       number2
     sync-token: ${{ secrets.MY_PAT }}
     sync-username: w.t.riker
+    sync-verified: true
     update-files: CHANGELOG.md
     update-files-header: |
       ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})

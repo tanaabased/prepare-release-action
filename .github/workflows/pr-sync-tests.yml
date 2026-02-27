@@ -10,6 +10,9 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
+        signed:
+          - true
+          - false
 
     steps:
       # Install deps and cache
@@ -49,6 +52,7 @@ jobs:
             v99
           sync-token: ${{ secrets.TANAAB_COAXIUM_INJECTOR }}
           sync-username: William T. Riker
+          sync-verified: ${{ matrix.signed }}
           update-files: CHANGELOG.md
           update-files-header: |
             ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
