@@ -32,8 +32,6 @@ jobs:
         uses: actions/checkout@v6
         with:
           path: test
-      - name: Create matrix sync branch
-        run: git -C test checkout -B sync-test-${{ matrix.signed }}
       - name: Prepare release
         uses: ./
         with:
@@ -46,7 +44,7 @@ jobs:
             bosmang=Picard
           root: ${{ github.workspace }}/test
           sync: true
-          sync-branch: sync-test-${{ matrix.signed }}
+          sync-branch: ${{ matrix.signed && 'sync-test-verified' || 'sync-test' }}
           sync-email: william.t.riker@starfleet.mil
           sync-message: riker
           sync-tags: |
@@ -66,7 +64,7 @@ jobs:
         env:
           EXPECT_VERIFIED: ${{ matrix.signed }}
           GH_TOKEN: ${{ secrets.TANAAB_COAXIUM_INJECTOR }}
-          SYNC_BRANCH: sync-test-${{ matrix.signed }}
+          SYNC_BRANCH: ${{ matrix.signed && 'sync-test-verified' || 'sync-test' }}
         run: |
           actual="$(gh api "repos/${{ github.repository }}/commits/${SYNC_BRANCH}" --jq '.commit.verification.verified')"
           echo "expected=${EXPECT_VERIFIED} actual=${actual}"
