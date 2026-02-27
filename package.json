@@ -1,6 +1,6 @@
 {
   "name": "@lando/prepare-release-action",
-  "version": "1.0.0-6-gad61",
+  "version": "1.0.0-7-gfed4",
   "description": "An action that can automate release steps and sync them back to the releasing repo.",
   "contributors": [
     "Alec Reynolds @reynoldsalec",
