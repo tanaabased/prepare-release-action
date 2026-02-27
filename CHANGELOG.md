@@ -1,6 +1,6 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
-- Removed opinionated `v` prefix from default `sync-message`
+- Removed opinionated `v` prefix from default `sync-message` [#8](https://github.com/tanaabased/prepare-release-action/pull/8)
 
 ## v1.1.0 - [February 27, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.1.0)
 
