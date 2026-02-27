@@ -36,7 +36,6 @@ jobs:
           commands: |
             touch riker
             touch picard
-          lando-plugin: false
           meta: |
             jazzman=William T. Riker
             bosmang=Picard
