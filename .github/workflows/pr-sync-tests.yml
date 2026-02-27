@@ -32,6 +32,8 @@ jobs:
         uses: actions/checkout@v6
         with:
           path: test
+      - name: Create matrix sync branch
+        run: git -C test checkout -B sync-test-${{ matrix.signed }}
       - name: Prepare release
         uses: ./
         with:
