@@ -43,7 +43,7 @@ inputs:
     required: false
     default: "41898282+github-actions[bot]@users.noreply.github.com"
   sync-verified:
-    description: "Use GitHub REST API commit flow when syncing to create GitHub-verified bot commits."
+    description: "Use GitHub GraphQL createCommitOnBranch when syncing to request GitHub-verified commits."
     required: false
     default: false
   sync-message:
