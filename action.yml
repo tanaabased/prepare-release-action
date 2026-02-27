@@ -19,10 +19,6 @@ inputs:
   commands:
     description: "A list of commands to run to prepare the release."
     required: false
-  lando-plugin:
-    description: "A special easy-mode setting to prepare and valdiate Lando plugins."
-    required: false
-    default: false
   meta:
     description: "A list of path=value strings to merge into the package.json"
     required: false
@@ -88,7 +84,6 @@ runs:
         INPUT_VERSION: ${{ inputs.version }}
         INPUT_BUNDLE-DEPENDENCIES: ${{ inputs.bundle-dependencies }}
         INPUT_COMMANDS: ${{ inputs.commands }}
-        INPUT_LANDO-PLUGIN: ${{ inputs.lando-plugin }}
         INPUT_META: ${{ inputs.meta }}
         INPUT_ROOT: ${{ inputs.root }}
         INPUT_SYNC: ${{ inputs.sync }}

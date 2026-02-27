@@ -4,7 +4,6 @@ import path from 'node:path';
 
 import core from '@actions/core';
 import exec from '@actions/exec';
-import github from '@actions/github';
 import jsonfile from 'jsonfile';
 import semverClean from 'semver/functions/clean.js';
 import semverValid from 'semver/functions/valid.js';
@@ -14,9 +13,6 @@ import getInputs from './utils/get-inputs.js';
 import getStdOut from './utils/get-stdout.js';
 import hasDependencies from './utils/has-dependencies.js';
 import hideCredentialFiles from './utils/hide-credentials.js';
-import isLandoPlugin from './utils/is-lando-plugin.js';
-import parseHumanSizeToBytes from './utils/parse-human-size-to-bytes.js';
-import parseReleaseDate from './utils/parse-release-date.js';
 import parseTokens from './utils/parse-tokens.js';
 import restoreCredentialFiles from './utils/restore-credentials.js';
 
@@ -29,7 +25,6 @@ const main = async () => {
 
   // add more
   inputs.pjson = path.join(inputs.root, 'package.json');
-  inputs.release = github?.context?.payload?.release;
 
   try {
     // get status of shallowness
@@ -53,24 +48,6 @@ const main = async () => {
     // and that we have a package.json
     if (!fs.existsSync(inputs.pjson)) throw new Error(`Could not detect a package.json in ${inputs.root}`);
 
-    // if bundle-deps is false but lando-plugin is true then really bundle-deps is also true
-    if (!inputs.bundleDependencies && inputs.landoPlugin) inputs.bundleDependencies = true;
-    // if update-files is empty but lando-plugin is true then set changelog.md
-    if (inputs.updateFiles.length === 0 && inputs.landoPlugin) inputs.updateFiles = ['CHANGELOG', 'CHANGELOG.md'];
-    // if lando-plugin is true and this is a release then add update meta to the end
-    // @NOTE: adding to the end means any same-named user-provided metadata will win
-    if (inputs.landoPlugin && inputs.release) {
-      inputs.tokens.push(...[
-        `UNRELEASED_DATE=${parseReleaseDate(inputs.release.published_at)}`,
-        `UNRELEASED_LINK=${inputs.release.html_url}`,
-        `UNRELEASED_VERSION=${inputs.release.tag_name}`,
-      ]);
-    }
-    // if lando plugin and updateHeader is not set then set it here
-    if (inputs.landoPlugin && inputs.updateHeader.length === 0) {
-      inputs.updateHeader = ['## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})'];
-    }
-
     // normalize updatefile paths
     for (const [index, filename] of inputs.updateFiles.entries()) {
       inputs.updateFiles[index] = path.isAbsolute(filename) ? filename : path.resolve(inputs.root, filename);
@@ -93,15 +70,6 @@ const main = async () => {
 
     // run user specified commands
     for (const command of inputs.commands) await exec.exec(command);
-
-    // if "lando-plugin" is on then lets add some required meta if we need to
-    // note that we put this stuff at the start of meta so that a users meta will take priority
-    // in the case that they set the same stuff
-    if (inputs.landoPlugin && !isLandoPlugin(jsonfile.readFileSync(inputs.pjson))) {
-      const pjson = jsonfile.readFileSync('package.json');
-      const keywords = pjson.keywords ?? [];
-      inputs.meta.unshift(`keywords[${keywords.length}]=lando-plugin`);
-    }
 
     // apply any metadata to the package.json
     if (inputs.meta.length > 0) {
@@ -152,12 +120,6 @@ const main = async () => {
       core.debug(`---`);
     }
 
-    // if using landoPlugin ez-mode then validate lando plugin
-    // it should be impossible to get here at this point but lets keep this just in case
-    if (inputs.landoPlugin && !isLandoPlugin(jsonfile.readFileSync(inputs.pjson))) {
-      throw new Error('Does not appear to be a valid Lando plugin! package.json must contain a lando key or the lando-plugin keyword');
-    }
-
     // bump version AND commit everything changed
     const bumpArgs = inputs.sync
       ? [inputs.version, '--commit', inputs.syncMessage, '--all']
@@ -206,37 +168,6 @@ const main = async () => {
     if (inputs.bundleDependencies && hasDependencies(inputs.pjson)) {
       await exec.exec('bunx', ['--bun', '--package', 'bundle-dependencies@1.0.2', 'bundle-dependencies', 'update']);
       await exec.exec('bunx', ['--bun', '--package', 'bundle-dependencies@1.0.2', 'bundle-dependencies', 'list-bundled-dependencies']);
-    }
-
-    // lets also add the "dist" information, this key is required if you want the plugin to be updateable
-    // via lando update
-    //
-    // this also happens after sync and  SHOULD NOT EVER be added manually to your package.json
-    if (inputs.landoPlugin) {
-      const pjson = jsonfile.readFileSync(inputs.pjson);
-
-      // onyl add information if dist isnt already in there
-      if (!pjson.dist) {
-        try {
-          const filename = getStdOut('bun pm pack --dry-run --ignore-scripts --quiet');
-          const info = getStdOut('bun pm pack --dry-run --ignore-scripts');
-          const fileCount = Number(info.match(/Total files:\s*(\d+)/)?.[1]);
-          const unpackedSize = parseHumanSizeToBytes(info.match(/Unpacked size:\s*([^\r\n]+)/)?.[1]);
-
-          pjson.dist = {filename};
-          if (!Number.isNaN(fileCount)) pjson.dist.fileCount = fileCount;
-          if (typeof unpackedSize === 'number') pjson.dist.unpackedSize = unpackedSize;
-        } catch (error) {
-          core.warning(`error getting dist information, not fatal, setting dist to ${inputs.version} instead`);
-          core.debug(error);
-          pjson.dist = inputs.version;
-        }
-
-        // write and debug
-        jsonfile.writeFileSync(inputs.pjson, pjson, {spaces: 2});
-        core.debug(`added dist info to pjson`);
-        core.debug(jsonfile.readFileSync(inputs.pjson));
-      }
     }
 
     // show all changes
