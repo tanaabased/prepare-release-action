@@ -212,8 +212,8 @@ describe('utils/create-verified-sync-commit', () => {
         expectedHeadOid: 'parent-sha',
         fileChanges: {
           additions: [
-            {path: 'notes.txt', contents: 'hello world'},
-            {path: 'scripts/run.sh', contents: '#!/bin/sh\necho hi\n'},
+            {path: 'notes.txt', contents: Buffer.from('hello world', 'utf-8').toString('base64')},
+            {path: 'scripts/run.sh', contents: Buffer.from('#!/bin/sh\necho hi\n', 'utf-8').toString('base64')},
           ],
           deletions: [
             {path: 'removed.txt'},

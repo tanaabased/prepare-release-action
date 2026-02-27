@@ -8532,9 +8532,11 @@ var create_verified_sync_commit_default = async (inputs, dependencies = {}) => {
     if (stats.isSymbolicLink()) {
       throw new Error(`sync-verified does not support symlink changes via createCommitOnBranch: ${filePath}`);
     }
+    const rawContents = fsClient.readFileSync(absolutePath);
+    const normalizedContents = Buffer.isBuffer(rawContents) ? rawContents : Buffer.from(String(rawContents), "utf-8");
     additions.push({
       path: filePath,
-      contents: fsClient.readFileSync(absolutePath, { encoding: "utf-8" })
+      contents: normalizedContents.toString("base64")
     });
   }
   if (additions.length === 0 && deletions.length === 0) {
@@ -8778,5 +8780,5 @@ var main = async () => {
 };
 main();
 
-//# debugId=427E54C8A703B9E964756E2164756E21
+//# debugId=537A22F1C65336A464756E2164756E21
 //# sourceMappingURL=index.js.map

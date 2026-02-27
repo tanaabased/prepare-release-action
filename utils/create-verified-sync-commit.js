@@ -55,9 +55,14 @@ export default async (inputs, dependencies = {}) => {
       throw new Error(`sync-verified does not support symlink changes via createCommitOnBranch: ${filePath}`);
     }
 
+    const rawContents = fsClient.readFileSync(absolutePath);
+    const normalizedContents = Buffer.isBuffer(rawContents)
+      ? rawContents
+      : Buffer.from(String(rawContents), 'utf-8');
+
     additions.push({
       path: filePath,
-      contents: fsClient.readFileSync(absolutePath, {encoding: 'utf-8'}),
+      contents: normalizedContents.toString('base64'),
     });
   }
 
