@@ -16,9 +16,10 @@ jobs:
           - false
 
     steps:
-      # Install deps and cache
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - name: Install bun
         uses: oven-sh/setup-bun@v2
         with:
