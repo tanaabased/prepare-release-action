@@ -40,7 +40,7 @@ jobs:
       - name: Prepare release
         uses: ./
         with:
-          version: dev
+          version: ${{ env.VERSION }}
           commands: |
             touch riker
             touch picard
