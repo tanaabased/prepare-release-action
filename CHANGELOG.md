@@ -1,7 +1,10 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
+- Added a `sync-verified` input to optionally create sync commits through GitHub with verified signatures. [#6](https://github.com/tanaabased/prepare-release-action/pull/6)
 - Removed the `lando-plugin` input and deleted Lando-specific release logic, helpers, and tests. [#5](https://github.com/tanaabased/prepare-release-action/pull/5)
 - Removed the unused `@actions/github` dependency after eliminating release-context handling. [#5](https://github.com/tanaabased/prepare-release-action/pull/5)
+- Switched verified sync commit creation to GraphQL `createCommitOnBranch` with base64-encoded file additions. [#6](https://github.com/tanaabased/prepare-release-action/pull/6)
+- Updated sync test workflows to validate unsigned (`sync-test`) and verified (`sync-test-verified`) branch flows. [#6](https://github.com/tanaabased/prepare-release-action/pull/6)
 - Updated workflows and documentation to drop `lando-plugin` usage and examples. [#5](https://github.com/tanaabased/prepare-release-action/pull/5)
 
 ## v1.0.0 - [February 26, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.0.0)

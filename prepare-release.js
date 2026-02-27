@@ -8,6 +8,7 @@ import jsonfile from 'jsonfile';
 import semverClean from 'semver/functions/clean.js';
 import semverValid from 'semver/functions/valid.js';
 import set from 'lodash.set';
+import createVerifiedSyncCommit from './utils/create-verified-sync-commit.js';
 
 import getInputs from './utils/get-inputs.js';
 import getStdOut from './utils/get-stdout.js';
@@ -120,14 +121,26 @@ const main = async () => {
       core.debug(`---`);
     }
 
-    // bump version AND commit everything changed
-    const bumpArgs = inputs.sync
+    const useVerifiedSync = inputs.sync && inputs.syncVerified;
+
+    if (inputs.syncVerified && !inputs.sync) {
+      core.warning('sync-verified=true has no effect when sync=false');
+    }
+
+    // bump version, and commit changes only if we are in git-sync mode
+    const bumpArgs = (inputs.sync && !inputs.syncVerified)
       ? [inputs.version, '--commit', inputs.syncMessage, '--all']
       : [inputs.version];
     await exec.exec('bunx', ['--bun', '--package', 'version-bump-prompt@6.1.0', 'bump', ...bumpArgs]);
 
+    let currentCommit = getStdOut('git --no-pager log --pretty=format:%h -n 1');
+    if (useVerifiedSync) {
+      currentCommit = await createVerifiedSyncCommit(inputs);
+      await exec.exec('git', ['fetch', '--no-tags', 'origin', inputs.syncBranch]);
+      await exec.exec('git', ['checkout', '--force', currentCommit]);
+    }
+
     // get helpful stuff, for some reasons windows interprets the format wrapping quptes literally?
-    const currentCommit = getStdOut('git --no-pager log --pretty=format:%h -n 1');
     const tags = inputs.syncTags.concat([inputs.version]);
 
     // tag commits
@@ -152,7 +165,7 @@ const main = async () => {
 
       // push updates
       await exec.exec('git', ['config', '--local', 'http.https://github.com/.extraheader', authString]);
-      await exec.exec('git', ['push', 'origin', inputs.syncBranch]);
+      if (!inputs.syncVerified) await exec.exec('git', ['push', 'origin', inputs.syncBranch]);
       for (const tag of tags) await exec.exec('git', ['push', '--force', 'origin', tag]);
 
       // restore credentials if needed

@@ -7,14 +7,19 @@ jobs:
   sync-tests:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-24.04
+        signed:
+          - true
+          - false
 
     steps:
-      # Install deps and cache
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - name: Install bun
         uses: oven-sh/setup-bun@v2
         with:
@@ -25,6 +30,10 @@ jobs:
           bun run build
       - name: Export formatted release date
         run: echo "RELEASE_DATE=$(date "+%B %e, %Y" | tr -s ' ')" >> $GITHUB_ENV
+      - name: Export custom dev release version
+        run: |
+          DEV_VERSION=$(git describe --tags --always --abbrev=1 --match="v[0-9].*") && echo "$VERSION"
+          echo "VERSION=$DEV_VERSION-${{ matrix.signed && 'sync-test-verified' || 'sync-test' }}" >> $GITHUB_ENV
       - name: Checkout fresh repo for testing
         uses: actions/checkout@v6
         with:
@@ -32,7 +41,7 @@ jobs:
       - name: Prepare release
         uses: ./
         with:
-          version: dev
+          version: ${{ env.VERSION }}
           commands: |
             touch riker
             touch picard
@@ -41,14 +50,15 @@ jobs:
             bosmang=Picard
           root: ${{ github.workspace }}/test
           sync: true
-          sync-branch: sync-test
+          sync-branch: ${{ matrix.signed && 'sync-test-verified' || 'sync-test' }}
           sync-email: william.t.riker@starfleet.mil
           sync-message: riker
           sync-tags: |
-            number1
-            v99
+            number1-${{ matrix.signed }}
+            v99-${{ matrix.signed }}
           sync-token: ${{ secrets.TANAAB_COAXIUM_INJECTOR }}
           sync-username: William T. Riker
+          sync-verified: ${{ matrix.signed }}
           update-files: CHANGELOG.md
           update-files-header: |
             ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
@@ -56,6 +66,18 @@ jobs:
             UNRELEASED_DATE=${{ env.RELEASE_DATE }}
             UNRELEASED_LINK=${{ github.repositoryUrl }}
             UNRELEASED_VERSION=v${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt}}-build.${{ github.sha }}
+      - name: Verify sync commit signature state
+        env:
+          EXPECT_VERIFIED: ${{ matrix.signed }}
+          GH_TOKEN: ${{ secrets.TANAAB_COAXIUM_INJECTOR }}
+          SYNC_BRANCH: ${{ matrix.signed && 'sync-test-verified' || 'sync-test' }}
+        run: |
+          actual="$(gh api "repos/${{ github.repository }}/commits/${SYNC_BRANCH}" --jq '.commit.verification.verified')"
+          echo "expected=${EXPECT_VERIFIED} actual=${actual}"
+          if [ "${actual}" != "${EXPECT_VERIFIED}" ]; then
+            gh api "repos/${{ github.repository }}/commits/${SYNC_BRANCH}" --jq '.commit.verification'
+            exit 1
+          fi
       - name: Checkout again to validate credential restoration
         uses: actions/checkout@v6
         with:
