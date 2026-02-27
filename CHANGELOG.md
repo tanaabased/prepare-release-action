@@ -1,5 +1,7 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
+## v22492216191.21.1-build.d19537adc344bb71e7b4bf8c2e0fd96171e36cb4 - [February 27, 2026](git://github.com/tanaabased/prepare-release-action.git)
+
 ## v22491601079.20.1-build.d3aec9e62c3ff3ce9e88d20ab3bfdcdcd4c17810 - [February 27, 2026](git://github.com/tanaabased/prepare-release-action.git)
 
 - Removed the `lando-plugin` input and deleted Lando-specific release logic, helpers, and tests. [#5](https://github.com/tanaabased/prepare-release-action/pull/5)
