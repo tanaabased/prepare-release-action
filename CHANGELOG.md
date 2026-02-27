@@ -1,5 +1,7 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
+## v1.1.0 - [February 27, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.1.0)
+
 - Added a `sync-verified` input to optionally create sync commits through GitHub with verified signatures. [#6](https://github.com/tanaabased/prepare-release-action/pull/6)
 - Removed the `lando-plugin` input and deleted Lando-specific release logic, helpers, and tests. [#5](https://github.com/tanaabased/prepare-release-action/pull/5)
 - Removed the unused `@actions/github` dependency after eliminating release-context handling. [#5](https://github.com/tanaabased/prepare-release-action/pull/5)
