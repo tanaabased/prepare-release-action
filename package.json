@@ -1,6 +1,6 @@
 {
   "name": "@tanaabased/prepare-release-action",
-  "version": "1.0.0-13-gd195",
+  "version": "1.0.0-14-g92d8",
   "description": "An action that can automate release steps and sync them back to the releasing repo.",
   "type": "module",
   "main": "./dist/index.js",
