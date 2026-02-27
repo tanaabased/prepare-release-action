@@ -1,5 +1,7 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
+## v22490674695.17.1-build.a5950cd74606e54b9ee8ad542326fd40a0e69aa6 - [February 27, 2026](git://github.com/tanaabased/prepare-release-action.git)
+
 - Removed the `lando-plugin` input and deleted Lando-specific release logic, helpers, and tests. [#5](https://github.com/tanaabased/prepare-release-action/pull/5)
 - Removed the unused `@actions/github` dependency after eliminating release-context handling. [#5](https://github.com/tanaabased/prepare-release-action/pull/5)
 - Updated workflows and documentation to drop `lando-plugin` usage and examples. [#5](https://github.com/tanaabased/prepare-release-action/pull/5)

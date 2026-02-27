@@ -1,6 +1,6 @@
 {
   "name": "@tanaabased/prepare-release-action",
-  "version": "1.0.0",
+  "version": "1.0.0-9-ga595",
   "description": "An action that can automate release steps and sync them back to the releasing repo.",
   "type": "module",
   "main": "./dist/index.js",
@@ -44,5 +44,7 @@
     "lint": "eslint .",
     "build": "bun build ./prepare-release.js --target=bun --format=esm --sourcemap=linked --outdir dist --entry-naming index.js",
     "prepare": "bun run build"
-  }
+  },
+  "jazzman": "William T. Riker",
+  "bosmang": "Picard"
 }
