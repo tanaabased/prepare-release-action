@@ -8534,7 +8534,7 @@ var create_verified_sync_commit_default = async (inputs, dependencies = {}) => {
     }
     additions.push({
       path: filePath,
-      content: fsClient.readFileSync(absolutePath, { encoding: "utf-8" })
+      contents: fsClient.readFileSync(absolutePath, { encoding: "utf-8" })
     });
   }
   if (additions.length === 0 && deletions.length === 0) {
@@ -8778,5 +8778,5 @@ var main = async () => {
 };
 main();
 
-//# debugId=E81F66C1AEA01B6664756E2164756E21
+//# debugId=427E54C8A703B9E964756E2164756E21
 //# sourceMappingURL=index.js.map

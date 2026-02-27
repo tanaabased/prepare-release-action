@@ -57,7 +57,7 @@ export default async (inputs, dependencies = {}) => {
 
     additions.push({
       path: filePath,
-      content: fsClient.readFileSync(absolutePath, {encoding: 'utf-8'}),
+      contents: fsClient.readFileSync(absolutePath, {encoding: 'utf-8'}),
     });
   }
 
