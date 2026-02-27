@@ -10,6 +10,9 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
+        signed:
+          - true
+          - false
 
     steps:
       # Install deps and cache
@@ -29,6 +32,8 @@ jobs:
         uses: actions/checkout@v6
         with:
           path: test
+      - name: Create matrix sync branch
+        run: git -C test checkout -B sync-test-${{ matrix.signed }}
       - name: Prepare release
         uses: ./
         with:
@@ -41,14 +46,15 @@ jobs:
             bosmang=Picard
           root: ${{ github.workspace }}/test
           sync: true
-          sync-branch: sync-test
+          sync-branch: sync-test-${{ matrix.signed }}
           sync-email: william.t.riker@starfleet.mil
           sync-message: riker
           sync-tags: |
-            number1
-            v99
+            number1-${{ matrix.signed }}
+            v99-${{ matrix.signed }}
           sync-token: ${{ secrets.TANAAB_COAXIUM_INJECTOR }}
           sync-username: William T. Riker
+          sync-verified: ${{ matrix.signed }}
           update-files: CHANGELOG.md
           update-files-header: |
             ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
@@ -56,6 +62,18 @@ jobs:
             UNRELEASED_DATE=${{ env.RELEASE_DATE }}
             UNRELEASED_LINK=${{ github.repositoryUrl }}
             UNRELEASED_VERSION=v${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt}}-build.${{ github.sha }}
+      - name: Verify sync commit signature state
+        env:
+          EXPECT_VERIFIED: ${{ matrix.signed }}
+          GH_TOKEN: ${{ secrets.TANAAB_COAXIUM_INJECTOR }}
+          SYNC_BRANCH: sync-test-${{ matrix.signed }}
+        run: |
+          actual="$(gh api "repos/${{ github.repository }}/commits/${SYNC_BRANCH}" --jq '.commit.verification.verified')"
+          echo "expected=${EXPECT_VERIFIED} actual=${actual}"
+          if [ "${actual}" != "${EXPECT_VERIFIED}" ]; then
+            gh api "repos/${{ github.repository }}/commits/${SYNC_BRANCH}" --jq '.commit.verification'
+            exit 1
+          fi
       - name: Checkout again to validate credential restoration
         uses: actions/checkout@v6
         with:
