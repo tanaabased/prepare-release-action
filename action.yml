@@ -42,6 +42,10 @@ inputs:
     description: "The email to use when syncing changes back to the repo."
     required: false
     default: "41898282+github-actions[bot]@users.noreply.github.com"
+  sync-verified:
+    description: "Use GitHub REST API commit flow when syncing to create GitHub-verified bot commits."
+    required: false
+    default: false
   sync-message:
     description: "The commit message to use when syncing changes back to the repo."
     required: false
@@ -89,6 +93,7 @@ runs:
         INPUT_SYNC: ${{ inputs.sync }}
         INPUT_SYNC-BRANCH: ${{ inputs.sync-branch }}
         INPUT_SYNC-EMAIL: ${{ inputs.sync-email }}
+        INPUT_SYNC-VERIFIED: ${{ inputs.sync-verified }}
         INPUT_SYNC-MESSAGE: ${{ inputs.sync-message }}
         INPUT_SYNC-TAGS: ${{ inputs.sync-tags }}
         INPUT_SYNC-TOKEN: ${{ inputs.sync-token }}
