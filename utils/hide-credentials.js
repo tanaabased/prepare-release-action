@@ -18,7 +18,9 @@ export default async (collector = []) => {
         const backup = `${src}.bak`;
         await fs.promises.rename(src, backup);
         collector.push(backup);
-        core.info(`Temporarily hiding actions/checkout credential file ${file} in favor of our auth`);
+        core.info(
+          `Temporarily hiding actions/checkout credential file ${file} in favor of our auth`,
+        );
       }
     }
   } catch (e) {

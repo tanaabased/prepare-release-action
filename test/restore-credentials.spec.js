@@ -20,10 +20,10 @@ describe('utils/restore-credentials', () => {
     warningMessages = [];
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'restore-credentials-'));
 
-    core.info = message => {
+    core.info = (message) => {
       infoMessages.push(message);
     };
-    core.warning = message => {
+    core.warning = (message) => {
       warningMessages.push(message);
     };
   });
@@ -31,7 +31,7 @@ describe('utils/restore-credentials', () => {
   afterEach(() => {
     core.info = originalInfo;
     core.warning = originalWarning;
-    fs.rmSync(tempDir, {recursive: true, force: true});
+    fs.rmSync(tempDir, { recursive: true, force: true });
   });
 
   it('should restore credential backup files', async () => {

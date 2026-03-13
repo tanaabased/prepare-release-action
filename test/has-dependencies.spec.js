@@ -18,11 +18,11 @@ describe('utils/has-dependencies', () => {
   afterEach(() => {
     core.info = originalInfo;
     for (const dir of tempDirs.splice(0, tempDirs.length)) {
-      fs.rmSync(dir, {recursive: true, force: true});
+      fs.rmSync(dir, { recursive: true, force: true });
     }
   });
 
-  const writePackageJson = content => {
+  const writePackageJson = (content) => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'has-dependencies-'));
     const file = path.join(dir, 'package.json');
     tempDirs.push(dir);
@@ -31,7 +31,7 @@ describe('utils/has-dependencies', () => {
   };
 
   it('should return true when dependencies exist', () => {
-    const file = writePackageJson({dependencies: {mocha: '^11.0.0'}});
+    const file = writePackageJson({ dependencies: { mocha: '^11.0.0' } });
     let infoCount = 0;
     core.info = () => {
       infoCount += 1;
@@ -44,9 +44,9 @@ describe('utils/has-dependencies', () => {
   });
 
   it('should return false and log when dependencies are missing', () => {
-    const file = writePackageJson({name: 'example'});
+    const file = writePackageJson({ name: 'example' });
     const messages = [];
-    core.info = message => {
+    core.info = (message) => {
       messages.push(message);
     };
 
@@ -58,9 +58,9 @@ describe('utils/has-dependencies', () => {
   });
 
   it('should return false and log when dependencies are empty', () => {
-    const file = writePackageJson({dependencies: {}});
+    const file = writePackageJson({ dependencies: {} });
     const messages = [];
-    core.info = message => {
+    core.info = (message) => {
       messages.push(message);
     };
 

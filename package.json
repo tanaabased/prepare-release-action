@@ -33,15 +33,19 @@
     "semver": "^7.5.1"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.16.0",
+    "@eslint/js": "^10.0.1",
     "c8": "^11.0.0",
-    "eslint": "^7.32.0",
-    "eslint-config-google": "^0.9.1",
-    "mocha": "^11.7.5"
+    "eslint": "^10.0.3",
+    "eslint-config-prettier": "^10.1.1",
+    "globals": "^17.4.0",
+    "mocha": "^11.7.5",
+    "prettier": "^3.5.3"
   },
   "scripts": {
     "test": "c8 --all --include \"utils/*.js\" --reporter=text --check-coverage --per-file --lines 80 mocha \"test/**/*.spec.js\"",
-    "lint": "eslint .",
+    "lint": "eslint . --format json",
+    "format:check": "prettier . --check --ignore-unknown",
+    "format:write": "prettier . --write --ignore-unknown",
     "build": "bun build ./prepare-release.js --target=bun --format=esm --sourcemap=linked --outdir dist --entry-naming index.js",
     "prepare": "bun run build"
   }
