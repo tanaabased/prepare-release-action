@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 const cliPath = path.resolve('bin/version-injector.js');
+const ansiPattern = new RegExp(String.raw`\u001B\[[0-9;]*m`, 'g');
 const scriptVersion = execFileSync('git', ['describe', '--tags', '--always', '--abbrev=1'], {
   encoding: 'utf8',
 }).trim();
@@ -33,16 +34,17 @@ describe('bin/version-injector', () => {
 
   it('should print help text', () => {
     const result = runCli(['--help']);
+    const output = result.stdout.replaceAll(ansiPattern, '');
 
     assert.equal(result.status, 0);
-    assert.match(result.stdout, /Usage:/);
-    assert.match(result.stdout, /Inject a version assignment/);
-    assert.match(result.stdout, /Options:/);
-    assert.match(result.stdout, /Environment Variables:/);
-    assert.match(result.stdout, /--style <js\|sh\|ps1>/);
-    assert.match(result.stdout, /--debug/);
-    assert.match(result.stdout, /--insert <position>/);
-    assert.match(result.stdout, /VERSION_INJECTOR_VERSION/);
+    assert.match(output, /Usage:/);
+    assert.match(output, /Inject a version assignment/);
+    assert.match(output, /Options:/);
+    assert.match(output, /Environment Variables:/);
+    assert.match(output, /--style <js\|sh\|ps1>/);
+    assert.match(output, /--debug/);
+    assert.match(output, /--insert <position>/);
+    assert.match(output, /VERSION_INJECTOR_VERSION/);
   });
 
   it('should print the resolved script version when called with bare --version', () => {

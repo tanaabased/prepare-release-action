@@ -29,11 +29,7 @@ jobs:
           version: v7.8.9
           sync: false
           commands: |
-            bun -e 'await Bun.write("vi-js-target.js", "\"use strict\";\n\nlet SCRIPT_VERSION;\n")'
-            bun -e 'await Bun.write("vi-sh-target.sh", "#!/usr/bin/env bash\nset -euo pipefail\n")'
-            bun -e 'await Bun.write("vi-ps1-target.ps1", "$SCRIPT_VERSION = $null\nWrite-Host hello\n")'
-            bun -e 'await Bun.write("vi-env-target.js", "let BUILD_VERSION;\n")'
-            bun -e 'await Bun.write("vi-dry-run.js", "let SCRIPT_VERSION;\n")'
+            bun ./scripts/create-version-injector-fixtures.js
             version-injector vi-js-target.js --style js --version v7.8.9
             version-injector vi-js-target.js --style js --version v7.8.9 --check
             version-injector vi-sh-target.sh --style sh --version v7.8.9 --insert after-shebang
