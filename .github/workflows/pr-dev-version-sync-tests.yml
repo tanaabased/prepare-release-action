@@ -25,6 +25,12 @@ jobs:
         run: |
           bun install --frozen-lockfile --ignore-scripts
           bun run build
+      - name: Normalize git history for dev version
+        run: |
+          if [ "$(git rev-parse --is-shallow-repository)" = 'true' ]; then
+            git fetch --unshallow
+            git fetch --all
+          fi
       - name: Export expected dev version
         run: echo "VERSION=$(git describe --tags --always --abbrev=1 --match='v[0-9].*')" >> $GITHUB_ENV
       - name: Prepare release

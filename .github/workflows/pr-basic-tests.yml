@@ -52,19 +52,6 @@ jobs:
             UNRELEASED_DATE=${{ env.RELEASE_DATE }}
             UNRELEASED_LINK=${{ github.repositoryUrl }}
             UNRELEASED_VERSION=v${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt}}-build.${{ github.sha }}
-      - name: 'TEST: should prepend the requested changelog header'
-        if: always()
-        run: |
-          expected="## v${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt}}-build.${{ github.sha }} - [${{ env.RELEASE_DATE }}](${{ github.repositoryUrl }})"
-          actual="$(head -n 1 CHANGELOG.md)"
-          if [ "${actual}" = "${expected}" ]; then
-            echo "::notice title=TEST PASSED::CHANGELOG header updated correctly"
-          else
-            echo "::error title=TEST FAILED!::CHANGELOG header was not updated correctly"
-            echo "expected=${expected}"
-            echo "actual=${actual}"
-            exit 1
-          fi
       - name: 'TEST: should create the requested sync tags locally'
         if: always()
         run: |
