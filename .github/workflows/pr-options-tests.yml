@@ -32,6 +32,8 @@ jobs:
         with:
           version: v5.0.0
           commands: |
+            bun -e "await Bun.write('version-target.js', 'let SCRIPT_VERSION;\n')"
+            version-injector version-target.js --style js --version v5.0.0
             touch riker
             touch picard
           meta: |
@@ -96,6 +98,17 @@ jobs:
           else
             echo "::error title=TEST FAILED!::Commands did not run successfully"
             exit 3
+          fi
+        shell: bash
+
+      - name: 'TEST: should run version-injector successfully'
+        if: always()
+        run: |
+          if grep "const SCRIPT_VERSION = 'v5.0.0';" version-target.js; then
+            echo "::notice title=TEST PASSED::version-injector updated the target file"
+          else
+            echo "::error title=TEST FAILED!::version-injector did not update the target file"
+            exit 5
           fi
         shell: bash
 

@@ -1,6 +1,7 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
 - Updated repository tooling, workflows, packaging, and documentation to align with Tanaab coding guidance.
+- Added a bundled `version-injector` CLI for `js`, `sh`, and `ps1` `SCRIPT_VERSION` injection and exposed `dist/version-injector` on `PATH` for `commands`.
 
 ## v1.1.1 - [February 27, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.1.1)
 

@@ -85,6 +85,9 @@ runs:
       uses: oven-sh/setup-bun@v2
       with:
         bun-version: ${{ inputs.bun-version }}
+    - name: Expose version-injector on PATH
+      shell: bash
+      run: echo "${{ github.action_path }}/dist" >> "$GITHUB_PATH"
     - name: Run Prepare Release
       shell: bash
       env:
