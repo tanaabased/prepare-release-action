@@ -1,0 +1,131 @@
+name: Version Injector Tests
+
+on:
+  pull_request:
+
+jobs:
+  version-injector-test:
+    runs-on: ubuntu-24.04
+    env:
+      term: xterm
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+
+      - name: Install deps and prep
+        run: |
+          bun install --frozen-lockfile --ignore-scripts
+          bun run build
+
+      - name: Prepare release
+        uses: ./
+        with:
+          version: v7.8.9
+          sync: false
+          commands: |
+            bun ./scripts/create-version-injector-fixtures.js
+            version-injector vi-js-target.js --style js --version v7.8.9
+            version-injector vi-js-target.js --style js --version v7.8.9 --check
+            version-injector vi-sh-target.sh --style sh --version v7.8.9 --insert after-shebang
+            version-injector vi-ps1-target.ps1 --style ps1 --version v7.8.9
+            env VERSION_INJECTOR_NAME=BUILD_VERSION VERSION_INJECTOR_STYLE=js VERSION_INJECTOR_VERSION=v7.8.9 version-injector vi-env-target.js
+            version-injector vi-dry-run.js --style js --version v7.8.9 --dry-run
+            version-injector dist/index.js --style js --version v7.8.9
+            version-injector dist/version-injector.js --style js --version v7.8.9
+
+      - name: 'TEST: should update a javascript target file'
+        if: always()
+        run: |
+          if grep "const SCRIPT_VERSION = 'v7.8.9';" vi-js-target.js; then
+            echo "::notice title=TEST PASSED::JavaScript target updated correctly"
+          else
+            echo "::error title=TEST FAILED!::JavaScript target was not updated correctly"
+            exit 1
+          fi
+        shell: bash
+
+      - name: 'TEST: should insert a shell version after the shebang'
+        if: always()
+        run: |
+          first_line="$(sed -n '1p' vi-sh-target.sh)"
+          second_line="$(sed -n '2p' vi-sh-target.sh)"
+
+          if [ "$first_line" = '#!/usr/bin/env bash' ] && [ "$second_line" = 'SCRIPT_VERSION="v7.8.9"' ]; then
+            echo "::notice title=TEST PASSED::Shell target updated correctly"
+          else
+            echo "::error title=TEST FAILED!::Shell target was not updated correctly"
+            exit 2
+          fi
+        shell: bash
+
+      - name: 'TEST: should update a powershell target file'
+        if: always()
+        run: |
+          if grep '^\$SCRIPT_VERSION = "v7.8.9"$' vi-ps1-target.ps1; then
+            echo "::notice title=TEST PASSED::PowerShell target updated correctly"
+          else
+            echo "::error title=TEST FAILED!::PowerShell target was not updated correctly"
+            exit 3
+          fi
+        shell: bash
+
+      - name: 'TEST: should honor environment variable defaults'
+        if: always()
+        run: |
+          if grep "const BUILD_VERSION = 'v7.8.9';" vi-env-target.js; then
+            echo "::notice title=TEST PASSED::Environment defaults updated the target correctly"
+          else
+            echo "::error title=TEST FAILED!::Environment defaults did not update the target correctly"
+            exit 4
+          fi
+        shell: bash
+
+      - name: 'TEST: should not write files during dry runs'
+        if: always()
+        run: |
+          if grep '^let SCRIPT_VERSION;$' vi-dry-run.js; then
+            echo "::notice title=TEST PASSED::Dry run left the target unchanged"
+          else
+            echo "::error title=TEST FAILED!::Dry run modified the target"
+            exit 5
+          fi
+        shell: bash
+
+      - name: 'TEST: should stamp the built action bundle'
+        if: always()
+        run: |
+          if grep "const SCRIPT_VERSION = 'v7.8.9';" dist/index.js; then
+            echo "::notice title=TEST PASSED::Built action bundle stamped correctly"
+          else
+            echo "::error title=TEST FAILED!::Built action bundle was not stamped correctly"
+            exit 6
+          fi
+        shell: bash
+
+      - name: 'TEST: should stamp the built version-injector bundle'
+        if: always()
+        run: |
+          if grep "const SCRIPT_VERSION = 'v7.8.9';" dist/version-injector.js; then
+            echo "::notice title=TEST PASSED::Built version-injector bundle stamped correctly"
+          else
+            echo "::error title=TEST FAILED!::Built version-injector bundle was not stamped correctly"
+            exit 7
+          fi
+        shell: bash
+
+      - name: 'TEST: should print the stamped bundled CLI version'
+        if: always()
+        run: |
+          if [ "$(./dist/version-injector --version)" = 'v7.8.9' ]; then
+            echo "::notice title=TEST PASSED::Bundled CLI prints the stamped version"
+          else
+            echo "::error title=TEST FAILED!::Bundled CLI did not print the stamped version"
+            exit 8
+          fi
+        shell: bash

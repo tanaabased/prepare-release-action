@@ -4,6 +4,9 @@
   "description": "An action that can automate release steps and sync them back to the releasing repo.",
   "type": "module",
   "main": "./dist/index.js",
+  "bin": {
+    "version-injector": "./dist/version-injector"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -34,19 +37,22 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "ansis": "^4.2.0",
     "c8": "^11.0.0",
+    "debug": "^4.4.3",
     "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.1",
     "globals": "^17.4.0",
     "mocha": "^11.7.5",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "yargs-parser": "21.1.1"
   },
   "scripts": {
-    "test": "c8 --all --include \"utils/*.js\" --reporter=text --check-coverage --per-file --lines 80 mocha \"test/**/*.spec.js\"",
+    "test": "c8 --all --include \"utils/*.js\" --include \"bin/*.js\" --reporter=text --check-coverage --per-file --lines 80 mocha \"test/**/*.spec.js\"",
     "lint": "eslint . --format json",
     "format:check": "prettier . --check --ignore-unknown",
     "format:write": "prettier . --write --ignore-unknown",
-    "build": "bun build ./prepare-release.js --target=bun --format=esm --sourcemap=linked --outdir dist --entry-naming index.js",
+    "build": "bun ./scripts/build.js",
     "prepare": "bun run build"
   }
 }

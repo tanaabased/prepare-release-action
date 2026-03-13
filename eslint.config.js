@@ -27,7 +27,10 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      globals: globals.node,
+      globals: {
+        ...globals.node,
+        Bun: 'readonly',
+      },
     },
     rules: {
       'no-console': 'warn',

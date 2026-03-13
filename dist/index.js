@@ -8584,6 +8584,16 @@ var create_verified_sync_commit_default = async (inputs, dependencies = {}) => {
   return commitSha;
 };
 
+// utils/get-script-version.js
+import { execSync as execSync2 } from "child_process";
+var get_script_version_default = () => {
+  const output = execSync2("git describe --tags --always --abbrev=1", {
+    maxBuffer: 1024 * 1024 * 10,
+    encoding: "utf-8"
+  });
+  return typeof output === "string" ? output.trim() : "unknown";
+};
+
 // utils/get-inputs.js
 var import_core2 = __toESM(require_core(), 1);
 var defaultSyncBranch = "main";
@@ -8672,8 +8682,13 @@ var restore_credentials_default = async (files = []) => {
 };
 
 // prepare-release.js
+var SCRIPT_VERSION;
+if (!SCRIPT_VERSION) {
+  SCRIPT_VERSION = get_script_version_default();
+}
 var main = async () => {
   const inputs = get_inputs_default();
+  import_core6.default.debug(`running prepare-release.js script version: ${SCRIPT_VERSION}`);
   process.chdir(inputs.root);
   inputs.pjson = path4.join(inputs.root, "package.json");
   try {
@@ -8815,5 +8830,5 @@ var main = async () => {
 };
 main();
 
-//# debugId=13C9E6A1F5E73FEE64756E2164756E21
+//# debugId=3DE7F0B3AD37DFE564756E2164756E21
 //# sourceMappingURL=index.js.map

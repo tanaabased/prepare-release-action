@@ -10,7 +10,7 @@ All inputs are optional however if you are **NOT** triggering this action on a `
 | --------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
 | `version`             | The version of the thing to be released. Must be a semver valid string.                                | `${{ github.event.release.tag_name }}`                                                                      | `v3.14.0`                                          |
 | `bundle-dependencies` | A toggle to autoset `bundleDependencies` in `package.json`.                                            | `false`                                                                                                     | `true`                                             |
-| `commands`            | A list of commands to run to prepare the release.                                                      | `[]`                                                                                                        | `bun run build`                                    |
+| `commands`            | A list of commands to run to prepare the release.                                                      | `[]`                                                                                                        | `version-injector --help`                          |
 | `meta`                | A list of `path=value` strings to merge into the `package.json`                                        | `null`                                                                                                      | `dist=thing`                                       |
 | `root`                | The location of the code being prepared for release.                                                   | `${{ github.workspace }}`                                                                                   | `/path/to/my/project`                              |
 | `bun-version`         | An optional Bun version override for this action run.                                                  | action repo `.bun-version`                                                                                  | `1.3.4`                                            |
@@ -46,8 +46,27 @@ update-files-header: |
 
 update-files-meta: |
   UNRELEASED_DATE=May 4, 3000
-  UNRELEASED_LINK=${{ github.repositoryUrl }}
+UNRELEASED_LINK=${{ github.repositoryUrl }}
   UNRELEASED_VERSION=v${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt}}-build.${{ github.sha }}
+```
+
+You can use our `version-injector` helper in `commands` if you want to inject/replace/prepend additional version information into any files.
+
+```text
+Usage: [VERSION_INJECTOR=...] version-injector <file> --style <js|sh|ps1> --version <value> [options]
+
+Inject a version assignment into a JavaScript, shell, or PowerShell file.
+
+Options:
+  --check              exits non-zero when the file is not already up to date.
+  --dry-run            reports the planned change without writing the file.
+  --insert <position>  inserts a new assignment with after-shebang, top, or bottom.
+  --name <var>         sets the variable name to update [default: SCRIPT_VERSION]
+  --style <js|sh|ps1>  controls how the assignment line is matched and rendered.
+  --version <value>    sets the version string to write into the file.
+  --debug              shows debug output [default: off]
+  -h, --help           shows this help output.
+  --version            shows the CLI version.
 ```
 
 ## Permissions
@@ -90,6 +109,8 @@ steps:
   with:
     commands: |
       bun run build
+      version-injector dist/index.js --style js --version "${{ github.ref_name }}"
+      version-injector dist/version-injector.js --style js --version "${{ github.ref_name }}"
     sync-tags: v3
 ```
 

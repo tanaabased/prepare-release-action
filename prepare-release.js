@@ -10,6 +10,7 @@ import semverValid from 'semver/functions/valid.js';
 import set from 'lodash.set';
 import createVerifiedSyncCommit from './utils/create-verified-sync-commit.js';
 
+import getScriptVersion from './utils/get-script-version.js';
 import getInputs from './utils/get-inputs.js';
 import getStdOut from './utils/get-stdout.js';
 import hasDependencies from './utils/has-dependencies.js';
@@ -17,9 +18,17 @@ import hideCredentialFiles from './utils/hide-credentials.js';
 import parseTokens from './utils/parse-tokens.js';
 import restoreCredentialFiles from './utils/restore-credentials.js';
 
+let SCRIPT_VERSION;
+
+if (!SCRIPT_VERSION) {
+  SCRIPT_VERSION = getScriptVersion();
+}
+
 const main = async () => {
   // start by getting the inputs
   const inputs = getInputs();
+
+  core.debug(`running prepare-release.js script version: ${SCRIPT_VERSION}`);
 
   // switch cwd to inputs.root
   process.chdir(inputs.root);
