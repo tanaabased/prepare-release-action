@@ -21,10 +21,10 @@ describe('utils/hide-credentials', () => {
     infoMessages = [];
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hide-credentials-'));
 
-    core.debug = message => {
+    core.debug = (message) => {
       debugMessages.push(message);
     };
-    core.info = message => {
+    core.info = (message) => {
       infoMessages.push(message);
     };
   });
@@ -39,7 +39,7 @@ describe('utils/hide-credentials', () => {
       process.env.RUNNER_TEMP = originalRunnerTemp;
     }
 
-    fs.rmSync(tempDir, {recursive: true, force: true});
+    fs.rmSync(tempDir, { recursive: true, force: true });
   });
 
   it('should return collector unchanged when RUNNER_TEMP is missing', async () => {

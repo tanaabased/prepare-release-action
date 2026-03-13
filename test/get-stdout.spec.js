@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import childProcess from 'node:child_process';
-import {syncBuiltinESMExports} from 'node:module';
+import { syncBuiltinESMExports } from 'node:module';
 
 import getStdout from '../utils/get-stdout.js';
 
@@ -21,7 +21,9 @@ describe('utils/get-stdout', () => {
     syncBuiltinESMExports();
 
     try {
-      const {default: getStdoutWithBuffer} = await import(`../utils/get-stdout.js?buffer=${Date.now()}`);
+      const { default: getStdoutWithBuffer } = await import(
+        `../utils/get-stdout.js?buffer=${Date.now()}`
+      );
       const result = getStdoutWithBuffer('ignored');
 
       assert.equal(Buffer.isBuffer(result), true);

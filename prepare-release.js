@@ -43,15 +43,22 @@ const main = async () => {
     // validate that we have a version
     if (!inputs.version) throw new Error('Version is a required input!');
     // if version is dev then attempt to describe tag/version
-    if (inputs.version === 'dev') inputs.version = getStdOut(`git describe --tags --always --abbrev=1 --match="${inputs.versionMatch}"`);
+    if (inputs.version === 'dev')
+      inputs.version = getStdOut(
+        `git describe --tags --always --abbrev=1 --match="${inputs.versionMatch}"`,
+      );
     // and that it is semantically valid
-    if (semverValid(semverClean(inputs.version)) === null) throw new Error(`Version ${inputs.version} must be semver valid!`);
+    if (semverValid(semverClean(inputs.version)) === null)
+      throw new Error(`Version ${inputs.version} must be semver valid!`);
     // and that we have a package.json
-    if (!fs.existsSync(inputs.pjson)) throw new Error(`Could not detect a package.json in ${inputs.root}`);
+    if (!fs.existsSync(inputs.pjson))
+      throw new Error(`Could not detect a package.json in ${inputs.root}`);
 
     // normalize updatefile paths
     for (const [index, filename] of inputs.updateFiles.entries()) {
-      inputs.updateFiles[index] = path.isAbsolute(filename) ? filename : path.resolve(inputs.root, filename);
+      inputs.updateFiles[index] = path.isAbsolute(filename)
+        ? filename
+        : path.resolve(inputs.root, filename);
     }
 
     // ensure bun is available before we run any bunx commands
@@ -77,7 +84,7 @@ const main = async () => {
       const pjson = jsonfile.readFileSync(inputs.pjson);
 
       // go through meta and update package.json
-      inputs.meta.forEach(line => {
+      inputs.meta.forEach((line) => {
         if (Array.isArray(line)) set(pjson, line[0], line[1]);
         else if (typeof line === 'string') {
           const key = line.split('=')[0];
@@ -87,15 +94,15 @@ const main = async () => {
       });
 
       // write and debug
-      jsonfile.writeFileSync(inputs.pjson, pjson, {spaces: 2});
+      jsonfile.writeFileSync(inputs.pjson, pjson, { spaces: 2 });
       core.debug(`updated pjson`);
       core.debug(jsonfile.readFileSync(inputs.pjson));
     }
 
     // loop through and update-files with tokens and headers
-    for (const file of inputs.updateFiles.filter(file => fs.existsSync(file))) {
+    for (const file of inputs.updateFiles.filter((file) => fs.existsSync(file))) {
       // get content
-      let content = fs.readFileSync(file, {encoding: 'utf-8'});
+      let content = fs.readFileSync(file, { encoding: 'utf-8' });
 
       // update its tokens
       core.startGroup(`Updating ${file} with update-files-meta tokens`);
@@ -117,7 +124,7 @@ const main = async () => {
       fs.writeFileSync(file, content);
       core.debug(`updated ${file}:`);
       core.debug(`---`);
-      core.debug(`${fs.readFileSync(file, {encoding: 'utf-8'})}`);
+      core.debug(`${fs.readFileSync(file, { encoding: 'utf-8' })}`);
       core.debug(`---`);
     }
 
@@ -128,10 +135,17 @@ const main = async () => {
     }
 
     // bump version, and commit changes only if we are in git-sync mode
-    const bumpArgs = (inputs.sync && !inputs.syncVerified)
-      ? [inputs.version, '--commit', inputs.syncMessage, '--all']
-      : [inputs.version];
-    await exec.exec('bunx', ['--bun', '--package', 'version-bump-prompt@6.1.0', 'bump', ...bumpArgs]);
+    const bumpArgs =
+      inputs.sync && !inputs.syncVerified
+        ? [inputs.version, '--commit', inputs.syncMessage, '--all']
+        : [inputs.version];
+    await exec.exec('bunx', [
+      '--bun',
+      '--package',
+      'version-bump-prompt@6.1.0',
+      'bump',
+      ...bumpArgs,
+    ]);
 
     let currentCommit = getStdOut('git --no-pager log --pretty=format:%h -n 1');
     if (useVerifiedSync) {
@@ -159,12 +173,19 @@ const main = async () => {
       inputs.credFiles = await hideCredentialFiles();
 
       // construct auth string
-      const basicCredential = Buffer.from(`x-access-token:${inputs.syncToken}`, 'utf8').toString('base64');
+      const basicCredential = Buffer.from(`x-access-token:${inputs.syncToken}`, 'utf8').toString(
+        'base64',
+      );
       const authString = `AUTHORIZATION: basic ${basicCredential}`;
       core.setSecret(basicCredential);
 
       // push updates
-      await exec.exec('git', ['config', '--local', 'http.https://github.com/.extraheader', authString]);
+      await exec.exec('git', [
+        'config',
+        '--local',
+        'http.https://github.com/.extraheader',
+        authString,
+      ]);
       if (!inputs.syncVerified) await exec.exec('git', ['push', 'origin', inputs.syncBranch]);
       for (const tag of tags) await exec.exec('git', ['push', '--force', 'origin', tag]);
 
@@ -179,8 +200,20 @@ const main = async () => {
     // this happens AFTER sync because we ASSUME you do not have your node_modules checks into your repo
     // and if you do then this should be in your package.json already
     if (inputs.bundleDependencies && hasDependencies(inputs.pjson)) {
-      await exec.exec('bunx', ['--bun', '--package', 'bundle-dependencies@1.0.2', 'bundle-dependencies', 'update']);
-      await exec.exec('bunx', ['--bun', '--package', 'bundle-dependencies@1.0.2', 'bundle-dependencies', 'list-bundled-dependencies']);
+      await exec.exec('bunx', [
+        '--bun',
+        '--package',
+        'bundle-dependencies@1.0.2',
+        'bundle-dependencies',
+        'update',
+      ]);
+      await exec.exec('bunx', [
+        '--bun',
+        '--package',
+        'bundle-dependencies@1.0.2',
+        'bundle-dependencies',
+        'list-bundled-dependencies',
+      ]);
     }
 
     // show all changes
@@ -190,7 +223,7 @@ const main = async () => {
     await exec.exec('git', ['diff', 'HEAD~1']);
     core.endGroup();
 
-  // catch
+    // catch
   } catch (error) {
     core.setFailed(error.message);
     process.exit(1);

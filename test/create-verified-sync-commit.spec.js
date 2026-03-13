@@ -15,7 +15,7 @@ describe('utils/create-verified-sync-commit', () => {
   });
 
   const createCore = () => ({
-    info: message => {
+    info: (message) => {
       infoMessages.push(message);
     },
   });
@@ -36,7 +36,7 @@ describe('utils/create-verified-sync-commit', () => {
 
     await assert.rejects(
       createVerifiedSyncCommit(inputs, {
-        github: {context: {repo: {owner: '', repo: ''}}},
+        github: { context: { repo: { owner: '', repo: '' } } },
       }),
       /Could not determine GitHub repository/,
     );
@@ -47,7 +47,7 @@ describe('utils/create-verified-sync-commit', () => {
     const octokit = {
       rest: {
         git: {
-          getRef: async () => ({data: {object: {sha: 'parent-sha'}}}),
+          getRef: async () => ({ data: { object: { sha: 'parent-sha' } } }),
         },
       },
       graphql: async () => {
@@ -60,16 +60,13 @@ describe('utils/create-verified-sync-commit', () => {
       exec: createExec(),
       getStdOut: () => '',
       github: {
-        context: {repo: {owner: 'acme', repo: 'widget'}},
+        context: { repo: { owner: 'acme', repo: 'widget' } },
         getOctokit: () => octokit,
       },
     });
 
     assert.equal(result, 'parent-sha');
-    assert.deepEqual(execCalls, [[
-      'git',
-      ['add', '--all'],
-    ]]);
+    assert.deepEqual(execCalls, [['git', ['add', '--all']]]);
     assert.equal(infoMessages.length, 1);
     assert.match(infoMessages[0], /No staged changes found/);
   });
@@ -79,7 +76,7 @@ describe('utils/create-verified-sync-commit', () => {
     const octokit = {
       rest: {
         git: {
-          getRef: async () => ({data: {object: {sha: 'parent-sha'}}}),
+          getRef: async () => ({ data: { object: { sha: 'parent-sha' } } }),
         },
       },
       graphql: async () => {
@@ -92,7 +89,7 @@ describe('utils/create-verified-sync-commit', () => {
       exec: createExec(),
       getStdOut: () => 'M',
       github: {
-        context: {repo: {owner: 'acme', repo: 'widget'}},
+        context: { repo: { owner: 'acme', repo: 'widget' } },
         getOctokit: () => octokit,
       },
     });
@@ -108,7 +105,7 @@ describe('utils/create-verified-sync-commit', () => {
     const octokit = {
       rest: {
         git: {
-          getRef: async () => ({data: {object: {sha: 'parent-sha'}}}),
+          getRef: async () => ({ data: { object: { sha: 'parent-sha' } } }),
         },
       },
       graphql: async () => {
@@ -121,11 +118,11 @@ describe('utils/create-verified-sync-commit', () => {
       createVerifiedSyncCommit(inputs, {
         exec: createExec(),
         fs: {
-          lstatSync: () => ({isSymbolicLink: () => true}),
+          lstatSync: () => ({ isSymbolicLink: () => true }),
         },
         getStdOut: () => 'A\tlink-to-target',
         github: {
-          context: {repo: {owner: 'acme', repo: 'widget'}},
+          context: { repo: { owner: 'acme', repo: 'widget' } },
           getOctokit: () => octokit,
         },
         path: {
@@ -151,25 +148,29 @@ describe('utils/create-verified-sync-commit', () => {
     const octokit = {
       rest: {
         git: {
-          getRef: async payload => {
-            assert.deepEqual(payload, {owner: 'acme', repo: 'widget', ref: 'heads/release'});
-            return {data: {object: {sha: 'parent-sha'}}};
+          getRef: async (payload) => {
+            assert.deepEqual(payload, {
+              owner: 'acme',
+              repo: 'widget',
+              ref: 'heads/release',
+            });
+            return { data: { object: { sha: 'parent-sha' } } };
           },
         },
       },
       graphql: async (query, variables) => {
         graphqlQuery = query;
         graphqlVariables = variables;
-        return {createCommitOnBranch: {commit: {oid: 'commit-sha'}}};
+        return { createCommitOnBranch: { commit: { oid: 'commit-sha' } } };
       },
     };
 
     const fsClient = {
-      lstatSync: absolutePath => ({
+      lstatSync: (absolutePath) => ({
         isSymbolicLink: () => false,
         absolutePath,
       }),
-      readFileSync: absolutePath => {
+      readFileSync: (absolutePath) => {
         if (absolutePath === '/repo/notes.txt') return 'hello world';
         if (absolutePath === '/repo/scripts/run.sh') return '#!/bin/sh\necho hi\n';
         throw new Error(`unexpected file read: ${absolutePath}`);
@@ -180,13 +181,9 @@ describe('utils/create-verified-sync-commit', () => {
       core: createCore(),
       exec: createExec(),
       fs: fsClient,
-      getStdOut: () => [
-        'M\tnotes.txt',
-        'A\tscripts/run.sh',
-        'D\tremoved.txt',
-      ].join('\n'),
+      getStdOut: () => ['M\tnotes.txt', 'A\tscripts/run.sh', 'D\tremoved.txt'].join('\n'),
       github: {
-        context: {repo: {owner: 'acme', repo: 'widget'}},
+        context: { repo: { owner: 'acme', repo: 'widget' } },
         getOctokit: () => octokit,
       },
       path: {
@@ -195,10 +192,7 @@ describe('utils/create-verified-sync-commit', () => {
     });
 
     assert.equal(result, 'commit-sha');
-    assert.deepEqual(execCalls, [[
-      'git',
-      ['add', '--all'],
-    ]]);
+    assert.deepEqual(execCalls, [['git', ['add', '--all']]]);
     assert.match(graphqlQuery, /mutation CreateCommitOnBranch/);
     assert.deepEqual(graphqlVariables, {
       input: {
@@ -212,12 +206,16 @@ describe('utils/create-verified-sync-commit', () => {
         expectedHeadOid: 'parent-sha',
         fileChanges: {
           additions: [
-            {path: 'notes.txt', contents: Buffer.from('hello world', 'utf-8').toString('base64')},
-            {path: 'scripts/run.sh', contents: Buffer.from('#!/bin/sh\necho hi\n', 'utf-8').toString('base64')},
+            {
+              path: 'notes.txt',
+              contents: Buffer.from('hello world', 'utf-8').toString('base64'),
+            },
+            {
+              path: 'scripts/run.sh',
+              contents: Buffer.from('#!/bin/sh\necho hi\n', 'utf-8').toString('base64'),
+            },
           ],
-          deletions: [
-            {path: 'removed.txt'},
-          ],
+          deletions: [{ path: 'removed.txt' }],
         },
       },
     });

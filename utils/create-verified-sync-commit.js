@@ -7,8 +7,11 @@ import github from '@actions/github';
 
 import getStdOut from './get-stdout.js';
 
-const normalizeBranchName = branch => String(branch ?? '').replace(/^refs\/heads\//, '');
-const syncCommitMessage = (message, version) => String(message ?? '').split('%s').join(version);
+const normalizeBranchName = (branch) => String(branch ?? '').replace(/^refs\/heads\//, '');
+const syncCommitMessage = (message, version) =>
+  String(message ?? '')
+    .split('%s')
+    .join(version);
 
 export default async (inputs, dependencies = {}) => {
   const coreClient = dependencies.core ?? core;
@@ -17,17 +20,22 @@ export default async (inputs, dependencies = {}) => {
   const getStdOutClient = dependencies.getStdOut ?? getStdOut;
   const githubClient = dependencies.github ?? github;
   const pathClient = dependencies.path ?? path;
-  const {owner, repo} = githubClient.context.repo;
+  const { owner, repo } = githubClient.context.repo;
   const branchName = normalizeBranchName(inputs.syncBranch);
 
-  if (!owner || !repo) throw new Error('Could not determine GitHub repository from github.context.repo');
+  if (!owner || !repo)
+    throw new Error('Could not determine GitHub repository from github.context.repo');
   if (!branchName) throw new Error('Could not determine sync branch for verified commit mode');
 
   await execClient.exec('git', ['add', '--all']);
   const changedFiles = getStdOutClient('git diff --cached --name-status --no-renames');
 
   const octokit = dependencies.octokit ?? githubClient.getOctokit(inputs.syncToken);
-  const {data: headRef} = await octokit.rest.git.getRef({owner, repo, ref: `heads/${branchName}`});
+  const { data: headRef } = await octokit.rest.git.getRef({
+    owner,
+    repo,
+    ref: `heads/${branchName}`,
+  });
   const parentCommitSha = headRef.object.sha;
 
   if (!changedFiles) {
@@ -44,7 +52,7 @@ export default async (inputs, dependencies = {}) => {
     if (!filePath || !status) continue;
 
     if (status === 'D') {
-      deletions.push({path: filePath});
+      deletions.push({ path: filePath });
       continue;
     }
 
@@ -52,7 +60,9 @@ export default async (inputs, dependencies = {}) => {
     const stats = fsClient.lstatSync(absolutePath);
 
     if (stats.isSymbolicLink()) {
-      throw new Error(`sync-verified does not support symlink changes via createCommitOnBranch: ${filePath}`);
+      throw new Error(
+        `sync-verified does not support symlink changes via createCommitOnBranch: ${filePath}`,
+      );
     }
 
     const rawContents = fsClient.readFileSync(absolutePath);

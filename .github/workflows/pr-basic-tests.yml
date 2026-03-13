@@ -52,3 +52,12 @@ jobs:
             UNRELEASED_DATE=${{ env.RELEASE_DATE }}
             UNRELEASED_LINK=${{ github.repositoryUrl }}
             UNRELEASED_VERSION=v${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt}}-build.${{ github.sha }}
+      - name: 'TEST: should create the requested sync tags locally'
+        if: always()
+        run: |
+          if git --no-pager tag --points-at HEAD | grep -Fx 'v2' && git --no-pager tag --points-at HEAD | grep -Fx 'kirk-epsilon'; then
+            echo "::notice title=TEST PASSED::Requested sync tags point at HEAD"
+          else
+            echo "::error title=TEST FAILED!::Requested sync tags were not created on HEAD"
+            exit 1
+          fi

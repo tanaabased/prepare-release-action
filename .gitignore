@@ -34,6 +34,7 @@ coverage/
 
 # Vuepress
 .temp
+.tmp-*/
 .cache
 _site
 

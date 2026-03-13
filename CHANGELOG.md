@@ -1,5 +1,7 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
+- Updated repository tooling, workflows, packaging, and documentation to align with Tanaab coding guidance.
+
 ## v1.1.1 - [February 27, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.1.1)
 
 - Removed opinionated `v` prefix from default `sync-message` [#8](https://github.com/tanaabased/prepare-release-action/pull/8)
