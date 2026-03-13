@@ -1850,7 +1850,7 @@ var color = ansis_default.extend({
 var { bold, dim, green, red, tp, ts } = color;
 var validInsertions = new Set(["after-shebang", "top", "bottom"]);
 var validStyles = new Set(["js", "sh", "ps1"]);
-var SCRIPT_VERSION;
+const SCRIPT_VERSION = 'v1.2.0';
 if (!SCRIPT_VERSION) {
   SCRIPT_VERSION = get_script_version_default();
 }

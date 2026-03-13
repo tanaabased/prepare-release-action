@@ -8682,7 +8682,7 @@ var restore_credentials_default = async (files = []) => {
 };
 
 // prepare-release.js
-var SCRIPT_VERSION;
+const SCRIPT_VERSION = 'v1.2.0';
 if (!SCRIPT_VERSION) {
   SCRIPT_VERSION = get_script_version_default();
 }
