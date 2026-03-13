@@ -37,12 +37,15 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "ansis": "^4.2.0",
     "c8": "^11.0.0",
+    "debug": "^4.4.3",
     "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.1",
     "globals": "^17.4.0",
     "mocha": "^11.7.5",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "yargs-parser": "21.1.1"
   },
   "scripts": {
     "test": "c8 --all --include \"utils/*.js\" --include \"bin/*.js\" --reporter=text --check-coverage --per-file --lines 80 mocha \"test/**/*.spec.js\"",

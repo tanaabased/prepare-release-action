@@ -35,7 +35,10 @@ jobs:
       - name: Prepare release
         uses: ./
         with:
-          commands: bun run build
+          commands: |
+            bun run build
+            version-injector dist/index.js --style js --version "${{ github.event.release.tag_name }}"
+            version-injector dist/version-injector.js --style js --version "${{ github.event.release.tag_name }}"
           sync-tags: v1
           sync-token: ${{ secrets.TANAAB_COAXIUM_INJECTOR }}
           sync-email: tanaabot@tanaab.dev

@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
 const cliPath = path.resolve('bin/version-injector.js');
-const packageJsonPath = path.resolve('package.json');
-const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+const scriptVersion = execFileSync('git', ['describe', '--tags', '--always', '--abbrev=1'], {
+  encoding: 'utf8',
+}).trim();
 
 describe('bin/version-injector', () => {
   const tempDirs = [];
@@ -44,11 +45,11 @@ describe('bin/version-injector', () => {
     assert.match(result.stdout, /VERSION_INJECTOR_VERSION/);
   });
 
-  it('should print the package version when called with bare --version', () => {
+  it('should print the resolved script version when called with bare --version', () => {
     const result = runCli(['--version']);
 
     assert.equal(result.status, 0);
-    assert.equal(result.stdout.trim(), packageJson.version);
+    assert.equal(result.stdout.trim(), scriptVersion);
   });
 
   it('should replace a javascript placeholder assignment', () => {
@@ -62,6 +63,19 @@ describe('bin/version-injector', () => {
     assert.equal(
       fs.readFileSync(filePath, 'utf8'),
       `'use strict';\n\nconst SCRIPT_VERSION = 'v1.2.3';\n`,
+    );
+  });
+
+  it('should replace a bundled javascript var placeholder assignment', () => {
+    const filePath = createTempFile('bundled.js', `var SCRIPT_VERSION;\nconsole.log('hello');\n`);
+
+    const result = runCli([filePath, '--style', 'js', '--version', 'v1.2.3']);
+
+    assert.equal(result.status, 0);
+    assert.match(result.stdout, /done/);
+    assert.equal(
+      fs.readFileSync(filePath, 'utf8'),
+      `const SCRIPT_VERSION = 'v1.2.3';\nconsole.log('hello');\n`,
     );
   });
 
@@ -166,6 +180,7 @@ describe('bin/version-injector', () => {
     assert.equal(result.status, 0);
     assert.match(result.stderr, /debug/);
     assert.match(result.stderr, /\[version-injector\]/);
+    assert.match(result.stderr, /running version-injector\.js script version:/);
     assert.match(result.stderr, /resolved file=/);
   });
 });

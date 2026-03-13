@@ -3,118 +3,31 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
-import { fileURLToPath } from 'node:url';
+import { format, inspect } from 'node:util';
 
-const ANSI_PATTERN = new RegExp(String.raw`\u001B\[[0-9;]*m`, 'g');
+import ansis from 'ansis';
+import Debug from 'debug';
+import parser from 'yargs-parser';
+
+import getScriptVersion from '../utils/get-script-version.js';
+
 const CLI_NAME = 'version-injector';
-const CSI = '\u001B[';
 const DEBUG_NAMESPACE = 'version-injector';
-const here = path.dirname(fileURLToPath(import.meta.url));
-const packageJsonPath = path.join(here, '..', 'package.json');
-const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf8'));
+const color = ansis.extend({
+  tp: '#00c88a',
+  ts: '#db2777',
+});
+const { bold, dim, green, red, tp, ts } = color;
 const validInsertions = new Set(['after-shebang', 'top', 'bottom']);
 const validStyles = new Set(['js', 'sh', 'ps1']);
 
-const supportsColor = (stream = process.stdout) => {
-  const forceColor = process.env.FORCE_COLOR;
+let SCRIPT_VERSION;
 
-  if (forceColor !== undefined) {
-    return !['0', 'false'].includes(forceColor.toLowerCase());
-  }
+if (!SCRIPT_VERSION) {
+  SCRIPT_VERSION = getScriptVersion();
+}
 
-  if (process.env.NO_COLOR !== undefined) {
-    return false;
-  }
-
-  return Boolean(stream?.isTTY);
-};
-
-const applyAnsi = (code, text, stream = process.stdout) => {
-  const value = String(text);
-
-  if (!supportsColor(stream)) {
-    return value;
-  }
-
-  return `${CSI}${code}m${value}${CSI}0m`;
-};
-
-const hexToRgb = (hex) => {
-  const normalized = hex.replace(/^#/, '');
-
-  if (!/^[0-9a-f]{6}$/i.test(normalized)) {
-    throw new Error(`Invalid hex color ${hex}.`);
-  }
-
-  return {
-    blue: Number.parseInt(normalized.slice(4, 6), 16),
-    green: Number.parseInt(normalized.slice(2, 4), 16),
-    red: Number.parseInt(normalized.slice(0, 2), 16),
-  };
-};
-
-const applyRgb = (hex, text, stream = process.stdout) => {
-  const value = String(text);
-
-  if (!supportsColor(stream)) {
-    return value;
-  }
-
-  const { red, green, blue } = hexToRgb(hex);
-  return `${CSI}38;2;${red};${green};${blue}m${value}${CSI}0m`;
-};
-
-const stripAnsi = (value) => String(value).replaceAll(ANSI_PATTERN, '');
-
-const bold = (text, stream = process.stdout) => applyAnsi('1', text, stream);
-const dim = (text, stream = process.stdout) => applyAnsi('2', text, stream);
-const green = (text, stream = process.stdout) => applyAnsi('32', text, stream);
-const red = (text, stream = process.stdout) => applyAnsi('31', text, stream);
-const tp = (text, stream = process.stdout) => applyRgb('#00c88a', text, stream);
-const ts = (text, stream = process.stdout) => applyRgb('#db2777', text, stream);
-
-const writeLine = (stream, message = '') => {
-  stream.write(`${message}\n`);
-};
-
-const writeStatus = (stream, label, colorize, message = '') => {
-  const prefix = bold(colorize(label, stream), stream);
-  const line = message ? `${prefix} ${message}` : prefix;
-  stream.write(`${line}\n`);
-};
-
-const log = (message = '') => {
-  writeLine(process.stdout, message);
-};
-
-const note = (message = '') => {
-  writeStatus(process.stdout, 'note', ts, message);
-};
-
-const success = (message = '') => {
-  writeStatus(process.stdout, 'done', green, message);
-};
-
-const fail = (message) => {
-  writeStatus(process.stderr, 'error', red, message);
-  process.exit(1);
-};
-
-const debugPatternMatches = (pattern, namespace) => {
-  if (!pattern) {
-    return false;
-  }
-
-  if (pattern === '1' || pattern === '*') {
-    return true;
-  }
-
-  if (pattern.endsWith('*')) {
-    return namespace.startsWith(pattern.slice(0, -1));
-  }
-
-  return pattern === namespace;
-};
+const debug = Debug(DEBUG_NAMESPACE);
 
 const valueEnabled = (value) => {
   switch (
@@ -142,34 +55,101 @@ const normalizeEnvValue = (value) => {
   return normalized === '' ? null : normalized;
 };
 
-const envDebugEnabled = (namespace) => {
-  if (process.env.VERSION_INJECTOR_DEBUG !== undefined) {
-    return valueEnabled(process.env.VERSION_INJECTOR_DEBUG);
-  }
+const configureDebug = (rawArgv) => {
+  const debugPattern = normalizeEnvValue(process.env.DEBUG);
+  const toolDebug = normalizeEnvValue(process.env.VERSION_INJECTOR_DEBUG);
+  const cliDebugEnabled = rawArgv.includes('--debug');
+  const cliDebugDisabled = rawArgv.includes('--no-debug');
 
-  if (process.env.RUNNER_DEBUG === '1') {
-    return true;
-  }
-
-  const rawDebug = process.env.DEBUG;
-
-  if (!rawDebug) {
-    return false;
-  }
-
-  return rawDebug
-    .split(',')
-    .map((segment) => segment.trim())
-    .some((pattern) => debugPatternMatches(pattern, namespace));
-};
-
-const debugLog = (enabled, message = '') => {
-  if (!enabled) {
+  if (cliDebugDisabled) {
+    Debug.disable();
     return;
   }
 
-  const prefix = dim(`[${DEBUG_NAMESPACE}]`, process.stderr);
-  writeStatus(process.stderr, 'debug', dim, `${prefix} ${message}`);
+  if (cliDebugEnabled) {
+    Debug.enable(debugPattern ?? DEBUG_NAMESPACE);
+    return;
+  }
+
+  if (toolDebug !== null) {
+    if (valueEnabled(toolDebug)) {
+      Debug.enable(debugPattern ?? DEBUG_NAMESPACE);
+    } else {
+      Debug.disable();
+    }
+
+    return;
+  }
+
+  if (process.env.RUNNER_DEBUG === '1') {
+    Debug.enable(debugPattern ?? DEBUG_NAMESPACE);
+    return;
+  }
+
+  if (debugPattern !== null) {
+    Debug.enable(debugPattern);
+    return;
+  }
+
+  Debug.disable();
+};
+
+const normalizeMessage = (message, stream) => {
+  if (typeof message === 'string') {
+    return message;
+  }
+
+  return inspect(message, {
+    colors: stream.isTTY,
+    depth: 6,
+  });
+};
+
+const writeLine = (stream, message = '', ...args) => {
+  const normalizedMessage = normalizeMessage(message, stream);
+  stream.write(`${format(normalizedMessage, ...args)}\n`);
+};
+
+const writeStatus = (stream, label, colorize, message = '', ...args) => {
+  const normalizedMessage = normalizeMessage(message, stream);
+  stream.write(`${bold(colorize(label))} ${format(normalizedMessage, ...args)}\n`);
+};
+
+const trace = (message = '', ...args) => {
+  if (!debug.enabled) {
+    return;
+  }
+
+  if (typeof message === 'string') {
+    writeStatus(
+      process.stderr,
+      'debug',
+      dim,
+      '%s %s',
+      dim(`[${DEBUG_NAMESPACE}]`),
+      format(message, ...args),
+    );
+    return;
+  }
+
+  writeStatus(process.stderr, 'debug', dim, '%s %O', dim(`[${DEBUG_NAMESPACE}]`), message);
+};
+
+const log = (message = '', ...args) => {
+  writeLine(process.stdout, message, ...args);
+};
+
+const note = (message = '', ...args) => {
+  writeStatus(process.stdout, 'note', ts, message, ...args);
+};
+
+const success = (message = '', ...args) => {
+  writeStatus(process.stdout, 'done', green, message, ...args);
+};
+
+const fail = (message = '', exitCode = 1) => {
+  writeStatus(process.stderr, 'error', red, message);
+  process.exit(exitCode);
 };
 
 const displayValue = (value, fallback = 'none') => {
@@ -185,120 +165,71 @@ const escapePowerShellString = (value) => value.replace(/`/g, '``').replace(/"/g
 const escapeShellString = (value) =>
   value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\$/g, '\\$').replace(/`/g, '\\`');
 
-const getOptionValue = (args, index, token) => {
-  const [name, inlineValue] = token.split(/=(.*)/s, 2);
+const normalizeRawArgv = (rawArgv) => {
+  const normalized = [];
 
-  if (inlineValue !== undefined) {
-    if (inlineValue === '') {
-      fail(`Missing value for ${name}.`);
-    }
-
-    return { nextIndex: index, value: inlineValue };
-  }
-
-  const nextValue = args[index + 1];
-
-  if (nextValue === undefined || nextValue.startsWith('-')) {
-    fail(`Missing value for ${name}.`);
-  }
-
-  return { nextIndex: index + 1, value: nextValue };
-};
-
-const parseArgs = (args) => {
-  const parsed = {
-    check: false,
-    debug: null,
-    dryRun: false,
-    file: null,
-    help: false,
-    insert: null,
-    name: null,
-    showCliVersion: false,
-    style: null,
-    versionValue: null,
-  };
-
-  for (let index = 0; index < args.length; index += 1) {
-    const token = args[index];
-
-    if (token === '--check') {
-      parsed.check = true;
-      continue;
-    }
-
-    if (token === '--debug') {
-      parsed.debug = true;
-      continue;
-    }
-
-    if (token === '--dry-run') {
-      parsed.dryRun = true;
-      continue;
-    }
-
-    if (token === '--help' || token === '-h') {
-      parsed.help = true;
-      continue;
-    }
-
-    if (token === '--insert' || token.startsWith('--insert=')) {
-      const result = getOptionValue(args, index, token);
-      parsed.insert = result.value;
-      index = result.nextIndex;
-      continue;
-    }
-
-    if (token === '--name' || token.startsWith('--name=')) {
-      const result = getOptionValue(args, index, token);
-      parsed.name = result.value;
-      index = result.nextIndex;
-      continue;
-    }
-
-    if (token === '--style' || token.startsWith('--style=')) {
-      const result = getOptionValue(args, index, token);
-      parsed.style = result.value;
-      index = result.nextIndex;
-      continue;
-    }
+  for (let index = 0; index < rawArgv.length; index += 1) {
+    const token = rawArgv[index];
 
     if (token === '--version') {
-      const nextValue = args[index + 1];
+      const nextValue = rawArgv[index + 1];
 
       if (nextValue === undefined || nextValue.startsWith('-')) {
-        parsed.showCliVersion = true;
-        continue;
+        normalized.push('--show-cli-version');
+      } else {
+        normalized.push('--inject-version', nextValue);
+        index += 1;
       }
 
-      parsed.versionValue = nextValue;
-      index += 1;
       continue;
     }
 
     if (token.startsWith('--version=')) {
-      const result = getOptionValue(args, index, token);
-      parsed.versionValue = result.value;
+      const value = token.slice('--version='.length);
+
+      if (value === '') {
+        throw new Error('Missing value for --version.');
+      }
+
+      normalized.push(`--inject-version=${value}`);
       continue;
     }
 
-    if (token.startsWith('-')) {
-      fail(`Unknown option ${token}.`);
-    }
-
-    if (parsed.file !== null) {
-      fail(`Unexpected positional argument ${token}. Only one file path is supported.`);
-    }
-
-    parsed.file = token;
+    normalized.push(token);
   }
 
-  return parsed;
+  return normalized;
 };
+
+const parseArgs = (rawArgv) => {
+  return parser(normalizeRawArgv(rawArgv), {
+    alias: {
+      help: ['h'],
+    },
+    boolean: ['check', 'debug', 'dry-run', 'help', 'show-cli-version'],
+    string: ['inject-version', 'insert', 'name', 'style'],
+    configuration: {
+      'boolean-negation': true,
+      'camel-case-expansion': false,
+      'parse-numbers': false,
+      'strip-aliased': true,
+      'strip-dashed': true,
+    },
+  });
+};
+
+const buildDefaults = () =>
+  Object.freeze({
+    check: false,
+    dryRun: false,
+    insert: null,
+    name: 'SCRIPT_VERSION',
+    style: null,
+    versionValue: null,
+  });
 
 const buildEnvironment = () =>
   Object.freeze({
-    debug: envDebugEnabled(DEBUG_NAMESPACE),
     insert: normalizeEnvValue(process.env.VERSION_INJECTOR_INSERT),
     name: normalizeEnvValue(process.env.VERSION_INJECTOR_NAME),
     style: normalizeEnvValue(process.env.VERSION_INJECTOR_STYLE),
@@ -308,55 +239,18 @@ const buildEnvironment = () =>
         : String(process.env.VERSION_INJECTOR_VERSION),
   });
 
-const resolveInvocation = (parsedArgs) => {
-  const environment = buildEnvironment();
-
-  return {
-    check: parsedArgs.check,
-    debug: parsedArgs.debug ?? environment.debug,
-    dryRun: parsedArgs.dryRun,
-    environment,
-    file: parsedArgs.file,
-    help: parsedArgs.help,
-    insert: parsedArgs.insert ?? environment.insert,
-    name: parsedArgs.name ?? environment.name ?? 'SCRIPT_VERSION',
-    showCliVersion: parsedArgs.showCliVersion,
-    style: parsedArgs.style ?? environment.style,
-    versionValue: parsedArgs.versionValue ?? environment.versionValue,
-  };
-};
-
-const validateArgs = (options) => {
-  if (options.file === null) {
-    fail('Missing required file path.');
-  }
-
-  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(options.name)) {
-    fail(`Invalid variable name ${options.name}.`);
-  }
-
-  if (options.style === null) {
-    fail('Missing required option --style.');
-  }
-
-  if (!validStyles.has(options.style)) {
-    fail(`Invalid --style ${options.style}. Expected one of js, sh, ps1.`);
-  }
-
-  if (options.versionValue === null) {
-    fail('Missing required option --version <value>.');
-  }
-
-  if (options.insert !== null && !validInsertions.has(options.insert)) {
-    fail(`Invalid --insert ${options.insert}. Expected one of after-shebang, top, bottom.`);
-  }
+const buildEnvironmentVariables = () => {
+  return [
+    'VERSION_INJECTOR_DEBUG',
+    'VERSION_INJECTOR_INSERT',
+    'VERSION_INJECTOR_NAME',
+    'VERSION_INJECTOR_STYLE',
+    'VERSION_INJECTOR_VERSION',
+  ];
 };
 
 const formatHelpEntries = (entries) => {
-  const width = entries.reduce(
-    (maxWidth, entry) => Math.max(maxWidth, stripAnsi(entry.label).length),
-    0,
-  );
+  const width = entries.reduce((maxWidth, entry) => Math.max(maxWidth, entry.label.length), 0);
 
   return entries.map((entry) => `  ${entry.label.padEnd(width)}  ${entry.description}`).join('\n');
 };
@@ -366,14 +260,6 @@ const formatHelpLines = (lines) => {
 };
 
 const renderHelp = () => {
-  const environmentVariables = [
-    'VERSION_INJECTOR_DEBUG',
-    'VERSION_INJECTOR_INSERT',
-    'VERSION_INJECTOR_NAME',
-    'VERSION_INJECTOR_STYLE',
-    'VERSION_INJECTOR_VERSION',
-  ];
-
   const options = [
     {
       label: '--check',
@@ -409,12 +295,12 @@ const renderHelp = () => {
     },
     {
       label: '--version',
-      description: `shows the CLI version`,
+      description: 'shows the CLI version.',
     },
   ];
 
   return [
-    `Usage: ${dim(`[VERSION_INJECTOR=...]`)} ${bold(`${CLI_NAME} <file> --style <js|sh|ps1> --version <value>`)} ${dim(`[options]`)}`,
+    `Usage: ${dim('[VERSION_INJECTOR=...]')} ${bold(`${CLI_NAME} <file> --style <js|sh|ps1> --version <value>`)} ${dim('[options]')}`,
     '',
     'Inject a version assignment into a JavaScript, shell, or PowerShell file.',
     '',
@@ -422,8 +308,80 @@ const renderHelp = () => {
     formatHelpEntries(options),
     '',
     `${tp('Environment Variables')}:`,
-    formatHelpLines(environmentVariables),
+    formatHelpLines(buildEnvironmentVariables()),
   ].join('\n');
+};
+
+const resolveInvocation = (argv) => {
+  const defaults = buildDefaults();
+  const environment = buildEnvironment();
+  const allowedKeys = new Set([
+    '_',
+    'check',
+    'debug',
+    'dry-run',
+    'help',
+    'inject-version',
+    'insert',
+    'name',
+    'show-cli-version',
+    'style',
+  ]);
+  const unknownKey = Object.keys(argv).find((key) => !allowedKeys.has(key));
+
+  if (unknownKey) {
+    throw new Error(`Unknown option --${unknownKey}.`);
+  }
+
+  const positionals = argv._.map((value) => String(value));
+
+  if (positionals.length > 1) {
+    throw new Error(
+      `Unexpected positional argument ${positionals[1]}. Only one file path is supported.`,
+    );
+  }
+
+  return {
+    check: argv.check ?? defaults.check,
+    debug: debug.enabled,
+    dryRun: argv['dry-run'] ?? defaults.dryRun,
+    environment,
+    file: positionals[0] ?? null,
+    help: argv.help === true,
+    insert: argv.insert ?? environment.insert ?? defaults.insert,
+    name: argv.name ?? environment.name ?? defaults.name,
+    showCliVersion: argv['show-cli-version'] === true,
+    style: argv.style ?? environment.style ?? defaults.style,
+    versionValue: argv['inject-version'] ?? environment.versionValue ?? defaults.versionValue,
+  };
+};
+
+const validateArgs = (options) => {
+  if (options.file === null) {
+    throw new Error('Missing required file path.');
+  }
+
+  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(options.name)) {
+    throw new Error(`Invalid variable name ${options.name}.`);
+  }
+
+  if (options.style === null) {
+    throw new Error('Missing required option --style.');
+  }
+
+  if (!validStyles.has(options.style)) {
+    throw new Error(`Invalid --style ${options.style}. Expected one of js, sh, ps1.`);
+  }
+
+  if (options.versionValue === null) {
+    throw new Error('Missing required option --version <value>.');
+  }
+
+  if (options.insert !== null && !validInsertions.has(options.insert)) {
+    throw new Error(
+      `Invalid --insert ${options.insert}. Expected one of after-shebang, top, bottom.`,
+    );
+  }
 };
 
 const getLineEnding = (content) => (content.includes('\r\n') ? '\r\n' : '\n');
@@ -450,7 +408,7 @@ const getStyleConfig = (style, name, versionValue) => {
   if (style === 'js') {
     return {
       matchers: [
-        new RegExp(`^(?<indent>\\s*)let\\s+${escapeRegExp(name)}\\s*;\\s*$`),
+        new RegExp(`^(?<indent>\\s*)(?:let|var)\\s+${escapeRegExp(name)}\\s*;\\s*$`),
         new RegExp(`^(?<indent>\\s*)(?:const|let|var)\\s+${escapeRegExp(name)}\\s*=\\s*.+;\\s*$`),
       ],
       renderLine: (indent = '') =>
@@ -504,7 +462,7 @@ const applyInsertion = (lines, renderedLine, insert) => {
     return [lines[0], renderedLine, ...lines.slice(1)];
   }
 
-  fail('Cannot use --insert after-shebang on a file without a shebang line.');
+  throw new Error('Cannot use --insert after-shebang on a file without a shebang line.');
 };
 
 const planUpdate = (content, options) => {
@@ -513,13 +471,15 @@ const planUpdate = (content, options) => {
   const styleConfig = getStyleConfig(options.style, options.name, options.versionValue);
   const matches = findMatches(lines, styleConfig.matchers);
 
-  debugLog(
-    options.debug,
-    `matched ${matches.length} candidate line${matches.length === 1 ? '' : 's'} in ${options.file}`,
+  trace(
+    'matched %d candidate line%s in %s',
+    matches.length,
+    matches.length === 1 ? '' : 's',
+    options.file,
   );
 
   if (matches.length > 1) {
-    fail(
+    throw new Error(
       `Found multiple ${options.name} assignments or placeholders in ${options.file}; refusing to choose one.`,
     );
   }
@@ -538,7 +498,7 @@ const planUpdate = (content, options) => {
       nextContent: joinLines(insertedLines, lineEnding, endsWithNewline),
     };
   } else {
-    fail(
+    throw new Error(
       `Could not find an existing ${options.name} assignment or placeholder in ${options.file}.`,
     );
   }
@@ -551,76 +511,94 @@ const planUpdate = (content, options) => {
   };
 };
 
-const parsedArgs = parseArgs(process.argv.slice(2));
-const invocation = resolveInvocation(parsedArgs);
+const runCli = async (options) => {
+  validateArgs(options);
 
-if (invocation.help) {
-  log(renderHelp());
-  process.exit(0);
-}
+  const targetPath = path.resolve(options.file);
 
-if (
-  invocation.showCliVersion &&
-  invocation.file === null &&
-  parsedArgs.style === null &&
-  parsedArgs.versionValue === null &&
-  parsedArgs.insert === null &&
-  parsedArgs.name === null &&
-  parsedArgs.check === false &&
-  parsedArgs.dryRun === false &&
-  parsedArgs.debug === null
-) {
-  log(packageJson.version);
-  process.exit(0);
-}
-
-if (invocation.showCliVersion) {
-  fail(
-    'Bare --version only prints the CLI version when no file path or injection options are provided.',
+  trace('running %s.js script version: %s', CLI_NAME, SCRIPT_VERSION);
+  trace(
+    'resolved file=%s style=%s name=%s insert=%s check=%s dry-run=%s',
+    targetPath,
+    options.style,
+    options.name,
+    displayValue(options.insert),
+    options.check,
+    options.dryRun,
   );
-}
 
-validateArgs(invocation);
+  let content;
 
-const targetPath = path.resolve(invocation.file);
-
-debugLog(
-  invocation.debug,
-  `resolved file=${targetPath} style=${invocation.style} name=${invocation.name} insert=${displayValue(invocation.insert)} check=${invocation.check} dry-run=${invocation.dryRun}`,
-);
-
-let content;
-
-try {
-  content = await fs.readFile(targetPath, 'utf8');
-} catch (error) {
-  fail(`Could not read ${targetPath}. ${error.message}`);
-}
-
-const result = planUpdate(content, { ...invocation, file: targetPath });
-
-if (invocation.check) {
-  if (result.changed) {
-    fail(`${ts(targetPath, process.stderr)} does not match the requested version injection.`);
+  try {
+    content = await fs.readFile(targetPath, 'utf8');
+  } catch (error) {
+    throw new Error(`Could not read ${targetPath}. ${error.message}`, { cause: error });
   }
 
-  success(`${tp('check')} ${ts(targetPath)}`);
-  process.exit(0);
-}
+  const result = planUpdate(content, { ...options, file: targetPath });
 
-if (invocation.dryRun) {
-  note(
-    result.changed
-      ? `${tp('update')} ${ts(targetPath)} ${dim('(dry run)')}`
-      : `${tp('skip')} ${ts(targetPath)} ${dim('(already matches)')}`,
-  );
-  process.exit(0);
-}
+  if (options.check) {
+    if (result.changed) {
+      throw new Error(`${targetPath} does not match the requested version injection.`);
+    }
 
-if (!result.changed) {
-  note(`${tp('skip')} ${ts(targetPath)} ${dim('(already matches)')}`);
-  process.exit(0);
-}
+    success('%s %s', tp('check'), ts(targetPath));
+    return;
+  }
 
-await fs.writeFile(targetPath, result.nextContent, 'utf8');
-success(`${tp('update')} ${ts(targetPath)}`);
+  if (options.dryRun) {
+    note(
+      '%s %s %s',
+      tp(result.changed ? 'update' : 'skip'),
+      ts(targetPath),
+      dim(result.changed ? '(dry run)' : '(already matches)'),
+    );
+    return;
+  }
+
+  if (!result.changed) {
+    note('%s %s %s', tp('skip'), ts(targetPath), dim('(already matches)'));
+    return;
+  }
+
+  await fs.writeFile(targetPath, result.nextContent, 'utf8');
+  success('%s %s', tp('update'), ts(targetPath));
+};
+
+const main = async (rawArgv) => {
+  configureDebug(rawArgv);
+  const argv = parseArgs(rawArgv);
+  const invocation = resolveInvocation(argv);
+
+  if (invocation.help) {
+    log(renderHelp());
+    return;
+  }
+
+  if (invocation.showCliVersion) {
+    if (
+      invocation.file !== null ||
+      argv.style !== undefined ||
+      argv['inject-version'] !== undefined ||
+      argv.insert !== undefined ||
+      argv.name !== undefined ||
+      argv.check === true ||
+      argv['dry-run'] === true ||
+      argv.debug !== undefined
+    ) {
+      throw new Error(
+        'Bare --version only prints the CLI version when no file path or injection options are provided.',
+      );
+    }
+
+    log(SCRIPT_VERSION);
+    return;
+  }
+
+  await runCli(invocation);
+};
+
+await main(process.argv.slice(2)).catch((error) => {
+  trace(error);
+  fail(error instanceof Error ? error.message : String(error));
+});

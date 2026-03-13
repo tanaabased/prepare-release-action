@@ -66,7 +66,7 @@ Options:
   --version <value>    sets the version string to write into the file.
   --debug              shows debug output [default: off]
   -h, --help           shows this help output.
-  --version            shows the CLI version
+  --version            shows the CLI version.
 ```
 
 ## Permissions
@@ -108,8 +108,9 @@ steps:
   uses: tanaabased/prepare-release-action@v1
   with:
     commands: |
-      version-injector dist/index.js --style js --version "${{ github.ref_name }}"
       bun run build
+      version-injector dist/index.js --style js --version "${{ github.ref_name }}"
+      version-injector dist/version-injector.js --style js --version "${{ github.ref_name }}"
     sync-tags: v3
 ```
 
