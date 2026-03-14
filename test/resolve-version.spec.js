@@ -53,22 +53,29 @@ describe('utils/resolve-version', () => {
     return dir;
   };
 
-  it('should use the latest matching reachable tag when version=dev', () => {
+  it('should preserve git describe output when matching tags exist', () => {
     const repoDir = createRepo({
       packageJson: { name: 'fixture', version: '9.9.9' },
       tags: ['v1.2.3'],
       untaggedHead: true,
     });
+    const expected = runGit(repoDir, [
+      'describe',
+      '--tags',
+      '--always',
+      '--abbrev=1',
+      '--match=v[0-9].*',
+    ]);
 
     process.chdir(repoDir);
 
     const result = resolveVersion({
       packageJsonPath: path.join(repoDir, 'package.json'),
       version: 'dev',
-      versionMatch: '^v\\d',
+      versionMatch: 'v[0-9].*',
     });
 
-    assert.equal(result, 'v1.2.3');
+    assert.equal(result, expected);
   });
 
   it('should fall back to package.json.version when no matching tag exists', () => {
@@ -82,7 +89,7 @@ describe('utils/resolve-version', () => {
     const result = resolveVersion({
       packageJsonPath: path.join(repoDir, 'package.json'),
       version: 'dev',
-      versionMatch: '^v\\d',
+      versionMatch: 'v[0-9].*',
     });
 
     assert.equal(result, 'v2.3.4');
@@ -99,7 +106,7 @@ describe('utils/resolve-version', () => {
     const result = resolveVersion({
       packageJsonPath: path.join(repoDir, 'package.json'),
       version: 'dev',
-      versionMatch: '^v\\d',
+      versionMatch: 'v[0-9].*',
     });
 
     assert.equal(result, `v0.0.0-unreleased.${shortSha}`);

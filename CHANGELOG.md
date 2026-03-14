@@ -2,7 +2,7 @@
 
 - Added `PREPARE_RELEASE_VERSION` and the `resolved-version` action output so downstream commands and later workflow steps can reuse the resolved release version.
 - Added README guidance and regression coverage for `version=dev` resolution from matching tags, `package.json.version`, and the unreleased fallback path.
-- Fixed `version=dev` to resolve a semver-valid version for untagged repositories by preferring matching tags, then `package.json.version`, then `v0.0.0-unreleased.<sha>`.
+- Fixed `version=dev` to handle repositories without matching tags by falling back to `package.json.version` or `v0.0.0-unreleased.<sha>`.
 
 ## v1.2.0 - [March 13, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.2.0)
 

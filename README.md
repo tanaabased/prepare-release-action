@@ -29,7 +29,8 @@ All inputs are optional however if you are **NOT** triggering this action on a `
 
 Note that `sync` must be set to `true` for the other `sync-*` options to do anything. Also note that in `sync-message` you can use `%s` as a placeholder for the version.
 
-When `version=dev`, this action resolves a semver-valid version in this order: the latest reachable tag matching `version-match`, then `v${package.json.version}`, then `v0.0.0-unreleased.<short-sha>`.
+When `version=dev`, this action preserves the semver-valid `git describe --tags --always --abbrev=1 --match=<version-match>` result when matching tags exist.
+If no matching tag exists and that describe output is not semver-valid, it falls back to `v${package.json.version}`, then `v0.0.0-unreleased.<short-sha>`.
 The resolved value is exported as `PREPARE_RELEASE_VERSION` for the `commands` block and later workflow steps, and is also exposed as the `resolved-version` action output.
 
 ## Outputs

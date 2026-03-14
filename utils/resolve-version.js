@@ -9,15 +9,8 @@ const fallbackVersion = 'v0.0.0-unreleased';
 
 const isSemverValid = (version) => semverValid(semverClean(version)) !== null;
 
-const getMatchingTag = (versionMatch) => {
-  const versionPattern = new RegExp(versionMatch);
-  const tags = getStdOut('git tag --merged HEAD --sort=-v:refname')
-    .split(/\r?\n/)
-    .map((tag) => tag.trim())
-    .filter(Boolean);
-
-  return tags.find((tag) => versionPattern.test(tag) && isSemverValid(tag)) ?? null;
-};
+const getDescribedVersion = (versionMatch) =>
+  getStdOut(`git describe --tags --always --abbrev=1 --match="${versionMatch}"`);
 
 const getPackageVersion = (packageJsonPath) => {
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
@@ -45,10 +38,10 @@ export default ({ packageJsonPath, version, versionMatch }) => {
     return version;
   }
 
-  const matchingTag = getMatchingTag(versionMatch);
+  const describedVersion = getDescribedVersion(versionMatch);
 
-  if (matchingTag) {
-    return matchingTag;
+  if (isSemverValid(describedVersion)) {
+    return describedVersion;
   }
 
   const packageVersion = getPackageVersion(packageJsonPath);

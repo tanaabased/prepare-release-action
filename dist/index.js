@@ -8628,11 +8628,7 @@ var import_valid = __toESM(require_valid(), 1);
 import fs2 from "fs";
 var fallbackVersion = "v0.0.0-unreleased";
 var isSemverValid = (version) => import_valid.default(import_clean.default(version)) !== null;
-var getMatchingTag = (versionMatch) => {
-  const versionPattern = new RegExp(versionMatch);
-  const tags = get_stdout_default("git tag --merged HEAD --sort=-v:refname").split(/\r?\n/).map((tag) => tag.trim()).filter(Boolean);
-  return tags.find((tag) => versionPattern.test(tag) && isSemverValid(tag)) ?? null;
-};
+var getDescribedVersion = (versionMatch) => get_stdout_default(`git describe --tags --always --abbrev=1 --match="${versionMatch}"`);
 var getPackageVersion = (packageJsonPath) => {
   const packageJson = JSON.parse(fs2.readFileSync(packageJsonPath, "utf8"));
   if (typeof packageJson.version !== "string") {
@@ -8649,9 +8645,9 @@ var resolve_version_default = ({ packageJsonPath, version, versionMatch }) => {
   if (version !== "dev") {
     return version;
   }
-  const matchingTag = getMatchingTag(versionMatch);
-  if (matchingTag) {
-    return matchingTag;
+  const describedVersion = getDescribedVersion(versionMatch);
+  if (isSemverValid(describedVersion)) {
+    return describedVersion;
   }
   const packageVersion = getPackageVersion(packageJsonPath);
   if (packageVersion && isSemverValid(packageVersion)) {
@@ -8872,5 +8868,5 @@ var main = async () => {
 };
 main();
 
-//# debugId=24371AFFD5DF128D64756E2164756E21
+//# debugId=0F24E0A7C8160B4964756E2164756E21
 //# sourceMappingURL=index.js.map
