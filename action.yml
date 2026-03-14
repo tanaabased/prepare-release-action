@@ -6,7 +6,7 @@ branding:
 
 inputs:
   version:
-    description: 'The version of the thing to be released. Must be a semver valid string.'
+    description: 'The version of the thing to be released. Use a semver-valid string or dev to auto-resolve one.'
     required: false
     default: ${{ github.event.release.tag_name }}
 
@@ -72,6 +72,11 @@ inputs:
     required: false
     default: 'v[0-9].*'
 
+outputs:
+  resolved-version:
+    description: 'The semver-valid version resolved for this action run.'
+    value: ${{ steps.prepare-release.outputs.resolved-version }}
+
 runs:
   using: 'composite'
   steps:
@@ -89,6 +94,7 @@ runs:
       shell: bash
       run: echo "${{ github.action_path }}/dist" >> "$GITHUB_PATH"
     - name: Run Prepare Release
+      id: prepare-release
       shell: bash
       env:
         INPUT_VERSION: ${{ inputs.version }}

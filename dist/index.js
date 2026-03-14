@@ -8468,10 +8468,10 @@ var require_github = __commonJS((exports) => {
 var import_core6 = __toESM(require_core(), 1);
 var import_exec2 = __toESM(require_exec(), 1);
 var import_jsonfile2 = __toESM(require_jsonfile(), 1);
-var import_clean = __toESM(require_clean(), 1);
-var import_valid = __toESM(require_valid(), 1);
+var import_clean2 = __toESM(require_clean(), 1);
+var import_valid2 = __toESM(require_valid(), 1);
 var import_lodash = __toESM(require_lodash(), 1);
-import fs4 from "fs";
+import fs5 from "fs";
 import os from "os";
 import path4 from "path";
 
@@ -8622,6 +8622,40 @@ var get_inputs_default = () => ({
   versionMatch: import_core2.default.getInput("version-match") || defaultVersionMatch
 });
 
+// utils/resolve-version.js
+var import_clean = __toESM(require_clean(), 1);
+var import_valid = __toESM(require_valid(), 1);
+import fs2 from "fs";
+var fallbackVersion = "v0.0.0-unreleased";
+var isSemverValid = (version) => import_valid.default(import_clean.default(version)) !== null;
+var getDescribedVersion = (versionMatch) => get_stdout_default(`git describe --tags --always --abbrev=1 --match="${versionMatch}"`);
+var getPackageVersion = (packageJsonPath) => {
+  const packageJson = JSON.parse(fs2.readFileSync(packageJsonPath, "utf8"));
+  if (typeof packageJson.version !== "string") {
+    return null;
+  }
+  const cleanedVersion = import_clean.default(packageJson.version);
+  return cleanedVersion ? `v${cleanedVersion}` : null;
+};
+var getFallbackCommitId = () => String(get_stdout_default("git rev-parse --short HEAD")).trim().toLowerCase().replace(/[^0-9a-z-]+/g, "-").replace(/^-+|-+$/g, "") || "unknown";
+var resolve_version_default = ({ packageJsonPath, version, versionMatch }) => {
+  if (!version) {
+    throw new Error("Version is a required input!");
+  }
+  if (version !== "dev") {
+    return version;
+  }
+  const describedVersion = getDescribedVersion(versionMatch);
+  if (isSemverValid(describedVersion)) {
+    return describedVersion;
+  }
+  const packageVersion = getPackageVersion(packageJsonPath);
+  if (packageVersion && isSemverValid(packageVersion)) {
+    return packageVersion;
+  }
+  return `${fallbackVersion}.${getFallbackCommitId()}`;
+};
+
 // utils/has-dependencies.js
 var import_core3 = __toESM(require_core(), 1);
 var import_jsonfile = __toESM(require_jsonfile(), 1);
@@ -8635,19 +8669,19 @@ var has_dependencies_default = (pjson) => {
 
 // utils/hide-credentials.js
 var import_core4 = __toESM(require_core(), 1);
-import fs2 from "fs";
+import fs3 from "fs";
 import path2 from "path";
 var hide_credentials_default = async (collector = []) => {
   const runnerTemp = process.env["RUNNER_TEMP"];
   if (!runnerTemp)
     return collector;
   try {
-    const files = await fs2.promises.readdir(runnerTemp);
+    const files = await fs3.promises.readdir(runnerTemp);
     for (const file of files) {
       if (file.startsWith("git-credentials-") && file.endsWith(".config")) {
         const src = path2.join(runnerTemp, file);
         const backup = `${src}.bak`;
-        await fs2.promises.rename(src, backup);
+        await fs3.promises.rename(src, backup);
         collector.push(backup);
         import_core4.default.info(`Temporarily hiding actions/checkout credential file ${file} in favor of our auth`);
       }
@@ -8665,13 +8699,13 @@ var parse_tokens_default = (tokens) => {
 
 // utils/restore-credentials.js
 var import_core5 = __toESM(require_core(), 1);
-import fs3 from "fs";
+import fs4 from "fs";
 import path3 from "path";
 var restore_credentials_default = async (files = []) => {
   for (const backup of files) {
     try {
       const src = backup.replace(/\.bak$/, "");
-      await fs3.promises.rename(backup, src);
+      await fs4.promises.rename(backup, src);
       const file = path3.basename(src);
       import_core5.default.info(`Restored actions/checkout credential file ${file}`);
     } catch (e) {
@@ -8682,7 +8716,7 @@ var restore_credentials_default = async (files = []) => {
 };
 
 // prepare-release.js
-const SCRIPT_VERSION = 'v1.2.0';
+var SCRIPT_VERSION;
 if (!SCRIPT_VERSION) {
   SCRIPT_VERSION = get_script_version_default();
 }
@@ -8700,14 +8734,18 @@ var main = async () => {
       await import_exec2.default.exec("git", ["fetch", "--all"]);
       import_core6.default.endGroup();
     }
-    if (!inputs.version)
-      throw new Error("Version is a required input!");
-    if (inputs.version === "dev")
-      inputs.version = get_stdout_default(`git describe --tags --always --abbrev=1 --match="${inputs.versionMatch}"`);
-    if (import_valid.default(import_clean.default(inputs.version)) === null)
-      throw new Error(`Version ${inputs.version} must be semver valid!`);
-    if (!fs4.existsSync(inputs.pjson))
+    if (!fs5.existsSync(inputs.pjson))
       throw new Error(`Could not detect a package.json in ${inputs.root}`);
+    inputs.version = resolve_version_default({
+      packageJsonPath: inputs.pjson,
+      version: inputs.version,
+      versionMatch: inputs.versionMatch
+    });
+    if (import_valid2.default(import_clean2.default(inputs.version)) === null)
+      throw new Error(`Version ${inputs.version} must be semver valid!`);
+    import_core6.default.exportVariable("PREPARE_RELEASE_VERSION", inputs.version);
+    import_core6.default.setOutput("resolved-version", inputs.version);
+    import_core6.default.info(`resolved-version: ${inputs.version}`);
     for (const [index, filename] of inputs.updateFiles.entries()) {
       inputs.updateFiles[index] = path4.isAbsolute(filename) ? filename : path4.resolve(inputs.root, filename);
     }
@@ -8737,8 +8775,8 @@ var main = async () => {
       import_core6.default.debug(`updated pjson`);
       import_core6.default.debug(import_jsonfile2.default.readFileSync(inputs.pjson));
     }
-    for (const file of inputs.updateFiles.filter((file2) => fs4.existsSync(file2))) {
-      let content = fs4.readFileSync(file, { encoding: "utf-8" });
+    for (const file of inputs.updateFiles.filter((file2) => fs5.existsSync(file2))) {
+      let content = fs5.readFileSync(file, { encoding: "utf-8" });
       import_core6.default.startGroup(`Updating ${file} with update-files-meta tokens`);
       for (const [token, value] of parse_tokens_default(inputs.tokens)) {
         import_core6.default.info(`{{ ${token} }}: ${value}`);
@@ -8751,10 +8789,10 @@ var main = async () => {
         import_core6.default.endGroup();
         content = `${inputs.updateHeader.join(os.EOL)}${os.EOL}${os.EOL}${content}`;
       }
-      fs4.writeFileSync(file, content);
+      fs5.writeFileSync(file, content);
       import_core6.default.debug(`updated ${file}:`);
       import_core6.default.debug(`---`);
-      import_core6.default.debug(`${fs4.readFileSync(file, { encoding: "utf-8" })}`);
+      import_core6.default.debug(`${fs5.readFileSync(file, { encoding: "utf-8" })}`);
       import_core6.default.debug(`---`);
     }
     const useVerifiedSync = inputs.sync && inputs.syncVerified;
@@ -8830,5 +8868,5 @@ var main = async () => {
 };
 main();
 
-//# debugId=3DE7F0B3AD37DFE564756E2164756E21
+//# debugId=0F24E0A7C8160B4964756E2164756E21
 //# sourceMappingURL=index.js.map

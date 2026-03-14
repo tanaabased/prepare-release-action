@@ -12,6 +12,7 @@ import createVerifiedSyncCommit from './utils/create-verified-sync-commit.js';
 
 import getScriptVersion from './utils/get-script-version.js';
 import getInputs from './utils/get-inputs.js';
+import resolveVersion from './utils/resolve-version.js';
 import getStdOut from './utils/get-stdout.js';
 import hasDependencies from './utils/has-dependencies.js';
 import hideCredentialFiles from './utils/hide-credentials.js';
@@ -49,19 +50,20 @@ const main = async () => {
       core.endGroup();
     }
 
-    // validate that we have a version
-    if (!inputs.version) throw new Error('Version is a required input!');
-    // if version is dev then attempt to describe tag/version
-    if (inputs.version === 'dev')
-      inputs.version = getStdOut(
-        `git describe --tags --always --abbrev=1 --match="${inputs.versionMatch}"`,
-      );
-    // and that it is semantically valid
-    if (semverValid(semverClean(inputs.version)) === null)
-      throw new Error(`Version ${inputs.version} must be semver valid!`);
     // and that we have a package.json
     if (!fs.existsSync(inputs.pjson))
       throw new Error(`Could not detect a package.json in ${inputs.root}`);
+    // validate and resolve the working version
+    inputs.version = resolveVersion({
+      packageJsonPath: inputs.pjson,
+      version: inputs.version,
+      versionMatch: inputs.versionMatch,
+    });
+    if (semverValid(semverClean(inputs.version)) === null)
+      throw new Error(`Version ${inputs.version} must be semver valid!`);
+    core.exportVariable('PREPARE_RELEASE_VERSION', inputs.version);
+    core.setOutput('resolved-version', inputs.version);
+    core.info(`resolved-version: ${inputs.version}`);
 
     // normalize updatefile paths
     for (const [index, filename] of inputs.updateFiles.entries()) {

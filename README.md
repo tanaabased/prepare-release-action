@@ -8,7 +8,7 @@ All inputs are optional however if you are **NOT** triggering this action on a `
 
 | Name                  | Description                                                                                            | Default                                                                                                     | Example                                            |
 | --------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `version`             | The version of the thing to be released. Must be a semver valid string.                                | `${{ github.event.release.tag_name }}`                                                                      | `v3.14.0`                                          |
+| `version`             | The version of the thing to be released. Use a semver-valid string or `dev` to auto-resolve one.       | `${{ github.event.release.tag_name }}`                                                                      | `v3.14.0`                                          |
 | `bundle-dependencies` | A toggle to autoset `bundleDependencies` in `package.json`.                                            | `false`                                                                                                     | `true`                                             |
 | `commands`            | A list of commands to run to prepare the release.                                                      | `[]`                                                                                                        | `version-injector --help`                          |
 | `meta`                | A list of `path=value` strings to merge into the `package.json`                                        | `null`                                                                                                      | `dist=thing`                                       |
@@ -28,6 +28,16 @@ All inputs are optional however if you are **NOT** triggering this action on a `
 | `version-match`       | A regex to help find the latest tag. Only used when `version=dev`.                                     | `v[0-9].*`                                                                                                  | `[1-2].*`                                          |
 
 Note that `sync` must be set to `true` for the other `sync-*` options to do anything. Also note that in `sync-message` you can use `%s` as a placeholder for the version.
+
+When `version=dev`, this action preserves the semver-valid `git describe --tags --always --abbrev=1 --match=<version-match>` result when matching tags exist.
+If no matching tag exists and that describe output is not semver-valid, it falls back to `v${package.json.version}`, then `v0.0.0-unreleased.<short-sha>`.
+The resolved value is exported as `PREPARE_RELEASE_VERSION` for the `commands` block and later workflow steps, and is also exposed as the `resolved-version` action output.
+
+## Outputs
+
+| Name               | Description                                                   |
+| ------------------ | ------------------------------------------------------------- |
+| `resolved-version` | The semver-valid version resolved for the current action run. |
 
 When `sync-verified=true`, this action creates the sync commit with GitHub GraphQL `createCommitOnBranch` (instead of local `git commit`) and then pushes tags as usual.
 In this mode, `sync-username` and `sync-email` still configure local git but do not control the API commit identity.
@@ -112,6 +122,23 @@ steps:
       version-injector dist/index.js --style js --version "${{ github.ref_name }}"
       version-injector dist/version-injector.js --style js --version "${{ github.ref_name }}"
     sync-tags: v3
+```
+
+**Development build example with `version=dev`:**
+
+```yaml
+- name: Prepare Release
+  id: prepare-release
+  uses: tanaabased/prepare-release-action@v1
+  with:
+    version: dev
+    sync: false
+    commands: |
+      bun run build
+      version-injector dist/bootbox.sh --style sh --version "$PREPARE_RELEASE_VERSION"
+
+- name: Show resolved version
+  run: echo "${{ steps.prepare-release.outputs.resolved-version }}"
 ```
 
 **Everything, everywhere, all at once:**
