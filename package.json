@@ -45,7 +45,7 @@
     "globals": "^17.4.0",
     "mocha": "^11.7.5",
     "prettier": "^3.5.3",
-    "yargs-parser": "21.1.1"
+    "yargs-parser": "22.0.0"
   },
   "scripts": {
     "test": "c8 --all --include \"utils/*.js\" --include \"bin/*.js\" --reporter=text --check-coverage --per-file --lines 80 mocha \"test/**/*.spec.js\"",
