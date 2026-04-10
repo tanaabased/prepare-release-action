@@ -38,10 +38,10 @@ describe('bin/version-injector', () => {
 
     assert.equal(result.status, 0);
     assert.match(output, /Usage:/);
-    assert.match(output, /Inject a version assignment/);
+    assert.match(output, /Inject or update version information/);
     assert.match(output, /Options:/);
     assert.match(output, /Environment Variables:/);
-    assert.match(output, /--style <js\|sh\|ps1>/);
+    assert.match(output, /--style <js\|sh\|ps1\|json>/);
     assert.match(output, /--debug/);
     assert.match(output, /--insert <position>/);
     assert.match(output, /VERSION_INJECTOR_VERSION/);
@@ -141,6 +141,124 @@ describe('bin/version-injector', () => {
       fs.readFileSync(filePath, 'utf8'),
       '$SCRIPT_VERSION = "v4.5.6"\nWrite-Host "hello"\n',
     );
+  });
+
+  it('should replace a top-level json version and clean semver input', () => {
+    const filePath = createTempFile(
+      'manifest.json',
+      '{\n  "name": "fixture",\n  "version": "0.0.1",\n  "private": true\n}\n',
+    );
+
+    const result = runCli([filePath, '--style', 'json', '--version', 'v1.2.3']);
+
+    assert.equal(result.status, 0);
+    assert.match(result.stdout, /done/);
+    assert.equal(
+      fs.readFileSync(filePath, 'utf8'),
+      '{\n  "name": "fixture",\n  "version": "1.2.3",\n  "private": true\n}\n',
+    );
+  });
+
+  it('should support check mode for json without modifying the file', () => {
+    const filePath = createTempFile(
+      'check.json',
+      '{\n  "name": "fixture",\n  "version": "1.2.3"\n}\n',
+    );
+
+    const result = runCli([filePath, '--style', 'json', '--version', 'v1.2.3', '--check']);
+
+    assert.equal(result.status, 0);
+    assert.match(result.stdout, /done/);
+    assert.match(result.stdout, /check/);
+    assert.equal(
+      fs.readFileSync(filePath, 'utf8'),
+      '{\n  "name": "fixture",\n  "version": "1.2.3"\n}\n',
+    );
+  });
+
+  it('should support dry-run for json without modifying the file', () => {
+    const filePath = createTempFile(
+      'dry-run.json',
+      '{\n  "name": "fixture",\n  "version": "0.0.1"\n}\n',
+    );
+
+    const result = runCli([filePath, '--style', 'json', '--version', 'v8.8.8', '--dry-run']);
+
+    assert.equal(result.status, 0);
+    assert.match(result.stdout, /note/);
+    assert.match(result.stdout, /dry run/);
+    assert.equal(
+      fs.readFileSync(filePath, 'utf8'),
+      '{\n  "name": "fixture",\n  "version": "0.0.1"\n}\n',
+    );
+  });
+
+  it('should preserve json line endings and indentation', () => {
+    const filePath = createTempFile(
+      'windows.json',
+      '{\r\n    "name": "fixture",\r\n    "version": "0.0.1",\r\n    "nested": {\r\n        "ok": true\r\n    }\r\n}\r\n',
+    );
+
+    const result = runCli([filePath, '--style', 'json', '--version', 'v3.4.5']);
+
+    assert.equal(result.status, 0);
+    assert.equal(
+      fs.readFileSync(filePath, 'utf8'),
+      '{\r\n    "name": "fixture",\r\n    "version": "3.4.5",\r\n    "nested": {\r\n        "ok": true\r\n    }\r\n}\r\n',
+    );
+  });
+
+  it('should fail for invalid json files', () => {
+    const filePath = createTempFile('broken.json', '{\n');
+
+    const result = runCli([filePath, '--style', 'json', '--version', 'v1.2.3']);
+
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Could not parse JSON/);
+  });
+
+  it('should fail when the json root is not an object', () => {
+    const filePath = createTempFile('array.json', '[\n  "1.2.3"\n]\n');
+
+    const result = runCli([filePath, '--style', 'json', '--version', 'v1.2.3']);
+
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /must contain a top-level JSON object/);
+  });
+
+  it('should fail when the json version key is missing', () => {
+    const filePath = createTempFile('missing-version.json', '{\n  "name": "fixture"\n}\n');
+
+    const result = runCli([filePath, '--style', 'json', '--version', 'v1.2.3']);
+
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Could not find a top-level "version" key/);
+  });
+
+  it('should reject insert mode for json', () => {
+    const filePath = createTempFile('insert.json', '{\n  "version": "0.0.1"\n}\n');
+
+    const result = runCli([filePath, '--style', 'json', '--version', 'v1.2.3', '--insert', 'top']);
+
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /--insert is not supported with --style json/);
+  });
+
+  it('should reject custom names for json', () => {
+    const filePath = createTempFile('named.json', '{\n  "version": "0.0.1"\n}\n');
+
+    const result = runCli([
+      filePath,
+      '--style',
+      'json',
+      '--version',
+      'v1.2.3',
+      '--name',
+      'BUILD_VERSION',
+    ]);
+
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /--name is not supported with --style json/);
   });
 
   it('should support check mode without modifying the file', () => {
