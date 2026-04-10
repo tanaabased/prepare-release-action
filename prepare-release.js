@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 import * as core from '@actions/core';
-import exec from '@actions/exec';
+import * as exec from '@actions/exec';
 import jsonfile from 'jsonfile';
 import semverClean from 'semver/functions/clean.js';
 import semverValid from 'semver/functions/valid.js';
