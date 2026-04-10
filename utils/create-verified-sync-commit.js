@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
-import github from '@actions/github';
+import * as github from '@actions/github';
 
 import getStdOut from './get-stdout.js';
 
