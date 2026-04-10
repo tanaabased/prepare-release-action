@@ -7,6 +7,7 @@ import { format, inspect } from 'node:util';
 
 import ansis from 'ansis';
 import Debug from 'debug';
+import semverClean from 'semver/functions/clean.js';
 import parser from 'yargs-parser';
 
 import getScriptVersion from '../utils/get-script-version.js';
@@ -19,7 +20,7 @@ const color = ansis.extend({
 });
 const { bold, dim, green, red, tp, ts } = color;
 const validInsertions = new Set(['after-shebang', 'top', 'bottom']);
-const validStyles = new Set(['js', 'sh', 'ps1']);
+const validStyles = new Set(['js', 'sh', 'ps1', 'json']);
 
 let SCRIPT_VERSION;
 
@@ -259,6 +260,48 @@ const formatHelpLines = (lines) => {
   return lines.map((line) => `  ${line}`).join('\n');
 };
 
+const greatestCommonDivisor = (left, right) => {
+  if (right === 0) {
+    return left;
+  }
+
+  return greatestCommonDivisor(right, left % right);
+};
+
+const inferJsonIndent = (content) => {
+  const indents = Array.from(
+    content.matchAll(/^(?<indent>[ \t]+)(?="[^"\n]+"[ \t]*:)/gm),
+    (match) => match.groups?.indent ?? '',
+  ).filter(Boolean);
+
+  if (indents.length === 0) {
+    return '  ';
+  }
+
+  const hasTabs = indents.some((indent) => indent.includes('\t'));
+  const hasSpaces = indents.some((indent) => indent.includes(' '));
+
+  if (hasTabs && !hasSpaces) {
+    return '\t';
+  }
+
+  if (hasTabs && hasSpaces) {
+    return '  ';
+  }
+
+  const widths = indents.map((indent) => indent.length).filter((width) => width > 0);
+
+  if (widths.length === 0) {
+    return '  ';
+  }
+
+  const unitWidth = widths.reduce((currentWidth, width) =>
+    greatestCommonDivisor(currentWidth, width),
+  );
+
+  return unitWidth > 0 ? ' '.repeat(unitWidth) : '  ';
+};
+
 const renderHelp = () => {
   const options = [
     {
@@ -275,10 +318,10 @@ const renderHelp = () => {
     },
     {
       label: '--name <var>',
-      description: `sets the variable name to update ${dim('[default: SCRIPT_VERSION]')}`,
+      description: `sets the variable name to update ${dim('[default: SCRIPT_VERSION]')} ${dim('(not used for json)')}`,
     },
     {
-      label: '--style <js|sh|ps1>',
+      label: '--style <js|sh|ps1|json>',
       description: 'controls how the assignment line is matched and rendered.',
     },
     {
@@ -300,9 +343,9 @@ const renderHelp = () => {
   ];
 
   return [
-    `Usage: ${dim('[VERSION_INJECTOR=...]')} ${bold(`${CLI_NAME} <file> --style <js|sh|ps1> --version <value>`)} ${dim('[options]')}`,
+    `Usage: ${dim('[VERSION_INJECTOR=...]')} ${bold(`${CLI_NAME} <file> --style <js|sh|ps1|json> --version <value>`)} ${dim('[options]')}`,
     '',
-    'Inject a version assignment into a JavaScript, shell, or PowerShell file.',
+    'Inject or update version information in a JavaScript, shell, PowerShell, or JSON file.',
     '',
     `${tp('Options')}:`,
     formatHelpEntries(options),
@@ -349,7 +392,9 @@ const resolveInvocation = (argv) => {
     file: positionals[0] ?? null,
     help: argv.help === true,
     insert: argv.insert ?? environment.insert ?? defaults.insert,
+    insertConfigured: argv.insert !== undefined || environment.insert !== null,
     name: argv.name ?? environment.name ?? defaults.name,
+    nameConfigured: argv.name !== undefined || environment.name !== null,
     showCliVersion: argv['show-cli-version'] === true,
     style: argv.style ?? environment.style ?? defaults.style,
     versionValue: argv['inject-version'] ?? environment.versionValue ?? defaults.versionValue,
@@ -361,20 +406,36 @@ const validateArgs = (options) => {
     throw new Error('Missing required file path.');
   }
 
-  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(options.name)) {
-    throw new Error(`Invalid variable name ${options.name}.`);
-  }
-
   if (options.style === null) {
     throw new Error('Missing required option --style.');
   }
 
   if (!validStyles.has(options.style)) {
-    throw new Error(`Invalid --style ${options.style}. Expected one of js, sh, ps1.`);
+    throw new Error(`Invalid --style ${options.style}. Expected one of js, sh, ps1, json.`);
   }
 
   if (options.versionValue === null) {
     throw new Error('Missing required option --version <value>.');
+  }
+
+  if (options.style === 'json') {
+    if (options.insertConfigured) {
+      throw new Error('--insert is not supported with --style json.');
+    }
+
+    if (options.nameConfigured) {
+      throw new Error('--name is not supported with --style json.');
+    }
+
+    if (semverClean(options.versionValue) === null) {
+      throw new Error('--style json requires a semver-valid --version value.');
+    }
+
+    return;
+  }
+
+  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(options.name)) {
+    throw new Error(`Invalid variable name ${options.name}.`);
   }
 
   if (options.insert !== null && !validInsertions.has(options.insert)) {
@@ -402,6 +463,43 @@ const splitLines = (content) => {
 const joinLines = (lines, lineEnding, endsWithNewline) => {
   const content = lines.join(lineEnding);
   return endsWithNewline && lines.length > 0 ? `${content}${lineEnding}` : content;
+};
+
+const planJsonUpdate = (content, options) => {
+  const lineEnding = getLineEnding(content);
+  const { endsWithNewline } = splitLines(content);
+  let document;
+
+  try {
+    document = JSON.parse(content);
+  } catch (error) {
+    throw new Error(`Could not parse JSON in ${options.file}. ${error.message}`, { cause: error });
+  }
+
+  if (document === null || Array.isArray(document) || typeof document !== 'object') {
+    throw new Error(`${options.file} must contain a top-level JSON object.`);
+  }
+
+  if (!Object.hasOwn(document, 'version')) {
+    throw new Error(`Could not find a top-level "version" key in ${options.file}.`);
+  }
+
+  document.version = semverClean(options.versionValue);
+
+  let nextContent = JSON.stringify(document, null, inferJsonIndent(content));
+
+  if (lineEnding === '\r\n') {
+    nextContent = nextContent.replace(/\n/g, '\r\n');
+  }
+
+  if (endsWithNewline) {
+    nextContent = `${nextContent}${lineEnding}`;
+  }
+
+  return {
+    changed: nextContent !== content,
+    nextContent,
+  };
 };
 
 const getStyleConfig = (style, name, versionValue) => {
@@ -466,6 +564,10 @@ const applyInsertion = (lines, renderedLine, insert) => {
 };
 
 const planUpdate = (content, options) => {
+  if (options.style === 'json') {
+    return planJsonUpdate(content, options);
+  }
+
   const lineEnding = getLineEnding(content);
   const { endsWithNewline, lines } = splitLines(content);
   const styleConfig = getStyleConfig(options.style, options.name, options.versionValue);
@@ -521,8 +623,8 @@ const runCli = async (options) => {
     'resolved file=%s style=%s name=%s insert=%s check=%s dry-run=%s',
     targetPath,
     options.style,
-    options.name,
-    displayValue(options.insert),
+    displayValue(options.style === 'json' ? null : options.name),
+    displayValue(options.style === 'json' ? null : options.insert),
     options.check,
     options.dryRun,
   );
