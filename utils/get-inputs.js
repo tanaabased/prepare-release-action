@@ -1,4 +1,4 @@
-import core from '@actions/core';
+import * as core from '@actions/core';
 
 const defaultSyncBranch = 'main';
 const defaultSyncEmail = '41898282+github-actions[bot]@users.noreply.github.com';

@@ -61,23 +61,28 @@ UNRELEASED_LINK=${{ github.repositoryUrl }}
 ```
 
 You can use our `version-injector` helper in `commands` if you want to inject/replace/prepend additional version information into any files.
+Use `--style json` to update additional JSON manifests that already contain a top-level `version` key.
+This is the supported way to bump extra JSON files without adding more action inputs.
 
 ```text
-Usage: [VERSION_INJECTOR=...] version-injector <file> --style <js|sh|ps1> --version <value> [options]
+Usage: [VERSION_INJECTOR=...] version-injector <file> --style <js|sh|ps1|json> --version <value> [options]
 
-Inject a version assignment into a JavaScript, shell, or PowerShell file.
+Inject or update version information in a JavaScript, shell, PowerShell, or JSON file.
 
 Options:
   --check              exits non-zero when the file is not already up to date.
   --dry-run            reports the planned change without writing the file.
-  --insert <position>  inserts a new assignment with after-shebang, top, or bottom.
-  --name <var>         sets the variable name to update [default: SCRIPT_VERSION]
-  --style <js|sh|ps1>  controls how the assignment line is matched and rendered.
+  --insert <position>  inserts a new assignment with after-shebang, top, or bottom (not supported for json).
+  --name <var>         sets the variable name to update [default: SCRIPT_VERSION] (not used for json).
+  --style <js|sh|ps1|json>
+                      controls how the assignment line or version field is matched and rendered.
   --version <value>    sets the version string to write into the file.
   --debug              shows debug output [default: off]
   -h, --help           shows this help output.
   --version            shows the CLI version.
 ```
+
+When `--style json` is used, `version-injector` semver-cleans the supplied version first, so a value like `v1.2.3` is written as `1.2.3`.
 
 ## Permissions
 
@@ -139,6 +144,18 @@ steps:
 
 - name: Show resolved version
   run: echo "${{ steps.prepare-release.outputs.resolved-version }}"
+```
+
+**Additional JSON manifest example:**
+
+```yaml
+- name: Prepare Release
+  uses: tanaabased/prepare-release-action@v1
+  with:
+    version: dev
+    sync: false
+    commands: |
+      version-injector config/release.json --style json --version "$PREPARE_RELEASE_VERSION"
 ```
 
 **Everything, everywhere, all at once:**
