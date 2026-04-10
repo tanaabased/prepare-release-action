@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import core from '@actions/core';
+import * as core from '@actions/core';
 
 export default async (files = []) => {
   for (const backup of files) {

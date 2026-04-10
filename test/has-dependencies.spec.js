@@ -3,20 +3,30 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import core from '@actions/core';
-
 import hasDependencies from '../utils/has-dependencies.js';
 
 describe('utils/has-dependencies', () => {
-  const originalInfo = core.info;
   const tempDirs = [];
+  const originalStdoutWrite = process.stdout.write;
+  let stdoutMessages;
 
   beforeEach(() => {
-    core.info = () => {};
+    stdoutMessages = [];
+    process.stdout.write = (chunk, encoding, callback) => {
+      stdoutMessages.push(String(chunk));
+
+      if (typeof encoding === 'function') {
+        encoding();
+      } else if (typeof callback === 'function') {
+        callback();
+      }
+
+      return true;
+    };
   });
 
   afterEach(() => {
-    core.info = originalInfo;
+    process.stdout.write = originalStdoutWrite;
     for (const dir of tempDirs.splice(0, tempDirs.length)) {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -32,42 +42,27 @@ describe('utils/has-dependencies', () => {
 
   it('should return true when dependencies exist', () => {
     const file = writePackageJson({ dependencies: { mocha: '^11.0.0' } });
-    let infoCount = 0;
-    core.info = () => {
-      infoCount += 1;
-    };
-
     const result = hasDependencies(file);
 
     assert.equal(result, true);
-    assert.equal(infoCount, 0);
+    assert.equal(stdoutMessages.length, 0);
   });
 
   it('should return false and log when dependencies are missing', () => {
     const file = writePackageJson({ name: 'example' });
-    const messages = [];
-    core.info = (message) => {
-      messages.push(message);
-    };
-
     const result = hasDependencies(file);
 
     assert.equal(result, false);
-    assert.equal(messages.length, 1);
-    assert.match(messages[0], /No dependencies found/);
+    assert.equal(stdoutMessages.length, 1);
+    assert.match(stdoutMessages[0], /No dependencies found/);
   });
 
   it('should return false and log when dependencies are empty', () => {
     const file = writePackageJson({ dependencies: {} });
-    const messages = [];
-    core.info = (message) => {
-      messages.push(message);
-    };
-
     const result = hasDependencies(file);
 
     assert.equal(result, false);
-    assert.equal(messages.length, 1);
-    assert.match(messages[0], /No dependencies found/);
+    assert.equal(stdoutMessages.length, 1);
+    assert.match(stdoutMessages[0], /No dependencies found/);
   });
 });

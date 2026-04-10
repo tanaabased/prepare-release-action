@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import core from '@actions/core';
+import * as core from '@actions/core';
 
 export default async (collector = []) => {
   const runnerTemp = process.env['RUNNER_TEMP'];

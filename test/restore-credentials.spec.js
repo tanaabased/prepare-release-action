@@ -3,34 +3,31 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import core from '@actions/core';
-
 import restoreCredentials from '../utils/restore-credentials.js';
 
 describe('utils/restore-credentials', () => {
-  const originalInfo = core.info;
-  const originalWarning = core.warning;
-
-  let infoMessages;
+  const originalStdoutWrite = process.stdout.write;
   let tempDir;
-  let warningMessages;
+  let stdoutMessages;
 
   beforeEach(() => {
-    infoMessages = [];
-    warningMessages = [];
+    stdoutMessages = [];
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'restore-credentials-'));
+    process.stdout.write = (chunk, encoding, callback) => {
+      stdoutMessages.push(String(chunk));
 
-    core.info = (message) => {
-      infoMessages.push(message);
-    };
-    core.warning = (message) => {
-      warningMessages.push(message);
+      if (typeof encoding === 'function') {
+        encoding();
+      } else if (typeof callback === 'function') {
+        callback();
+      }
+
+      return true;
     };
   });
 
   afterEach(() => {
-    core.info = originalInfo;
-    core.warning = originalWarning;
+    process.stdout.write = originalStdoutWrite;
     fs.rmSync(tempDir, { recursive: true, force: true });
   });
 
@@ -44,9 +41,8 @@ describe('utils/restore-credentials', () => {
     assert.deepEqual(result, []);
     assert.equal(fs.existsSync(backup), false);
     assert.equal(fs.existsSync(restored), true);
-    assert.equal(infoMessages.length, 1);
-    assert.match(infoMessages[0], /Restored actions\/checkout credential file/);
-    assert.equal(warningMessages.length, 0);
+    assert.equal(stdoutMessages.length, 1);
+    assert.match(stdoutMessages[0], /Restored actions\/checkout credential file/);
   });
 
   it('should warn when restoring a backup fails', async () => {
@@ -55,8 +51,7 @@ describe('utils/restore-credentials', () => {
     const result = await restoreCredentials([missingBackup]);
 
     assert.deepEqual(result, []);
-    assert.equal(infoMessages.length, 0);
-    assert.equal(warningMessages.length, 1);
-    assert.match(warningMessages[0], /Failed to restore credential file/);
+    assert.equal(stdoutMessages.length, 1);
+    assert.match(stdoutMessages[0], /::warning::Failed to restore credential file/);
   });
 });

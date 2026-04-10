@@ -1,34 +1,40 @@
 import assert from 'node:assert/strict';
 
-import core from '@actions/core';
-
 import getInputs from '../utils/get-inputs.js';
 
 describe('utils/get-inputs', () => {
-  const originalGetInput = core.getInput;
-  const originalGetBooleanInput = core.getBooleanInput;
-  const originalGetMultilineInput = core.getMultilineInput;
   const originalGithubActions = process.env.GITHUB_ACTIONS;
   const originalGithubToken = process.env.GITHUB_TOKEN;
-
-  let inputValues;
-  let booleanValues;
-  let multilineValues;
+  const inputEnvNames = [
+    'INPUT_VERSION',
+    'INPUT_BUNDLE-DEPENDENCIES',
+    'INPUT_COMMANDS',
+    'INPUT_META',
+    'INPUT_ROOT',
+    'INPUT_SYNC',
+    'INPUT_SYNC-BRANCH',
+    'INPUT_SYNC-EMAIL',
+    'INPUT_SYNC-VERIFIED',
+    'INPUT_SYNC-MESSAGE',
+    'INPUT_SYNC-TAGS',
+    'INPUT_SYNC-TOKEN',
+    'INPUT_SYNC-USERNAME',
+    'INPUT_UPDATE-FILES-META',
+    'INPUT_UPDATE-FILES-HEADER',
+    'INPUT_UPDATE-FILES',
+    'INPUT_VERSION-MATCH',
+  ];
 
   beforeEach(() => {
-    inputValues = new Map();
-    booleanValues = new Map();
-    multilineValues = new Map();
-
-    core.getInput = (name) => inputValues.get(name) ?? '';
-    core.getBooleanInput = (name) => booleanValues.get(name) ?? false;
-    core.getMultilineInput = (name) => multilineValues.get(name);
+    for (const name of inputEnvNames) {
+      delete process.env[name];
+    }
   });
 
   afterEach(() => {
-    core.getInput = originalGetInput;
-    core.getBooleanInput = originalGetBooleanInput;
-    core.getMultilineInput = originalGetMultilineInput;
+    for (const name of inputEnvNames) {
+      delete process.env[name];
+    }
 
     if (originalGithubActions === undefined) {
       delete process.env.GITHUB_ACTIONS;
@@ -47,13 +53,10 @@ describe('utils/get-inputs', () => {
     delete process.env.GITHUB_ACTIONS;
     process.env.GITHUB_TOKEN = 'token-from-env';
 
-    inputValues.set('version', '1.2.3');
-    multilineValues.set('commands', ['bun run build']);
-    multilineValues.set('meta', ['FOO=bar']);
-    multilineValues.set('sync-tags', ['v1']);
-    multilineValues.set('update-files-meta', undefined);
-    multilineValues.set('update-files-header', undefined);
-    multilineValues.set('update-files', undefined);
+    process.env.INPUT_VERSION = '1.2.3';
+    process.env.INPUT_COMMANDS = 'bun run build';
+    process.env.INPUT_META = 'FOO=bar';
+    process.env['INPUT_SYNC-TAGS'] = 'v1';
 
     const result = getInputs();
 
@@ -81,25 +84,23 @@ describe('utils/get-inputs', () => {
     process.env.GITHUB_ACTIONS = 'true';
     delete process.env.GITHUB_TOKEN;
 
-    inputValues.set('version', '2.0.0');
-    inputValues.set('root', '/tmp/workspace');
-    inputValues.set('sync-branch', 'release');
-    inputValues.set('sync-email', 'bot@example.com');
-    inputValues.set('sync-message', 'syncing %s');
-    inputValues.set('sync-token', 'token-from-input');
-    inputValues.set('sync-username', 'release-bot');
-    inputValues.set('version-match', '^v\\d+');
-
-    booleanValues.set('bundle-dependencies', true);
-    booleanValues.set('sync', true);
-    booleanValues.set('sync-verified', true);
-
-    multilineValues.set('commands', ['bun run lint', 'bun run build']);
-    multilineValues.set('meta', ['KEY=value']);
-    multilineValues.set('sync-tags', ['stable', 'latest']);
-    multilineValues.set('update-files-meta', ['A=1']);
-    multilineValues.set('update-files-header', ['## Header']);
-    multilineValues.set('update-files', ['CHANGELOG.md']);
+    process.env.INPUT_VERSION = '2.0.0';
+    process.env.INPUT_ROOT = '/tmp/workspace';
+    process.env['INPUT_SYNC-BRANCH'] = 'release';
+    process.env['INPUT_SYNC-EMAIL'] = 'bot@example.com';
+    process.env['INPUT_SYNC-MESSAGE'] = 'syncing %s';
+    process.env['INPUT_SYNC-TOKEN'] = 'token-from-input';
+    process.env['INPUT_SYNC-USERNAME'] = 'release-bot';
+    process.env['INPUT_VERSION-MATCH'] = '^v\\d+';
+    process.env['INPUT_BUNDLE-DEPENDENCIES'] = 'true';
+    process.env.INPUT_SYNC = 'true';
+    process.env['INPUT_SYNC-VERIFIED'] = 'true';
+    process.env.INPUT_COMMANDS = ['bun run lint', 'bun run build'].join('\n');
+    process.env.INPUT_META = 'KEY=value';
+    process.env['INPUT_SYNC-TAGS'] = ['stable', 'latest'].join('\n');
+    process.env['INPUT_UPDATE-FILES-META'] = 'A=1';
+    process.env['INPUT_UPDATE-FILES-HEADER'] = '## Header';
+    process.env['INPUT_UPDATE-FILES'] = 'CHANGELOG.md';
 
     const result = getInputs();
 

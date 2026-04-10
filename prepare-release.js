@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import core from '@actions/core';
+import * as core from '@actions/core';
 import exec from '@actions/exec';
 import jsonfile from 'jsonfile';
 import semverClean from 'semver/functions/clean.js';
