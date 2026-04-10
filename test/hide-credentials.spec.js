@@ -3,35 +3,33 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import core from '@actions/core';
-
 import hideCredentials from '../utils/hide-credentials.js';
 
 describe('utils/hide-credentials', () => {
-  const originalInfo = core.info;
-  const originalDebug = core.debug;
   const originalRunnerTemp = process.env.RUNNER_TEMP;
+  const originalStdoutWrite = process.stdout.write;
 
-  let debugMessages;
-  let infoMessages;
+  let stdoutMessages;
   let tempDir;
 
   beforeEach(() => {
-    debugMessages = [];
-    infoMessages = [];
+    stdoutMessages = [];
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hide-credentials-'));
+    process.stdout.write = (chunk, encoding, callback) => {
+      stdoutMessages.push(String(chunk));
 
-    core.debug = (message) => {
-      debugMessages.push(message);
-    };
-    core.info = (message) => {
-      infoMessages.push(message);
+      if (typeof encoding === 'function') {
+        encoding();
+      } else if (typeof callback === 'function') {
+        callback();
+      }
+
+      return true;
     };
   });
 
   afterEach(() => {
-    core.info = originalInfo;
-    core.debug = originalDebug;
+    process.stdout.write = originalStdoutWrite;
 
     if (originalRunnerTemp === undefined) {
       delete process.env.RUNNER_TEMP;
@@ -50,8 +48,7 @@ describe('utils/hide-credentials', () => {
 
     assert.equal(result, collector);
     assert.deepEqual(result, ['existing-file']);
-    assert.equal(infoMessages.length, 0);
-    assert.equal(debugMessages.length, 0);
+    assert.equal(stdoutMessages.length, 0);
   });
 
   it('should rename matching credential files and collect backups', async () => {
@@ -79,8 +76,9 @@ describe('utils/hide-credentials', () => {
     assert.equal(fs.existsSync(`${matchingOne}.bak`), true);
     assert.equal(fs.existsSync(`${matchingTwo}.bak`), true);
     assert.equal(fs.existsSync(ignored), true);
-    assert.equal(infoMessages.length, 2);
-    assert.equal(debugMessages.length, 0);
+    assert.equal(stdoutMessages.length, 2);
+    assert.match(stdoutMessages[0], /Temporarily hiding actions\/checkout credential file/);
+    assert.match(stdoutMessages[1], /Temporarily hiding actions\/checkout credential file/);
   });
 
   it('should swallow read errors and return collector', async () => {
@@ -91,8 +89,7 @@ describe('utils/hide-credentials', () => {
 
     assert.equal(result, collector);
     assert.deepEqual(result, []);
-    assert.equal(infoMessages.length, 0);
-    assert.equal(debugMessages.length, 1);
-    assert.match(debugMessages[0], /Could not backup credential files/);
+    assert.equal(stdoutMessages.length, 1);
+    assert.match(stdoutMessages[0], /::debug::Could not backup credential files/);
   });
 });
