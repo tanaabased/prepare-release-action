@@ -1,5 +1,8 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
+- Added `json` support to `version-injector` so `commands` can update additional JSON manifests that already contain a top-level `version` key.
+- Updated action runtime imports to stay compatible with current `@actions/core`, `@actions/exec`, and `@actions/github` packages.
+
 ## v1.2.1 - [March 14, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.2.1)
 
 - Added `PREPARE_RELEASE_VERSION` and the `resolved-version` action output so downstream commands and later workflow steps can reuse the resolved release version.
