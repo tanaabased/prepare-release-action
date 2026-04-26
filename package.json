@@ -40,7 +40,7 @@
     "ansis": "^4.2.0",
     "c8": "^11.0.0",
     "debug": "^4.4.3",
-    "eslint": "^10.2.0",
+    "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.1",
     "globals": "^17.5.0",
     "mocha": "^11.7.5",
