@@ -1,6 +1,6 @@
 {
   "name": "@lando/prepare-release-action",
-  "version": "1.3.0-7-geaec-sync-test",
+  "version": "1.3.0-7-ge73b-sync-test",
   "description": "An action that can automate release steps and sync them back to the releasing repo.",
   "contributors": [
     "Alec Reynolds @reynoldsalec",
