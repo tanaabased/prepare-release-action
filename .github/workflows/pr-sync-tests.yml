@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Install bun
@@ -35,7 +35,7 @@ jobs:
           DEV_VERSION=$(git describe --tags --always --abbrev=1 --match="v[0-9].*") && echo "$VERSION"
           echo "VERSION=$DEV_VERSION-${{ matrix.signed && 'sync-test-verified' || 'sync-test' }}" >> $GITHUB_ENV
       - name: Checkout fresh repo for testing
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: test
       - name: Prepare release
@@ -79,6 +79,6 @@ jobs:
             exit 1
           fi
       - name: Checkout again to validate credential restoration
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: cred-me
