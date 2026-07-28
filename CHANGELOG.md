@@ -1,6 +1,6 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
-- Added exact `PREPARE_RELEASE_VERSION` interpolation in `commands` so release preparation commands can consume the validated resolved version without shell execution.
+- Fixed `PREPARE_RELEASE_VERSION` references in `commands` to resolve to the action's validated version without shell execution.
 
 ## v1.3.0 - [April 11, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.3.0)
 
