@@ -13,7 +13,7 @@ All inputs are optional however if you are **NOT** triggering this action on a `
 | `commands`            | A list of commands to run to prepare the release.                                                      | `[]`                                                                                                        | `version-injector --help`                          |
 | `meta`                | A list of `path=value` strings to merge into the `package.json`                                        | `null`                                                                                                      | `dist=thing`                                       |
 | `root`                | The location of the code being prepared for release.                                                   | `${{ github.workspace }}`                                                                                   | `/path/to/my/project`                              |
-| `bun-version`         | An optional Bun version override for this action run.                                                  | action repo `.bun-version`                                                                                  | `1.3.4`                                            |
+| `bun-version`         | The Bun version to install. Use `auto` to resolve it from the target repository.                       | `auto`                                                                                                      | `1.3.14`                                           |
 | `sync`                | A toggle to enable/disable code syncing.                                                               | `true`                                                                                                      | `false`                                            |
 | `sync-branch`         | The target branch to use when syncing changes back to the repo.                                        | `${{ github.event.release.target_commitish \|\| github.event.pull_request.head.ref \|\| github.ref_name }}` | `main`                                             |
 | `sync-email`          | The email to use when syncing changes back to the repo.                                                | `41898282+github-actions[bot]@users.noreply.github.com`                                                     | `riker@starfleet.gov`                              |
@@ -28,6 +28,8 @@ All inputs are optional however if you are **NOT** triggering this action on a `
 | `version-match`       | A regex to help find the latest tag. Only used when `version=dev`.                                     | `v[0-9].*`                                                                                                  | `[1-2].*`                                          |
 
 Note that `sync` must be set to `true` for the other `sync-*` options to do anything. Also note that in `sync-message` you can use `%s` as a placeholder for the version.
+
+With `bun-version=auto`, the action checks `root` for `.bun-version`, `.tool-versions`, then `package.json`; `setup-bun` parses the selected source and otherwise installs its latest release. Set `bun-version` explicitly to override detection.
 
 When `version=dev`, this action preserves the semver-valid `git describe --tags --always --abbrev=1 --match=<version-match>` result when matching tags exist.
 If no matching tag exists and that describe output is not semver-valid, it falls back to `v${package.json.version}`, then `v0.0.0-unreleased.<short-sha>`.

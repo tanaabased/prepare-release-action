@@ -25,8 +25,9 @@ inputs:
     required: false
     default: ${{ github.workspace }}
   bun-version:
-    description: 'An optional Bun version override for this action run.'
+    description: 'The Bun version to install. Use auto to resolve it from the target repository.'
     required: false
+    default: 'auto'
   sync:
     description: 'A toggle to enable/disable code syncing.'
     required: false
@@ -80,16 +81,18 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Setup Bundled Bun
-      if: ${{ inputs.bun-version == '' }}
+    - name: Select Bun Version Source
+      id: select-bun-version
+      shell: bash
+      env:
+        REQUESTED_BUN_VERSION: ${{ inputs.bun-version }}
+        TARGET_ROOT: ${{ inputs.root }}
+      run: bash "${{ github.action_path }}/scripts/select-bun-version-source.sh" "$REQUESTED_BUN_VERSION" "$TARGET_ROOT" >> "$GITHUB_OUTPUT"
+    - name: Setup Bun
       uses: oven-sh/setup-bun@v2
       with:
-        bun-version-file: ${{ github.action_path }}/.bun-version
-    - name: Setup Custom Bun
-      if: ${{ inputs.bun-version != '' }}
-      uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: ${{ inputs.bun-version }}
+        bun-version: ${{ steps.select-bun-version.outputs.bun-version }}
+        bun-version-file: ${{ steps.select-bun-version.outputs.bun-version-file }}
     - name: Expose version-injector on PATH
       shell: bash
       run: echo "${{ github.action_path }}/dist" >> "$GITHUB_PATH"

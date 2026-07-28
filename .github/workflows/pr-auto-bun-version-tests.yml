@@ -1,0 +1,40 @@
+name: Auto Bun Version Tests
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  auto-bun-version-test:
+    runs-on: ubuntu-24.04
+    env:
+      TEST_BUN_VERSION: 1.3.13
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set alternate Bun version
+        run: printf '%s\n' "$TEST_BUN_VERSION" > .bun-version
+        shell: bash
+
+      - name: Prepare release
+        uses: ./
+        with:
+          version: v5.0.0
+          commands: bun -e "await Bun.write('bun-version.txt', Bun.version)"
+          sync: false
+
+      - name: 'TEST: should install the repository Bun version'
+        if: always()
+        run: |
+          actual_version="$(tr -d '\r\n' < bun-version.txt)"
+          if test "$actual_version" = "$TEST_BUN_VERSION"; then
+            echo "::notice title=TEST PASSED::Repository Bun version installed"
+          else
+            echo "::error title=TEST FAILED!::Expected Bun $TEST_BUN_VERSION but found $actual_version"
+            exit 1
+          fi
+        shell: bash
