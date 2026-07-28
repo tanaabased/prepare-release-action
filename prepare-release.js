@@ -16,6 +16,7 @@ import resolveVersion from './utils/resolve-version.js';
 import getStdOut from './utils/get-stdout.js';
 import hasDependencies from './utils/has-dependencies.js';
 import hideCredentialFiles from './utils/hide-credentials.js';
+import interpolateCommandVersion from './utils/interpolate-command-version.js';
 import parseTokens from './utils/parse-tokens.js';
 import restoreCredentialFiles from './utils/restore-credentials.js';
 
@@ -88,7 +89,9 @@ const main = async () => {
     core.endGroup();
 
     // run user specified commands
-    for (const command of inputs.commands) await exec.exec(command);
+    for (const command of inputs.commands) {
+      await exec.exec(interpolateCommandVersion(command, inputs.version));
+    }
 
     // apply any metadata to the package.json
     if (inputs.meta.length > 0) {

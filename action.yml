@@ -15,7 +15,7 @@ inputs:
     required: false
     default: false
   commands:
-    description: 'A list of commands to run to prepare the release.'
+    description: 'A list of commands to run to prepare the release. Exact $PREPARE_RELEASE_VERSION and ${PREPARE_RELEASE_VERSION} references resolve to the validated version.'
     required: false
   meta:
     description: 'A list of path=value strings to merge into the package.json'
