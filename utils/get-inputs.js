@@ -15,7 +15,6 @@ export default () => ({
     ? core.getBooleanInput('bundle-dependencies')
     : false,
   commands: core.getMultilineInput('commands'),
-  credFiles: [],
   meta: core.getMultilineInput('meta'),
   root: core.getInput('root') || process.cwd(),
   sync: process.env.GITHUB_ACTIONS ? core.getBooleanInput('sync') : false,

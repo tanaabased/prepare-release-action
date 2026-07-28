@@ -48,7 +48,7 @@
     "yargs-parser": "22.0.0"
   },
   "scripts": {
-    "test": "c8 --all --include \"utils/*.js\" --include \"bin/*.js\" --reporter=text --check-coverage --per-file --lines 80 mocha \"test/**/*.spec.js\"",
+    "test": "c8 --all --include \"bin/*.js\" --include \"lib/*.js\" --include \"utils/*.js\" --reporter=text --check-coverage --per-file --lines 80 mocha \"test/**/*.spec.js\"",
     "lint": "eslint . --format json",
     "format:check": "prettier . --check --ignore-unknown",
     "format:write": "prettier . --write --ignore-unknown",

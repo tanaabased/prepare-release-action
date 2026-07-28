@@ -77,7 +77,6 @@ describe('utils/get-inputs', () => {
     assert.deepEqual(result.tokens, []);
     assert.deepEqual(result.updateHeader, []);
     assert.deepEqual(result.updateFiles, []);
-    assert.deepEqual(result.credFiles, []);
   });
 
   it('should read booleans and explicit values in GitHub Actions', () => {
