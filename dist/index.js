@@ -4,25 +4,43 @@ var __getProtoOf = Object.getPrototypeOf;
 var __defProp = Object.defineProperty;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+function __accessProp(key) {
+  return this[key];
+}
+var __toESMCache_node;
+var __toESMCache_esm;
 var __toESM = (mod, isNodeMode, target) => {
+  var canCache = mod != null && typeof mod === "object";
+  if (canCache) {
+    var cache = isNodeMode ? __toESMCache_node ??= new WeakMap : __toESMCache_esm ??= new WeakMap;
+    var cached = cache.get(mod);
+    if (cached)
+      return cached;
+  }
   target = mod != null ? __create(__getProtoOf(mod)) : {};
   const to = isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target;
   for (let key of __getOwnPropNames(mod))
     if (!__hasOwnProp.call(to, key))
       __defProp(to, key, {
-        get: () => mod[key],
+        get: __accessProp.bind(mod, key),
         enumerable: true
       });
+  if (canCache)
+    cache.set(mod, to);
   return to;
 };
 var __commonJS = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
+var __returnValue = (v) => v;
+function __exportSetter(name, newValue) {
+  this[name] = __returnValue.bind(null, newValue);
+}
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, {
       get: all[name],
       enumerable: true,
       configurable: true,
-      set: (newValue) => all[name] = () => newValue
+      set: __exportSetter.bind(all, name)
     });
 };
 var __require = import.meta.require;
@@ -828,9 +846,9 @@ GFS4: `);
     function readdir2(path6, options, cb) {
       if (typeof options === "function")
         cb = options, options = null;
-      var go$readdir = noReaddirOptionVersions.test(process.version) ? function go$readdir(path7, options2, cb2, startTime) {
+      var go$readdir = noReaddirOptionVersions.test(process.version) ? function go$readdir2(path7, options2, cb2, startTime) {
         return fs$readdir(path7, fs$readdirCallback(path7, options2, cb2, startTime));
-      } : function go$readdir(path7, options2, cb2, startTime) {
+      } : function go$readdir2(path7, options2, cb2, startTime) {
         return fs$readdir(path7, options2, fs$readdirCallback(path7, options2, cb2, startTime));
       };
       return go$readdir(path6, options, cb);
@@ -1058,6 +1076,9 @@ var require_utils = __commonJS((exports, module) => {
 `, finalEOL = true, replacer = null, spaces } = {}) {
     const EOF = finalEOL ? EOL6 : "";
     const str = JSON.stringify(obj, replacer, spaces);
+    if (str === undefined) {
+      throw new TypeError(`Converting ${typeof obj} value to JSON is not supported`);
+    }
     return str.replace(/\n/g, EOL6) + EOF;
   }
   function stripBom(content) {
@@ -8585,7 +8606,6 @@ var get_inputs_default = () => ({
   version: String(getInput("version")),
   bundleDependencies: process.env.GITHUB_ACTIONS ? getBooleanInput("bundle-dependencies") : false,
   commands: getMultilineInput("commands"),
-  credFiles: [],
   meta: getMultilineInput("meta"),
   root: getInput("root") || process.cwd(),
   sync: process.env.GITHUB_ACTIONS ? getBooleanInput("sync") : false,
@@ -8646,6 +8666,15 @@ var has_dependencies_default = (pjson) => {
   return typeof packageDependencies === "object" && packageDependencies !== null && Object.keys(packageDependencies).length > 0;
 };
 
+// utils/interpolate-command-version.js
+var resolvedVersionPattern = /\$(?:\{PREPARE_RELEASE_VERSION\}|PREPARE_RELEASE_VERSION(?![A-Za-z0-9_]))/g;
+var interpolate_command_version_default = (command, version) => command.replace(resolvedVersionPattern, version);
+
+// utils/parse-tokens.js
+var parse_tokens_default = (tokens) => {
+  return tokens.map((token) => token.split("=")).filter(([token, value]) => typeof token === "string" && typeof value === "string").map(([token, value]) => [token.trim(), value.trim()]);
+};
+
 // utils/hide-credentials.js
 import fs5 from "fs";
 import path7 from "path";
@@ -8670,11 +8699,6 @@ var hide_credentials_default = async (collector = []) => {
   return collector;
 };
 
-// utils/parse-tokens.js
-var parse_tokens_default = (tokens) => {
-  return tokens.map((token) => token.split("=")).filter(([token, value]) => typeof token === "string" && typeof value === "string").map(([token, value]) => [token.trim(), value.trim()]);
-};
-
 // utils/restore-credentials.js
 import fs6 from "fs";
 import path8 from "path";
@@ -8692,8 +8716,20 @@ var restore_credentials_default = async (files = []) => {
   return [];
 };
 
+// utils/with-hidden-credentials.js
+var with_hidden_credentials_default = async (operation) => {
+  const credentialFiles = await hide_credentials_default();
+  try {
+    return await operation();
+  } finally {
+    if (credentialFiles.length > 0) {
+      await restore_credentials_default(credentialFiles);
+    }
+  }
+};
+
 // prepare-release.js
-const SCRIPT_VERSION = 'v1.3.0';
+const SCRIPT_VERSION = 'v1.4.0';
 if (!SCRIPT_VERSION) {
   SCRIPT_VERSION = get_script_version_default();
 }
@@ -8735,8 +8771,9 @@ var main = async () => {
     if (inputs.sync)
       await exec("git", ["checkout", inputs.syncBranch]);
     endGroup();
-    for (const command of inputs.commands)
-      await exec(command);
+    for (const command of inputs.commands) {
+      await exec(interpolate_command_version_default(command, inputs.version));
+    }
     if (inputs.meta.length > 0) {
       const pjson = import_jsonfile2.default.readFileSync(inputs.pjson);
       inputs.meta.forEach((line) => {
@@ -8799,23 +8836,21 @@ var main = async () => {
       await exec("git", ["--no-pager", "tag", "--points-at", "HEAD"]);
       await exec("git", ["diff", "HEAD~1"]);
       endGroup();
-      inputs.credFiles = await hide_credentials_default();
-      const basicCredential = Buffer.from(`x-access-token:${inputs.syncToken}`, "utf8").toString("base64");
-      const authString = `AUTHORIZATION: basic ${basicCredential}`;
-      setSecret(basicCredential);
-      await exec("git", [
-        "config",
-        "--local",
-        "http.https://github.com/.extraheader",
-        authString
-      ]);
-      if (!inputs.syncVerified)
-        await exec("git", ["push", "origin", inputs.syncBranch]);
-      for (const tag of tags)
-        await exec("git", ["push", "--force", "origin", tag]);
-      if (Array.isArray(inputs.credFiles) && inputs.credFiles.length > 0) {
-        inputs.credFiles = await restore_credentials_default(inputs.credFiles);
-      }
+      await with_hidden_credentials_default(async () => {
+        const basicCredential = Buffer.from(`x-access-token:${inputs.syncToken}`, "utf8").toString("base64");
+        const authString = `AUTHORIZATION: basic ${basicCredential}`;
+        setSecret(basicCredential);
+        await exec("git", [
+          "config",
+          "--local",
+          "http.https://github.com/.extraheader",
+          authString
+        ]);
+        if (!inputs.syncVerified)
+          await exec("git", ["push", "origin", inputs.syncBranch]);
+        for (const tag of tags)
+          await exec("git", ["push", "--force", "origin", tag]);
+      });
     }
     if (inputs.bundleDependencies && has_dependencies_default(inputs.pjson)) {
       await exec("bunx", [
@@ -8845,5 +8880,5 @@ var main = async () => {
 };
 main();
 
-//# debugId=F0D305F9D8E3365A64756E2164756E21
+//# debugId=2FC4B60294EF9C5264756E2164756E21
 //# sourceMappingURL=index.js.map

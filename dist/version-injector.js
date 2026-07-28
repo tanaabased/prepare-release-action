@@ -5,15 +5,29 @@ var __getProtoOf = Object.getPrototypeOf;
 var __defProp = Object.defineProperty;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+function __accessProp(key) {
+  return this[key];
+}
+var __toESMCache_node;
+var __toESMCache_esm;
 var __toESM = (mod, isNodeMode, target) => {
+  var canCache = mod != null && typeof mod === "object";
+  if (canCache) {
+    var cache = isNodeMode ? __toESMCache_node ??= new WeakMap : __toESMCache_esm ??= new WeakMap;
+    var cached = cache.get(mod);
+    if (cached)
+      return cached;
+  }
   target = mod != null ? __create(__getProtoOf(mod)) : {};
   const to = isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target;
   for (let key of __getOwnPropNames(mod))
     if (!__hasOwnProp.call(to, key))
       __defProp(to, key, {
-        get: () => mod[key],
+        get: __accessProp.bind(mod, key),
         enumerable: true
       });
+  if (canCache)
+    cache.set(mod, to);
   return to;
 };
 var __commonJS = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
@@ -22,76 +36,74 @@ var __require = import.meta.require;
 // node_modules/ansis/index.cjs
 var require_ansis = __commonJS((exports, module) => {
   var e;
-  var t;
   var r;
-  var { defineProperty: l, setPrototypeOf: n, create: o, keys: s } = Object;
+  var { defineProperty: t, setPrototypeOf: n, create: l, keys: o } = Object;
   var i = "";
-  var { round: c, max: a } = Math;
-  var p = (e2) => {
-    let t2 = /([a-f\d]{3,6})/i.exec(e2)?.[1], r2 = t2?.length, l2 = parseInt(6 ^ r2 ? 3 ^ r2 ? "0" : t2[0] + t2[0] + t2[1] + t2[1] + t2[2] + t2[2] : t2, 16);
-    return [l2 >> 16 & 255, l2 >> 8 & 255, 255 & l2];
+  var { round: s, max: f } = Math;
+  var u = (e2) => {
+    let r2 = /([a-f\d]{3,6})/i.exec(e2)?.[1], t2 = r2?.length, n2 = parseInt(6 ^ t2 ? 3 ^ t2 ? "0" : r2[0] + r2[0] + r2[1] + r2[1] + r2[2] + r2[2] : r2, 16);
+    return [n2 >> 16 & 255, n2 >> 8 & 255, 255 & n2];
   };
-  var u = (e2, t2, r2) => e2 ^ t2 || t2 ^ r2 ? 16 + 36 * c(e2 / 51) + 6 * c(t2 / 51) + c(r2 / 51) : 8 > e2 ? 16 : e2 > 248 ? 231 : c(24 * (e2 - 8) / 247) + 232;
-  var d = (e2) => {
-    let t2, r2, l2, n2, o2;
-    return 8 > e2 ? 30 + e2 : 16 > e2 ? e2 - 8 + 90 : (232 > e2 ? (o2 = (e2 -= 16) % 36, t2 = (e2 / 36 | 0) / 5, r2 = (o2 / 6 | 0) / 5, l2 = o2 % 6 / 5) : t2 = r2 = l2 = (10 * (e2 - 232) + 8) / 255, n2 = 2 * a(t2, r2, l2), n2 ? 30 + (c(l2) << 2 | c(r2) << 1 | c(t2)) + (2 ^ n2 ? 0 : 60) : 30);
+  var a = (e2, r2, t2) => e2 ^ r2 || r2 ^ t2 ? 16 + 36 * s(e2 / 51) + 6 * s(r2 / 51) + s(t2 / 51) : 8 > e2 ? 16 : e2 > 248 ? 231 : s(24 * (e2 - 8) / 247) + 232;
+  var c = (e2) => {
+    let r2, t2, n2, l2, o2;
+    return 8 > e2 ? 30 + e2 : 16 > e2 ? 82 + e2 : (232 > e2 ? (o2 = (e2 -= 16) % 36, r2 = (e2 / 36 | 0) / 5, t2 = (o2 / 6 | 0) / 5, n2 = o2 % 6 / 5) : r2 = t2 = n2 = (10 * (e2 - 232) + 8) / 255, l2 = 2 * f(r2, t2, n2), l2 ? 30 + (s(n2) << 2 | s(t2) << 1 | s(r2)) + (2 ^ l2 ? 0 : 60) : 30);
   };
-  var f = (() => {
-    let r2 = (e2) => o2.some((t2) => e2.test(t2)), l2 = globalThis, n2 = l2.process ?? {}, o2 = n2.argv ?? [], i2 = n2.env ?? {}, c2 = -1;
-    try {
-      e = "," + s(i2).join(",");
-    } catch (e2) {
-      i2 = {}, c2 = 0;
-    }
-    let a2 = "FORCE_COLOR", p2 = { false: 0, 0: 0, 1: 1, 2: 2, 3: 3 }[i2[a2]] ?? -1, u2 = a2 in i2 && p2 || r2(/^--color=?(true|always)?$/);
-    return u2 && (c2 = p2), ~c2 || (c2 = ((r3, l3, n3) => (t = r3.TERM, { "24bit": 3, truecolor: 3, ansi256: 2, ansi: 1 }[r3.COLORTERM] || (r3.CI ? /,GITHUB/.test(e) ? 3 : 1 : l3 && t !== "dumb" ? n3 ? 3 : /-256/.test(t) ? 2 : 1 : 0)))(i2, !!i2.PM2_HOME || i2.NEXT_RUNTIME?.includes("edge") || !!n2.stdout?.isTTY, n2.platform === "win32")), !p2 || i2.NO_COLOR || r2(/^--(no-color|color=(false|never))$/) ? 0 : l2.window?.chrome || u2 && !c2 ? 3 : c2;
-  })();
   var g = { open: i, close: i };
-  var h = 39;
-  var b = 49;
-  var O = {};
-  var m = ({ p: e2 }, { open: t2, close: l2 }) => {
-    let o2 = (e3, ...r2) => {
+  var b = 39;
+  var d = 49;
+  var p = {};
+  var $ = ({ p: e2 }, { open: t2 = "", close: l2 = "", f: o2 }) => {
+    let s2 = (e3, ...r2) => {
       if (!e3) {
         if (t2 && t2 === l2)
           return t2;
         if ((e3 ?? i) === i)
           return i;
       }
-      let n2, s3 = e3.raw ? String.raw({ raw: e3 }, ...r2) : i + e3, c3 = o2.p, a2 = c3.o, p2 = c3.c;
-      if (s3.includes("\x1B"))
-        for (;c3; c3 = c3.p) {
-          let { open: e4, close: t3 } = c3, r3 = t3.length, l3 = i, o3 = 0;
-          if (r3)
-            for (;~(n2 = s3.indexOf(t3, o3)); o3 = n2 + r3)
-              l3 += s3.slice(o3, n2) + e4;
-          s3 = l3 + s3.slice(o3);
+      let n2, f3 = s2.p, u3 = f3.o, a2 = f3.c, c2 = o2 ? o2(e3, ...r2) : e3.raw ? String.raw({ raw: e3 }, ...r2) : i + e3;
+      if (c2.includes("\x1B"))
+        for (;f3; f3 = f3.p) {
+          let { t: e4, l: r3 } = f3, t3 = r3.length, l3 = i, o3 = 0;
+          if (t3)
+            for (;~(n2 = c2.indexOf(r3, o3)); o3 = n2 + t3)
+              l3 += c2.slice(o3, n2) + e4;
+          c2 = l3 + c2.slice(o3);
         }
-      return a2 + (s3.includes(`
-`) ? s3.replace(/(\r?\n)/g, p2 + "$1" + a2) : s3) + p2;
-    }, s2 = t2, c2 = l2;
-    return e2 && (s2 = e2.o + t2, c2 = l2 + e2.c), n(o2, r), o2.p = { open: t2, close: l2, o: s2, c: c2, p: e2 }, o2.open = s2, o2.close = c2, o2;
+      return u3 + (c2.includes(`
+`) ? c2.replace(/(\r?\n)/g, a2 + "$1" + u3) : c2) + a2;
+    }, f2 = t2, u2 = l2;
+    return e2 && (f2 = e2.o + t2, u2 = l2 + e2.c), n(s2, r), s2.p = { t: t2, l: l2, o: s2.open = f2, c: s2.close = u2, p: e2 }, s2;
   };
-  var w = new function e(t2 = f) {
-    let s2 = { Ansis: e, level: t2, isSupported: () => a2, strip: (e2) => e2.replace(/[\u001B\u009B][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, i), extend(e2) {
-      for (let t3 in e2) {
-        let r2 = e2[t3], l2 = (typeof r2)[0];
-        l2 === "s" ? (c2(t3, T(...p(r2))), c2(_(t3), v(...p(r2)))) : c2(t3, r2, l2 === "f");
+  var h = new function s2(f2 = globalThis) {
+    let h2, y, m = typeof f2 == "number" ? f2 : ((r2) => {
+      let t2 = r2.process ?? {}, n2 = t2.argv ?? [], l2 = t2.env ?? {}, i2 = 0;
+      try {
+        i2 = ((r3, t3, n3) => (e = t3.TERM, { "24bit": 3, truecolor: 3, ansi256: 2, ansi: 1 }[t3.COLORTERM] || (t3.CI ? /,GITHUB/.test(n3) ? 3 : 1 : (t3.PM2_HOME || /edge/.test(t3.NEXT_RUNTIME) || r3.stdout?.isTTY) && e !== "dumb" ? r3.platform === "win32" ? 3 : /-256/.test(e) ? 2 : 1 : 0)))(t2, l2, "," + o(l2).join(","));
+      } catch (e2) {
+        l2 = {};
       }
-      return r = o({}, O), n(s2, r), s2;
-    } }, c2 = (e2, t3, r2) => {
-      O[e2] = { get() {
-        let n2 = r2 ? (...e3) => m(this, t3(...e3)) : m(this, t3);
-        return l(this, e2, { value: n2 }), n2;
+      let s3, f3 = i2 || 1, u2 = "FORCE_COLOR", a2 = { false: 0, 0: 0, 1: 1, 2: 2, 3: 3 }[l2[u2]] ?? f3, c2 = -1;
+      for (s3 of n2)
+        /^--color=?(true|always)?$/.test(s3) && (c2 = f3), /^--(no-color|color=(false|never))$/.test(s3) && (c2 = 0);
+      return r2.window?.chrome ? 3 : (u2 in l2) ? a2 : ~c2 ? c2 : l2.NO_COLOR ? 0 : i2;
+    })(f2), w = { Ansis: s2, level: m, isSupported: () => v, strip: (e2) => e2.replace(/[\u001B\u009B][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, i), extend(e2) {
+      for (let r2 in e2) {
+        let t2 = e2[r2], n2 = (typeof t2)[0];
+        n2 === "s" && (O(B(r2), I(...u(t2))), t2 = H(...u(t2))), O(r2, t2, n2 === "f");
+      }
+      return n(w, r = l({}, p)), w;
+    } }, O = (e2, r2, n2) => {
+      p[e2] = { get() {
+        let l2 = n2 ? (...e3) => $(this, r2(...e3)) : $(this, r2);
+        return t(this, e2, { value: l2 }), l2;
       } };
-    }, a2 = t2 > 0, w2 = (e2, t3) => a2 ? { open: `\x1B[${e2}m`, close: `\x1B[${t3}m` } : g, y = (e2) => (t3) => e2(...p(t3)), R = (e2, t3) => (r2, l2, n2) => w2(`${e2}8;2;${r2};${l2};${n2}`, t3), $ = (e2, t3) => (r2, l2, n2) => w2(((e3, t4, r3) => d(u(e3, t4, r3)))(r2, l2, n2) + e2, t3), x = (e2) => (t3, r2, l2) => e2(u(t3, r2, l2)), T = R(3, h), v = R(4, b), C = (e2) => w2("38;5;" + e2, h), E = (e2) => w2("48;5;" + e2, b);
-    t2 === 2 ? (T = x(C), v = x(E)) : t2 === 1 && (T = $(0, h), v = $(10, b), C = (e2) => w2(d(e2), h), E = (e2) => w2(d(e2) + 10, b));
-    let M, I = { fg: C, bg: E, rgb: T, bgRgb: v, hex: y(T), bgHex: y(v), visible: g, reset: w2(0, 0), bold: w2(1, 22), dim: w2(2, 22), italic: w2(3, 23), underline: w2(4, 24), inverse: w2(7, 27), hidden: w2(8, 28), strikethrough: w2(9, 29) }, _ = (e2) => "bg" + e2[0].toUpperCase() + e2.slice(1), k = "Bright";
-    return "black,red,green,yellow,blue,magenta,cyan,white,gray".split(",").map((e2, t3) => {
-      M = _(e2), 8 > t3 ? (I[e2 + k] = w2(90 + t3, h), I[M + k] = w2(100 + t3, b)) : t3 = 60, I[e2] = w2(30 + t3, h), I[M] = w2(40 + t3, b);
-    }), s2.extend(I);
+    }, v = m > 0, _ = (e2, r2) => v ? { open: `\x1B[${e2}m`, close: `\x1B[${r2}m` } : g, k = (e2) => (r2) => e2(...u(r2)), x = (e2, r2) => (t2, n2, l2) => _(`${e2}8;2;${t2};${n2};${l2}`, r2), R = (e2) => (r2, t2, n2) => e2(a(r2, t2, n2)), A = (e2, r2) => (t2, n2, l2) => _(c(a(t2, n2, l2)) + e2, r2), B = (e2) => "bg" + e2[0].toUpperCase() + e2.slice(1), C = "Bright", H = x(3, b), I = x(4, d), P = (e2) => _("38;5;" + e2, b), S = (e2) => _("48;5;" + e2, d);
+    return m === 2 ? (H = R(P), I = R(S)) : m === 1 && (H = A(0, b), I = A(10, d), P = (e2) => _(c(e2), b), S = (e2) => _(c(e2) + 10, d)), y = { fg: P, bg: S, rgb: H, bgRgb: I, hex: k(H), bgHex: k(I), visible: g, reset: _(0, 0), bold: _(1, 22), dim: _(2, 22), italic: _(3, 23), underline: _(4, 24), inverse: _(7, 27), hidden: _(8, 28), strikethrough: _(9, 29), link: { f: (e2, r2 = e2) => v ? `\x1B]8;;${e2}\x07${r2}\x1B]8;;\x07` : r2 != e2 ? `${r2} (\u200B${e2}\u200B)` : e2 } }, "gray,black,red,green,yellow,blue,magenta,cyan,white".split(",").map((e2, r2) => {
+      h2 = B(e2), r2 ? (y[e2 + C] = _(89 + r2, b), y[h2 + C] = _(99 + r2, d)) : r2 = 61, y[e2] = _(29 + r2, b), y[h2] = _(39 + r2, d);
+    }), w.extend(y);
   };
-  module.exports = w, w.default = w;
+  module.exports = h.default = h;
 });
 
 // node_modules/ms/index.js
@@ -1296,6 +1308,19 @@ var require_clean = __commonJS((exports, module) => {
 });
 
 // bin/version-injector.js
+import process3 from "process";
+
+// utils/get-script-version.js
+import { execSync } from "child_process";
+var get_script_version_default = () => {
+  const output = execSync("git describe --tags --always --abbrev=1", {
+    maxBuffer: 1024 * 1024 * 10,
+    encoding: "utf-8"
+  });
+  return typeof output === "string" ? output.trim() : "unknown";
+};
+
+// lib/version-injector-cli.js
 import fs from "fs/promises";
 import path from "path";
 import process2 from "process";
@@ -1305,9 +1330,174 @@ import { format as format2, inspect } from "util";
 var import__ = __toESM(require_ansis(), 1);
 var ansis_default = import__.default;
 
-// bin/version-injector.js
+// lib/version-injector-cli.js
 var import_debug = __toESM(require_src(), 1);
+var import_clean2 = __toESM(require_clean(), 1);
+
+// utils/plan-version-injection.js
 var import_clean = __toESM(require_clean(), 1);
+var greatestCommonDivisor = (left, right) => {
+  if (right === 0) {
+    return left;
+  }
+  return greatestCommonDivisor(right, left % right);
+};
+var inferJsonIndent = (content) => {
+  const indents = Array.from(content.matchAll(/^(?<indent>[ \t]+)(?="[^"\n]+"[ \t]*:)/gm), (match) => match.groups?.indent ?? "").filter(Boolean);
+  if (indents.length === 0) {
+    return "  ";
+  }
+  const hasTabs = indents.some((indent) => indent.includes("\t"));
+  const hasSpaces = indents.some((indent) => indent.includes(" "));
+  if (hasTabs && !hasSpaces) {
+    return "\t";
+  }
+  if (hasTabs && hasSpaces) {
+    return "  ";
+  }
+  const widths = indents.map((indent) => indent.length).filter((width) => width > 0);
+  if (widths.length === 0) {
+    return "  ";
+  }
+  const unitWidth = widths.reduce((currentWidth, width) => greatestCommonDivisor(currentWidth, width));
+  return unitWidth > 0 ? " ".repeat(unitWidth) : "  ";
+};
+var getLineEnding = (content) => content.includes(`\r
+`) ? `\r
+` : `
+`;
+var splitLines = (content) => {
+  if (content === "") {
+    return { endsWithNewline: false, lines: [] };
+  }
+  const normalized = content.replace(/\r\n/g, `
+`);
+  const endsWithNewline = normalized.endsWith(`
+`);
+  const body = endsWithNewline ? normalized.slice(0, -1) : normalized;
+  const lines = body === "" ? [] : body.split(`
+`);
+  return { endsWithNewline, lines };
+};
+var joinLines = (lines, lineEnding, endsWithNewline) => {
+  const content = lines.join(lineEnding);
+  return endsWithNewline && lines.length > 0 ? `${content}${lineEnding}` : content;
+};
+var planJsonUpdate = (content, options) => {
+  const lineEnding = getLineEnding(content);
+  const { endsWithNewline } = splitLines(content);
+  let document2;
+  try {
+    document2 = JSON.parse(content);
+  } catch (error) {
+    throw new Error(`Could not parse JSON in ${options.file}. ${error.message}`, { cause: error });
+  }
+  if (document2 === null || Array.isArray(document2) || typeof document2 !== "object") {
+    throw new Error(`${options.file} must contain a top-level JSON object.`);
+  }
+  if (!Object.hasOwn(document2, "version")) {
+    throw new Error(`Could not find a top-level "version" key in ${options.file}.`);
+  }
+  document2.version = import_clean.default(options.versionValue);
+  let nextContent = JSON.stringify(document2, null, inferJsonIndent(content));
+  if (lineEnding === `\r
+`) {
+    nextContent = nextContent.replace(/\n/g, `\r
+`);
+  }
+  if (endsWithNewline) {
+    nextContent = `${nextContent}${lineEnding}`;
+  }
+  return {
+    changed: nextContent !== content,
+    nextContent
+  };
+};
+var escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+var escapeJavaScriptString = (value) => value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+var escapePowerShellString = (value) => value.replace(/`/g, "``").replace(/"/g, '`"');
+var escapeShellString = (value) => value.replace(/\\/g, "\\\\").replace(/"/g, "\\\"").replace(/\$/g, "\\$").replace(/`/g, "\\`");
+var getStyleConfig = (style, name, versionValue) => {
+  if (style === "js") {
+    return {
+      matchers: [
+        new RegExp(`^(?<indent>\\s*)(?:let|var)\\s+${escapeRegExp(name)}\\s*;\\s*$`),
+        new RegExp(`^(?<indent>\\s*)(?:const|let|var)\\s+${escapeRegExp(name)}\\s*=\\s*.+;\\s*$`)
+      ],
+      renderLine: (indent = "") => `${indent}const ${name} = '${escapeJavaScriptString(versionValue)}';`
+    };
+  }
+  if (style === "sh") {
+    return {
+      matchers: [new RegExp(`^(?<indent>\\s*)${escapeRegExp(name)}=.*$`)],
+      renderLine: (indent = "") => `${indent}${name}="${escapeShellString(versionValue)}"`
+    };
+  }
+  return {
+    matchers: [new RegExp(`^(?<indent>\\s*)\\$${escapeRegExp(name)}\\s*=\\s*(?:\\$null|.+)\\s*$`)],
+    renderLine: (indent = "") => `${indent}$${name} = "${escapePowerShellString(versionValue)}"`
+  };
+};
+var findMatches = (lines, matchers) => {
+  const matches = [];
+  for (const [index, line] of lines.entries()) {
+    for (const matcher of matchers) {
+      const match = line.match(matcher);
+      if (match) {
+        matches.push({
+          indent: match.groups?.indent ?? "",
+          index
+        });
+        break;
+      }
+    }
+  }
+  return matches;
+};
+var applyInsertion = (lines, renderedLine, insert) => {
+  if (insert === "top") {
+    return [renderedLine, ...lines];
+  }
+  if (insert === "bottom") {
+    return [...lines, renderedLine];
+  }
+  if (lines[0]?.startsWith("#!")) {
+    return [lines[0], renderedLine, ...lines.slice(1)];
+  }
+  throw new Error("Cannot use --insert after-shebang on a file without a shebang line.");
+};
+var plan_version_injection_default = (content, options, onMatches = () => {}) => {
+  if (options.style === "json") {
+    return planJsonUpdate(content, options);
+  }
+  const lineEnding = getLineEnding(content);
+  const { endsWithNewline, lines } = splitLines(content);
+  const styleConfig = getStyleConfig(options.style, options.name, options.versionValue);
+  const matches = findMatches(lines, styleConfig.matchers);
+  onMatches(matches.length);
+  if (matches.length > 1) {
+    throw new Error(`Found multiple ${options.name} assignments or placeholders in ${options.file}; refusing to choose one.`);
+  }
+  const nextLines = [...lines];
+  if (matches.length === 1) {
+    const match = matches[0];
+    nextLines[match.index] = styleConfig.renderLine(match.indent);
+  } else if (options.insert !== null) {
+    const renderedLine = styleConfig.renderLine();
+    const insertedLines = applyInsertion(nextLines, renderedLine, options.insert);
+    return {
+      changed: joinLines(insertedLines, lineEnding, endsWithNewline) !== content,
+      nextContent: joinLines(insertedLines, lineEnding, endsWithNewline)
+    };
+  } else {
+    throw new Error(`Could not find an existing ${options.name} assignment or placeholder in ${options.file}.`);
+  }
+  const nextContent = joinLines(nextLines, lineEnding, endsWithNewline);
+  return {
+    changed: nextContent !== content,
+    nextContent
+  };
+};
 
 // node_modules/yargs-parser/build/lib/index.js
 import { format } from "util";
@@ -2292,17 +2482,104 @@ yargsParser.decamelize = decamelize;
 yargsParser.looksLikeNumber = looksLikeNumber;
 var lib_default = yargsParser;
 
-// utils/get-script-version.js
-import { execSync } from "child_process";
-var get_script_version_default = () => {
-  const output = execSync("git describe --tags --always --abbrev=1", {
-    maxBuffer: 1024 * 1024 * 10,
-    encoding: "utf-8"
-  });
-  return typeof output === "string" ? output.trim() : "unknown";
+// utils/resolve-version-injector-options.js
+var normalizeEnvValue = (value) => {
+  if (value === undefined) {
+    return null;
+  }
+  const normalized = String(value).trim();
+  return normalized === "" ? null : normalized;
+};
+var normalizeRawArgv = (rawArgv) => {
+  const normalized = [];
+  for (let index = 0;index < rawArgv.length; index += 1) {
+    const token = rawArgv[index];
+    if (token === "--version") {
+      const nextValue = rawArgv[index + 1];
+      if (nextValue === undefined || nextValue.startsWith("-")) {
+        normalized.push("--show-cli-version");
+      } else {
+        normalized.push("--inject-version", nextValue);
+        index += 1;
+      }
+      continue;
+    }
+    if (token.startsWith("--version=")) {
+      const value = token.slice("--version=".length);
+      if (value === "") {
+        throw new Error("Missing value for --version.");
+      }
+      normalized.push(`--inject-version=${value}`);
+      continue;
+    }
+    normalized.push(token);
+  }
+  return normalized;
+};
+var parseArgs = (rawArgv) => lib_default(normalizeRawArgv(rawArgv), {
+  alias: {
+    help: ["h"]
+  },
+  boolean: ["check", "debug", "dry-run", "help", "show-cli-version"],
+  string: ["inject-version", "insert", "name", "style"],
+  configuration: {
+    "boolean-negation": true,
+    "camel-case-expansion": false,
+    "parse-numbers": false,
+    "strip-aliased": true,
+    "strip-dashed": true
+  }
+});
+var buildEnvironment = (env2) => Object.freeze({
+  insert: normalizeEnvValue(env2.VERSION_INJECTOR_INSERT),
+  name: normalizeEnvValue(env2.VERSION_INJECTOR_NAME),
+  style: normalizeEnvValue(env2.VERSION_INJECTOR_STYLE),
+  versionValue: env2.VERSION_INJECTOR_VERSION === undefined ? null : String(env2.VERSION_INJECTOR_VERSION)
+});
+var resolve_version_injector_options_default = (rawArgv, { debug = false, env: env2 = process.env } = {}) => {
+  const argv = parseArgs(rawArgv);
+  const environment = buildEnvironment(env2);
+  const allowedKeys = new Set([
+    "_",
+    "check",
+    "debug",
+    "dry-run",
+    "help",
+    "inject-version",
+    "insert",
+    "name",
+    "show-cli-version",
+    "style"
+  ]);
+  const unknownKey = Object.keys(argv).find((key) => !allowedKeys.has(key));
+  if (unknownKey) {
+    throw new Error(`Unknown option --${unknownKey}.`);
+  }
+  const positionals = argv._.map((value) => String(value));
+  if (positionals.length > 1) {
+    throw new Error(`Unexpected positional argument ${positionals[1]}. Only one file path is supported.`);
+  }
+  return {
+    argv,
+    options: {
+      check: argv.check ?? false,
+      debug,
+      dryRun: argv["dry-run"] ?? false,
+      environment,
+      file: positionals[0] ?? null,
+      help: argv.help === true,
+      insert: argv.insert ?? environment.insert ?? null,
+      insertConfigured: argv.insert !== undefined || environment.insert !== null,
+      name: argv.name ?? environment.name ?? "SCRIPT_VERSION",
+      nameConfigured: argv.name !== undefined || environment.name !== null,
+      showCliVersion: argv["show-cli-version"] === true,
+      style: argv.style ?? environment.style ?? null,
+      versionValue: argv["inject-version"] ?? environment.versionValue ?? null
+    }
+  };
 };
 
-// bin/version-injector.js
+// lib/version-injector-cli.js
 var CLI_NAME = "version-injector";
 var DEBUG_NAMESPACE = "version-injector";
 var color = ansis_default.extend({
@@ -2310,13 +2587,9 @@ var color = ansis_default.extend({
   ts: "#db2777"
 });
 var { bold, dim, green, red, tp, ts } = color;
+var debug = import_debug.default(DEBUG_NAMESPACE);
 var validInsertions = new Set(["after-shebang", "top", "bottom"]);
 var validStyles = new Set(["js", "sh", "ps1", "json"]);
-const SCRIPT_VERSION = 'v1.3.0';
-if (!SCRIPT_VERSION) {
-  SCRIPT_VERSION = get_script_version_default();
-}
-var debug = import_debug.default(DEBUG_NAMESPACE);
 var valueEnabled = (value) => {
   switch (String(value ?? "").trim().toLowerCase()) {
     case "":
@@ -2329,16 +2602,16 @@ var valueEnabled = (value) => {
       return true;
   }
 };
-var normalizeEnvValue = (value) => {
+var normalizeEnvValue2 = (value) => {
   if (value === undefined) {
     return null;
   }
   const normalized = String(value).trim();
   return normalized === "" ? null : normalized;
 };
-var configureDebug = (rawArgv) => {
-  const debugPattern = normalizeEnvValue(process2.env.DEBUG);
-  const toolDebug = normalizeEnvValue(process2.env.VERSION_INJECTOR_DEBUG);
+var configureDebug = (rawArgv, env2) => {
+  const debugPattern = normalizeEnvValue2(env2.DEBUG);
+  const toolDebug = normalizeEnvValue2(env2.VERSION_INJECTOR_DEBUG);
   const cliDebugEnabled = rawArgv.includes("--debug");
   const cliDebugDisabled = rawArgv.includes("--no-debug");
   if (cliDebugDisabled) {
@@ -2357,7 +2630,7 @@ var configureDebug = (rawArgv) => {
     }
     return;
   }
-  if (process2.env.RUNNER_DEBUG === "1") {
+  if (env2.RUNNER_DEBUG === "1") {
     import_debug.default.enable(debugPattern ?? DEBUG_NAMESPACE);
     return;
   }
@@ -2409,113 +2682,14 @@ var fail = (message = "", exitCode = 1) => {
   writeStatus(process2.stderr, "error", red, message);
   process2.exit(exitCode);
 };
-var displayValue = (value, fallback = "none") => {
-  return value === null ? fallback : value;
-};
-var escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-var escapeJavaScriptString = (value) => value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
-var escapePowerShellString = (value) => value.replace(/`/g, "``").replace(/"/g, '`"');
-var escapeShellString = (value) => value.replace(/\\/g, "\\\\").replace(/"/g, "\\\"").replace(/\$/g, "\\$").replace(/`/g, "\\`");
-var normalizeRawArgv = (rawArgv) => {
-  const normalized = [];
-  for (let index = 0;index < rawArgv.length; index += 1) {
-    const token = rawArgv[index];
-    if (token === "--version") {
-      const nextValue = rawArgv[index + 1];
-      if (nextValue === undefined || nextValue.startsWith("-")) {
-        normalized.push("--show-cli-version");
-      } else {
-        normalized.push("--inject-version", nextValue);
-        index += 1;
-      }
-      continue;
-    }
-    if (token.startsWith("--version=")) {
-      const value = token.slice("--version=".length);
-      if (value === "") {
-        throw new Error("Missing value for --version.");
-      }
-      normalized.push(`--inject-version=${value}`);
-      continue;
-    }
-    normalized.push(token);
-  }
-  return normalized;
-};
-var parseArgs = (rawArgv) => {
-  return lib_default(normalizeRawArgv(rawArgv), {
-    alias: {
-      help: ["h"]
-    },
-    boolean: ["check", "debug", "dry-run", "help", "show-cli-version"],
-    string: ["inject-version", "insert", "name", "style"],
-    configuration: {
-      "boolean-negation": true,
-      "camel-case-expansion": false,
-      "parse-numbers": false,
-      "strip-aliased": true,
-      "strip-dashed": true
-    }
-  });
-};
-var buildDefaults = () => Object.freeze({
-  check: false,
-  dryRun: false,
-  insert: null,
-  name: "SCRIPT_VERSION",
-  style: null,
-  versionValue: null
-});
-var buildEnvironment = () => Object.freeze({
-  insert: normalizeEnvValue(process2.env.VERSION_INJECTOR_INSERT),
-  name: normalizeEnvValue(process2.env.VERSION_INJECTOR_NAME),
-  style: normalizeEnvValue(process2.env.VERSION_INJECTOR_STYLE),
-  versionValue: process2.env.VERSION_INJECTOR_VERSION === undefined ? null : String(process2.env.VERSION_INJECTOR_VERSION)
-});
-var buildEnvironmentVariables = () => {
-  return [
-    "VERSION_INJECTOR_DEBUG",
-    "VERSION_INJECTOR_INSERT",
-    "VERSION_INJECTOR_NAME",
-    "VERSION_INJECTOR_STYLE",
-    "VERSION_INJECTOR_VERSION"
-  ];
-};
+var displayValue = (value, fallback = "none") => value === null ? fallback : value;
 var formatHelpEntries = (entries) => {
   const width = entries.reduce((maxWidth, entry) => Math.max(maxWidth, entry.label.length), 0);
   return entries.map((entry) => `  ${entry.label.padEnd(width)}  ${entry.description}`).join(`
 `);
 };
-var formatHelpLines = (lines) => {
-  return lines.map((line) => `  ${line}`).join(`
+var formatHelpLines = (lines) => lines.map((line) => `  ${line}`).join(`
 `);
-};
-var greatestCommonDivisor = (left, right) => {
-  if (right === 0) {
-    return left;
-  }
-  return greatestCommonDivisor(right, left % right);
-};
-var inferJsonIndent = (content) => {
-  const indents = Array.from(content.matchAll(/^(?<indent>[ \t]+)(?="[^"\n]+"[ \t]*:)/gm), (match) => match.groups?.indent ?? "").filter(Boolean);
-  if (indents.length === 0) {
-    return "  ";
-  }
-  const hasTabs = indents.some((indent) => indent.includes("\t"));
-  const hasSpaces = indents.some((indent) => indent.includes(" "));
-  if (hasTabs && !hasSpaces) {
-    return "\t";
-  }
-  if (hasTabs && hasSpaces) {
-    return "  ";
-  }
-  const widths = indents.map((indent) => indent.length).filter((width) => width > 0);
-  if (widths.length === 0) {
-    return "  ";
-  }
-  const unitWidth = widths.reduce((currentWidth, width) => greatestCommonDivisor(currentWidth, width));
-  return unitWidth > 0 ? " ".repeat(unitWidth) : "  ";
-};
 var renderHelp = () => {
   const options = [
     {
@@ -2564,50 +2738,17 @@ var renderHelp = () => {
     formatHelpEntries(options),
     "",
     `${tp("Environment Variables")}:`,
-    formatHelpLines(buildEnvironmentVariables())
+    formatHelpLines([
+      "VERSION_INJECTOR_DEBUG",
+      "VERSION_INJECTOR_INSERT",
+      "VERSION_INJECTOR_NAME",
+      "VERSION_INJECTOR_STYLE",
+      "VERSION_INJECTOR_VERSION"
+    ])
   ].join(`
 `);
 };
-var resolveInvocation = (argv) => {
-  const defaults = buildDefaults();
-  const environment = buildEnvironment();
-  const allowedKeys = new Set([
-    "_",
-    "check",
-    "debug",
-    "dry-run",
-    "help",
-    "inject-version",
-    "insert",
-    "name",
-    "show-cli-version",
-    "style"
-  ]);
-  const unknownKey = Object.keys(argv).find((key) => !allowedKeys.has(key));
-  if (unknownKey) {
-    throw new Error(`Unknown option --${unknownKey}.`);
-  }
-  const positionals = argv._.map((value) => String(value));
-  if (positionals.length > 1) {
-    throw new Error(`Unexpected positional argument ${positionals[1]}. Only one file path is supported.`);
-  }
-  return {
-    check: argv.check ?? defaults.check,
-    debug: debug.enabled,
-    dryRun: argv["dry-run"] ?? defaults.dryRun,
-    environment,
-    file: positionals[0] ?? null,
-    help: argv.help === true,
-    insert: argv.insert ?? environment.insert ?? defaults.insert,
-    insertConfigured: argv.insert !== undefined || environment.insert !== null,
-    name: argv.name ?? environment.name ?? defaults.name,
-    nameConfigured: argv.name !== undefined || environment.name !== null,
-    showCliVersion: argv["show-cli-version"] === true,
-    style: argv.style ?? environment.style ?? defaults.style,
-    versionValue: argv["inject-version"] ?? environment.versionValue ?? defaults.versionValue
-  };
-};
-var validateArgs = (options) => {
+var validateOptions = (options) => {
   if (options.file === null) {
     throw new Error("Missing required file path.");
   }
@@ -2627,7 +2768,7 @@ var validateArgs = (options) => {
     if (options.nameConfigured) {
       throw new Error("--name is not supported with --style json.");
     }
-    if (import_clean.default(options.versionValue) === null) {
+    if (import_clean2.default(options.versionValue) === null) {
       throw new Error("--style json requires a semver-valid --version value.");
     }
     return;
@@ -2639,142 +2780,10 @@ var validateArgs = (options) => {
     throw new Error(`Invalid --insert ${options.insert}. Expected one of after-shebang, top, bottom.`);
   }
 };
-var getLineEnding = (content) => content.includes(`\r
-`) ? `\r
-` : `
-`;
-var splitLines = (content) => {
-  if (content === "") {
-    return { endsWithNewline: false, lines: [] };
-  }
-  const normalized = content.replace(/\r\n/g, `
-`);
-  const endsWithNewline = normalized.endsWith(`
-`);
-  const body = endsWithNewline ? normalized.slice(0, -1) : normalized;
-  const lines = body === "" ? [] : body.split(`
-`);
-  return { endsWithNewline, lines };
-};
-var joinLines = (lines, lineEnding, endsWithNewline) => {
-  const content = lines.join(lineEnding);
-  return endsWithNewline && lines.length > 0 ? `${content}${lineEnding}` : content;
-};
-var planJsonUpdate = (content, options) => {
-  const lineEnding = getLineEnding(content);
-  const { endsWithNewline } = splitLines(content);
-  let document2;
-  try {
-    document2 = JSON.parse(content);
-  } catch (error) {
-    throw new Error(`Could not parse JSON in ${options.file}. ${error.message}`, { cause: error });
-  }
-  if (document2 === null || Array.isArray(document2) || typeof document2 !== "object") {
-    throw new Error(`${options.file} must contain a top-level JSON object.`);
-  }
-  if (!Object.hasOwn(document2, "version")) {
-    throw new Error(`Could not find a top-level "version" key in ${options.file}.`);
-  }
-  document2.version = import_clean.default(options.versionValue);
-  let nextContent = JSON.stringify(document2, null, inferJsonIndent(content));
-  if (lineEnding === `\r
-`) {
-    nextContent = nextContent.replace(/\n/g, `\r
-`);
-  }
-  if (endsWithNewline) {
-    nextContent = `${nextContent}${lineEnding}`;
-  }
-  return {
-    changed: nextContent !== content,
-    nextContent
-  };
-};
-var getStyleConfig = (style, name, versionValue) => {
-  if (style === "js") {
-    return {
-      matchers: [
-        new RegExp(`^(?<indent>\\s*)(?:let|var)\\s+${escapeRegExp(name)}\\s*;\\s*$`),
-        new RegExp(`^(?<indent>\\s*)(?:const|let|var)\\s+${escapeRegExp(name)}\\s*=\\s*.+;\\s*$`)
-      ],
-      renderLine: (indent = "") => `${indent}const ${name} = '${escapeJavaScriptString(versionValue)}';`
-    };
-  }
-  if (style === "sh") {
-    return {
-      matchers: [new RegExp(`^(?<indent>\\s*)${escapeRegExp(name)}=.*$`)],
-      renderLine: (indent = "") => `${indent}${name}="${escapeShellString(versionValue)}"`
-    };
-  }
-  return {
-    matchers: [new RegExp(`^(?<indent>\\s*)\\$${escapeRegExp(name)}\\s*=\\s*(?:\\$null|.+)\\s*$`)],
-    renderLine: (indent = "") => `${indent}$${name} = "${escapePowerShellString(versionValue)}"`
-  };
-};
-var findMatches = (lines, matchers) => {
-  const matches = [];
-  for (const [index, line] of lines.entries()) {
-    for (const matcher of matchers) {
-      const match = line.match(matcher);
-      if (match) {
-        matches.push({
-          indent: match.groups?.indent ?? "",
-          index
-        });
-        break;
-      }
-    }
-  }
-  return matches;
-};
-var applyInsertion = (lines, renderedLine, insert) => {
-  if (insert === "top") {
-    return [renderedLine, ...lines];
-  }
-  if (insert === "bottom") {
-    return [...lines, renderedLine];
-  }
-  if (lines[0]?.startsWith("#!")) {
-    return [lines[0], renderedLine, ...lines.slice(1)];
-  }
-  throw new Error("Cannot use --insert after-shebang on a file without a shebang line.");
-};
-var planUpdate = (content, options) => {
-  if (options.style === "json") {
-    return planJsonUpdate(content, options);
-  }
-  const lineEnding = getLineEnding(content);
-  const { endsWithNewline, lines } = splitLines(content);
-  const styleConfig = getStyleConfig(options.style, options.name, options.versionValue);
-  const matches = findMatches(lines, styleConfig.matchers);
-  trace("matched %d candidate line%s in %s", matches.length, matches.length === 1 ? "" : "s", options.file);
-  if (matches.length > 1) {
-    throw new Error(`Found multiple ${options.name} assignments or placeholders in ${options.file}; refusing to choose one.`);
-  }
-  const nextLines = [...lines];
-  if (matches.length === 1) {
-    const match = matches[0];
-    nextLines[match.index] = styleConfig.renderLine(match.indent);
-  } else if (options.insert !== null) {
-    const renderedLine = styleConfig.renderLine();
-    const insertedLines = applyInsertion(nextLines, renderedLine, options.insert);
-    return {
-      changed: joinLines(insertedLines, lineEnding, endsWithNewline) !== content,
-      nextContent: joinLines(insertedLines, lineEnding, endsWithNewline)
-    };
-  } else {
-    throw new Error(`Could not find an existing ${options.name} assignment or placeholder in ${options.file}.`);
-  }
-  const nextContent = joinLines(nextLines, lineEnding, endsWithNewline);
-  return {
-    changed: nextContent !== content,
-    nextContent
-  };
-};
-var runCli = async (options) => {
-  validateArgs(options);
+var runInjection = async (options, scriptVersion) => {
+  validateOptions(options);
   const targetPath = path.resolve(options.file);
-  trace("running %s.js script version: %s", CLI_NAME, SCRIPT_VERSION);
+  trace("running %s.js script version: %s", CLI_NAME, scriptVersion);
   trace("resolved file=%s style=%s name=%s insert=%s check=%s dry-run=%s", targetPath, options.style, displayValue(options.style === "json" ? null : options.name), displayValue(options.style === "json" ? null : options.insert), options.check, options.dryRun);
   let content;
   try {
@@ -2782,7 +2791,9 @@ var runCli = async (options) => {
   } catch (error) {
     throw new Error(`Could not read ${targetPath}. ${error.message}`, { cause: error });
   }
-  const result = planUpdate(content, { ...options, file: targetPath });
+  const result = plan_version_injection_default(content, { ...options, file: targetPath }, (matchCount) => {
+    trace("matched %d candidate line%s in %s", matchCount, matchCount === 1 ? "" : "s", targetPath);
+  });
   if (options.check) {
     if (result.changed) {
       throw new Error(`${targetPath} does not match the requested version injection.`);
@@ -2801,27 +2812,40 @@ var runCli = async (options) => {
   await fs.writeFile(targetPath, result.nextContent, "utf8");
   success("%s %s", tp("update"), ts(targetPath));
 };
-var main = async (rawArgv) => {
-  configureDebug(rawArgv);
-  const argv = parseArgs(rawArgv);
-  const invocation = resolveInvocation(argv);
-  if (invocation.help) {
+var main = async (rawArgv, scriptVersion, env2) => {
+  configureDebug(rawArgv, env2);
+  const { argv, options } = resolve_version_injector_options_default(rawArgv, {
+    debug: debug.enabled,
+    env: env2
+  });
+  if (options.help) {
     log(renderHelp());
     return;
   }
-  if (invocation.showCliVersion) {
-    if (invocation.file !== null || argv.style !== undefined || argv["inject-version"] !== undefined || argv.insert !== undefined || argv.name !== undefined || argv.check === true || argv["dry-run"] === true || argv.debug !== undefined) {
+  if (options.showCliVersion) {
+    if (options.file !== null || argv.style !== undefined || argv["inject-version"] !== undefined || argv.insert !== undefined || argv.name !== undefined || argv.check === true || argv["dry-run"] === true || argv.debug !== undefined) {
       throw new Error("Bare --version only prints the CLI version when no file path or injection options are provided.");
     }
-    log(SCRIPT_VERSION);
+    log(scriptVersion);
     return;
   }
-  await runCli(invocation);
+  await runInjection(options, scriptVersion);
 };
-await main(process2.argv.slice(2)).catch((error) => {
-  trace(error);
-  fail(error instanceof Error ? error.message : String(error));
-});
+var version_injector_cli_default = async (rawArgv, scriptVersion, env2 = process2.env) => {
+  try {
+    await main(rawArgv, scriptVersion, env2);
+  } catch (error) {
+    trace(error);
+    fail(error instanceof Error ? error.message : String(error));
+  }
+};
 
-//# debugId=4D96B542BE98EBFB64756E2164756E21
+// bin/version-injector.js
+const SCRIPT_VERSION = 'v1.4.0';
+if (!SCRIPT_VERSION) {
+  SCRIPT_VERSION = get_script_version_default();
+}
+await version_injector_cli_default(process3.argv.slice(2), SCRIPT_VERSION);
+
+//# debugId=EDCB64B2B17132E364756E2164756E21
 //# sourceMappingURL=version-injector.js.map

@@ -1,5 +1,7 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
+## v1.4.0 - [July 28, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.4.0)
+
 - Added automatic Bun version selection from `.bun-version`, `.tool-versions`, or `package.json` when `bun-version=auto`. [#34](https://github.com/tanaabased/prepare-release-action/pull/34)
 - Fixed `actions/checkout` credentials to be restored when sync operations fail. [#33](https://github.com/tanaabased/prepare-release-action/pull/33)
 - Fixed `PREPARE_RELEASE_VERSION` references in `commands` to resolve to the action's validated version without shell execution. [#32](https://github.com/tanaabased/prepare-release-action/pull/32)
