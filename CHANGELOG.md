@@ -1,5 +1,7 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
+- Fixed `PREPARE_RELEASE_VERSION` references in `commands` to resolve to the action's validated version without shell execution.
+
 ## v1.3.0 - [April 11, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.3.0)
 
 - Added `json` support to `version-injector` so `commands` can update additional JSON manifests that already contain a top-level `version` key.

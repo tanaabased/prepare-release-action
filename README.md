@@ -31,7 +31,9 @@ Note that `sync` must be set to `true` for the other `sync-*` options to do anyt
 
 When `version=dev`, this action preserves the semver-valid `git describe --tags --always --abbrev=1 --match=<version-match>` result when matching tags exist.
 If no matching tag exists and that describe output is not semver-valid, it falls back to `v${package.json.version}`, then `v0.0.0-unreleased.<short-sha>`.
-The resolved value is exported as `PREPARE_RELEASE_VERSION` for the `commands` block and later workflow steps, and is also exposed as the `resolved-version` action output.
+Inside `commands`, the action replaces exact `$PREPARE_RELEASE_VERSION` and `${PREPARE_RELEASE_VERSION}` references with the validated resolved value before direct execution; other environment references remain unchanged.
+The value is also exported as `PREPARE_RELEASE_VERSION` for command processes and later workflow steps.
+The `resolved-version` action output is available only after the action step completes, so it cannot be referenced from that same step's `commands` input.
 
 ## Outputs
 
