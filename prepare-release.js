@@ -15,10 +15,9 @@ import getInputs from './utils/get-inputs.js';
 import resolveVersion from './utils/resolve-version.js';
 import getStdOut from './utils/get-stdout.js';
 import hasDependencies from './utils/has-dependencies.js';
-import hideCredentialFiles from './utils/hide-credentials.js';
 import interpolateCommandVersion from './utils/interpolate-command-version.js';
 import parseTokens from './utils/parse-tokens.js';
-import restoreCredentialFiles from './utils/restore-credentials.js';
+import withHiddenCredentials from './utils/with-hidden-credentials.js';
 
 let SCRIPT_VERSION;
 
@@ -183,30 +182,22 @@ const main = async () => {
       await exec.exec('git', ['diff', 'HEAD~1']);
       core.endGroup();
 
-      // if using actions/checkout@v6 we need to temporarily move credential files
-      inputs.credFiles = await hideCredentialFiles();
+      await withHiddenCredentials(async () => {
+        const basicCredential = Buffer.from(`x-access-token:${inputs.syncToken}`, 'utf8').toString(
+          'base64',
+        );
+        const authString = `AUTHORIZATION: basic ${basicCredential}`;
+        core.setSecret(basicCredential);
 
-      // construct auth string
-      const basicCredential = Buffer.from(`x-access-token:${inputs.syncToken}`, 'utf8').toString(
-        'base64',
-      );
-      const authString = `AUTHORIZATION: basic ${basicCredential}`;
-      core.setSecret(basicCredential);
-
-      // push updates
-      await exec.exec('git', [
-        'config',
-        '--local',
-        'http.https://github.com/.extraheader',
-        authString,
-      ]);
-      if (!inputs.syncVerified) await exec.exec('git', ['push', 'origin', inputs.syncBranch]);
-      for (const tag of tags) await exec.exec('git', ['push', '--force', 'origin', tag]);
-
-      // restore credentials if needed
-      if (Array.isArray(inputs.credFiles) && inputs.credFiles.length > 0) {
-        inputs.credFiles = await restoreCredentialFiles(inputs.credFiles);
-      }
+        await exec.exec('git', [
+          'config',
+          '--local',
+          'http.https://github.com/.extraheader',
+          authString,
+        ]);
+        if (!inputs.syncVerified) await exec.exec('git', ['push', 'origin', inputs.syncBranch]);
+        for (const tag of tags) await exec.exec('git', ['push', '--force', 'origin', tag]);
+      });
     }
 
     // bundle deps if we need to

@@ -3,6 +3,9 @@ name: Version Injector Tests
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   version-injector-test:
     runs-on: ubuntu-24.04

@@ -3,6 +3,9 @@ name: Options Tests
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   options-test:
     runs-on: ${{ matrix.os }}
