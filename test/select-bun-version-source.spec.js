@@ -51,22 +51,11 @@ describe('scripts/select-bun-version-source', () => {
 
   it('should prefer .bun-version in auto mode', () => {
     writeFileSync(join(fixture, '.bun-version'), '1.2.3\n');
-    writeFileSync(join(fixture, '.tool-versions'), 'bun 1.2.2\n');
     writeFileSync(join(fixture, 'package.json'), '{"packageManager":"bun@1.2.1"}\n');
 
     assert.deepEqual(select('auto'), {
       'bun-version': '',
       'bun-version-file': `${fixtureRoot}/.bun-version`,
-    });
-  });
-
-  it('should fall back to .tool-versions in auto mode', () => {
-    writeFileSync(join(fixture, '.tool-versions'), 'bun 1.2.2\n');
-    writeFileSync(join(fixture, 'package.json'), '{"packageManager":"bun@1.2.1"}\n');
-
-    assert.deepEqual(select('auto'), {
-      'bun-version': '',
-      'bun-version-file': `${fixtureRoot}/.tool-versions`,
     });
   });
 
@@ -79,8 +68,8 @@ describe('scripts/select-bun-version-source', () => {
     });
   });
 
-  it('should skip .tool-versions when it has no Bun entry', () => {
-    writeFileSync(join(fixture, '.tool-versions'), 'nodejs 24.0.0\n');
+  it('should ignore .tool-versions and fall back to package.json', () => {
+    writeFileSync(join(fixture, '.tool-versions'), 'bun 1.2.2\nnodejs 24.0.0\n');
     writeFileSync(join(fixture, 'package.json'), '{"packageManager":"bun@1.2.1"}\n');
 
     assert.deepEqual(select('auto'), {
