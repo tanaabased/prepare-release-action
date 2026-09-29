@@ -1,5 +1,7 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
+- Updated the development Bun version to 1.4.2 and removed automatic Bun version detection from `.tool-versions`; use `.bun-version` instead.
+
 ## v1.4.0 - [July 28, 2026](https://github.com/tanaabased/prepare-release-action/releases/tag/v1.4.0)
 
 - Added automatic Bun version selection from `.bun-version`, `.tool-versions`, or `package.json` when `bun-version=auto`. [#34](https://github.com/tanaabased/prepare-release-action/pull/34)
