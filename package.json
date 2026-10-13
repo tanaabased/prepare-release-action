@@ -44,7 +44,7 @@
     "eslint-config-prettier": "^10.1.1",
     "globals": "^17.12.0",
     "mocha": "^12.0.2",
-    "prettier": "^3.9.9",
+    "prettier": "^3.9.10",
     "yargs-parser": "22.0.0"
   },
   "scripts": {
